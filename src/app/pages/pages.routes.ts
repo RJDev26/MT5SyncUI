@@ -68,8 +68,14 @@ export const routes: Routes = [
         loadComponent: () => import('./drag-drop/drag-drop.component').then(c => c.DragDropComponent),
         data: { breadcrumb: 'Drag & Drop' }
       },
-      
-      
+
+      {
+        path: 'deals-live',
+        loadComponent: () => import('./deals-live/deals-live.component').then(c => c.DealsLiveComponent),
+        data: { breadcrumb: 'Live Deals' }
+      },
+
+
     ]
   }
 ];
