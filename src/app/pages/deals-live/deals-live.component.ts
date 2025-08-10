@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DealsService } from '@services/deals.service';
 import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
-import { interval, Subscription, switchMap, tap } from 'rxjs';
+import { interval, Subscription, switchMap, tap, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-deals-live',
@@ -48,6 +48,7 @@ export class DealsLiveComponent implements OnDestroy {
       filter: true,
       minWidth: 110
     },
+    rowData: [],
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
@@ -69,6 +70,7 @@ export class DealsLiveComponent implements OnDestroy {
     this.gridApi = event.api;
     this.sub = interval(1000)
       .pipe(
+        startWith(0),
         switchMap(() =>
           this.svc.getLiveDeals({
             date: this.selectedDateParam,
