@@ -4,19 +4,19 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface DealRow {
-  Login: string;
-  Time: string;
-  Deal: string;
-  Symbol: string;
-  ConType: string;
-  Entry: string;
-  Qty: number;
-  Price: number;
-  Volume: number;
-  VolumeExt: number;
-  Profit: number;
-  Commission: number;
-  Comment: string;
+  login: number;
+  time: string;
+  deal: number;
+  symbol: string;
+  contype: string;
+  entry: number;
+  qty: number;
+  price: number;
+  volume: number;
+  volumeext: number;
+  profit: number;
+  commission: number;
+  comment: string;
 }
 
 @Injectable({ providedIn: 'root' })

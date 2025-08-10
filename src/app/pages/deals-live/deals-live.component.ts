@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DealsService } from '@services/deals.service';
 import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
-import { interval, Subscription, startWith, switchMap, tap } from 'rxjs';
+import { interval, Subscription, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-deals-live',
@@ -12,28 +12,35 @@ import { interval, Subscription, startWith, switchMap, tap } from 'rxjs';
   templateUrl: './deals-live.component.html',
   styleUrls: ['./deals-live.component.scss']
 })
-export class DealsLiveComponent implements OnInit, OnDestroy {
+export class DealsLiveComponent implements OnDestroy {
   gridOptions: GridOptions = {
     columnDefs: [
-      { field: 'Time', valueFormatter: p => new Date(p.value).toLocaleTimeString(), sort: 'asc' },
-      { field: 'Login' },
-      { field: 'Deal' },
-      { field: 'Symbol' },
-      { field: 'ConType' },
-      { field: 'Entry' },
-      { field: 'Qty', type: 'numericColumn' },
-      { field: 'Price', type: 'numericColumn' },
-      { field: 'Volume', type: 'numericColumn' },
-      { field: 'VolumeExt', type: 'numericColumn' },
       {
-        field: 'Profit', type: 'numericColumn',
+        field: 'time',
+        headerName: 'Time',
+        valueFormatter: p => new Date(p.value).toLocaleTimeString(),
+        sort: 'asc'
+      },
+      { field: 'login', headerName: 'Login' },
+      { field: 'deal', headerName: 'Deal' },
+      { field: 'symbol', headerName: 'Symbol' },
+      { field: 'contype', headerName: 'ConType' },
+      { field: 'entry', headerName: 'Entry' },
+      { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
+      { field: 'price', headerName: 'Price', type: 'numericColumn' },
+      { field: 'volume', headerName: 'Volume', type: 'numericColumn' },
+      { field: 'volumeext', headerName: 'VolumeExt', type: 'numericColumn' },
+      {
+        field: 'profit',
+        headerName: 'Profit',
+        type: 'numericColumn',
         cellClassRules: {
           'text-green-600': p => p.value > 0,
           'text-red-600': p => p.value < 0
         }
       },
-      { field: 'Commission', type: 'numericColumn' },
-      { field: 'Comment' }
+      { field: 'commission', headerName: 'Commission', type: 'numericColumn' },
+      { field: 'comment', headerName: 'Comment' }
     ],
     defaultColDef: {
       resizable: true,
@@ -44,7 +51,7 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
-    getRowId: p => String(p.data.Deal)
+    getRowId: p => String(p.data.deal)
   };
 
   private gridApi!: GridApi;
@@ -54,33 +61,31 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
 
   constructor(private svc: DealsService) {}
 
-  ngOnInit(): void {
-    this.sub = interval(1000).pipe(
-      startWith(0),
-      switchMap(() =>
-        this.svc.getLiveDeals({
-          date: this.selectedDateParam,
-          sinceTime: this.lastMaxTime ?? 'NULL',
-          pageSize: this.lastMaxTime ? 1000 : 500,
-          asc: false,
-        })
-      ),
-      tap(res => {
-        if (res.rows?.length) {
-          this.gridApi.applyTransaction({ add: res.rows });
-        }
-        if (res.maxTime != null) {
-          this.lastMaxTime = res.maxTime;
-        }
-      })
-    ).subscribe();
-  }
-
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
   }
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
+    this.sub = interval(1000)
+      .pipe(
+        switchMap(() =>
+          this.svc.getLiveDeals({
+            date: this.selectedDateParam,
+            sinceTime: this.lastMaxTime ?? 'NULL',
+            pageSize: this.lastMaxTime ? 1000 : 500,
+            asc: false,
+          })
+        ),
+        tap(res => {
+          if (res.rows?.length) {
+            this.gridApi.applyTransaction({ add: res.rows });
+          }
+          if (res.maxTime != null) {
+            this.lastMaxTime = res.maxTime;
+          }
+        })
+      )
+      .subscribe();
   }
 }
