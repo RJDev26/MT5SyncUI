@@ -44,7 +44,6 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
-    deltaRowDataMode: true,
     getRowId: p => String(p.data.Deal)
   };
 
