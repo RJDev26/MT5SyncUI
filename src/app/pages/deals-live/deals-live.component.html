@@ -2,8 +2,10 @@
   <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()" />
   Auto Update
 </label>
-<div class="ag-theme-alpine" style="height:500px; width:100%">
+<div class="grid-wrapper">
   <ag-grid-angular
+    class="ag-theme-alpine full-grid"
     [gridOptions]="gridOptions"
-    (gridReady)="onGridReady($event)"></ag-grid-angular>
+    (gridReady)="onGridReady($event)">
+  </ag-grid-angular>
 </div>
