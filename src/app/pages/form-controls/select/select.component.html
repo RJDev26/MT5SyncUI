@@ -1,0 +1,78 @@
+<div fxLayout="column">
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header>                
+                <mat-card-title>Basic select</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <mat-form-field>
+                    <mat-select placeholder="Favorite food" [(ngModel)]="selectedValue" name="food">
+                        @for (food of foods; track food) {
+                            <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
+                        }                        
+                    </mat-select>
+                </mat-form-field>
+                <p class="py-1"> Selected value: <b>{{selectedValue}}</b> </p>
+            </mat-card-content>
+        </mat-card>
+    </div> 
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header>                
+                <mat-card-title>Select with option groups</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <mat-form-field>
+                    <mat-select placeholder="Pokemon" [formControl]="pokemonControl">
+                        <mat-option>-- None --</mat-option>
+                        @for (group of pokemonGroups; track group) {
+                            <mat-optgroup [label]="group.name" [disabled]="group.disabled">
+                                @for (pokemon of group.pokemon; track pokemon) {
+                                    <mat-option [value]="pokemon.value">{{ pokemon.viewValue }}</mat-option>
+                                }                                
+                            </mat-optgroup>
+                        }                        
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-content>
+        </mat-card>
+    </div> 
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header>                
+                <mat-card-title>Select with multiple selection</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <mat-form-field>
+                    <mat-select placeholder="Toppings" [formControl]="toppings" multiple>
+                        @for (topping of toppingList; track topping) {
+                            <mat-option [value]="topping">{{topping}}</mat-option>
+                        }                     
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-content>
+        </mat-card>
+    </div> 
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header>                
+                <mat-card-title>Select with custom trigger text</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <mat-form-field>
+                    <mat-select placeholder="Toppings" [formControl]="toppings2" multiple>
+                        <mat-select-trigger>
+                            {{toppings2.value ? toppings2.value[0] : ''}}
+                            @if (toppings2.value?.length > 1) {
+                                <small>(+{{toppings2.value.length - 1}} others)</small>
+                            }                         
+                        </mat-select-trigger>
+                        @for (topping of toppingList2; track topping) {
+                            <mat-option [value]="topping">{{topping}}</mat-option>
+                        }                        
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-content>
+        </mat-card>
+    </div> 
+</div>

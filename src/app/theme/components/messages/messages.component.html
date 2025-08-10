@@ -1,0 +1,31 @@
+<button mat-icon-button [matMenuTriggerFor]="messagesMenu" (click)="openMessagesMenu()">
+    <mat-icon>notifications</mat-icon>
+</button>
+<mat-menu #messagesMenu="matMenu" [overlapTrigger]="false" class="toolbar-dropdown-menu messages">
+    <!--<span (mouseleave)="onMouseLeave()">-->
+        <mat-tab-group backgroundColor="primary" (click)="stopClickPropagate($event)">
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>message</mat-icon>
+                </ng-template>
+                <mat-card class="content">
+                    <ng-scrollbar pointerEventsMethod="scrollbar">
+                        <div fxLayout="column" fxLayoutAlign="none">
+                            @for (message of messages | slice:0:1; track message) {
+                                <button mat-button>
+                                    <div fxLayout="column" fxLayoutAlign="none" class="w-100">
+                                        <div fxLayout="row" fxLayoutAlign="space-between start">
+                                            <span class="name">{{message.name}}</span>
+                                            <span class="info"><mat-icon>access_time</mat-icon> {{message.time}}</span>
+                                        </div>
+                                        <span class="text muted-text">{{message.text}}</span>
+                                    </div>
+                                </button>
+                            }
+                        </div>
+                    </ng-scrollbar>
+                </mat-card>
+            </mat-tab>
+        </mat-tab-group>
+    <!--</span>-->
+</mat-menu>

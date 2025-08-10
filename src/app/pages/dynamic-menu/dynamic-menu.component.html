@@ -1,0 +1,61 @@
+<div fxLayout="row wrap" fxLayoutAlign="center">
+    <div fxFlex="100" fxFlex.gt-sm="50" fxFlex.sm="60" class="p-2">
+        <mat-card class="list">
+            <mat-card-content>
+                <form [formGroup]="form" (ngSubmit)="onSubmit(form.value)">      
+                    <mat-form-field class="w-100">
+                        <mat-label>Title</mat-label>
+                        <input matInput formControlName="title">
+                        @if (form.controls.title.errors?.required) {
+                            <mat-error>Menu title is required</mat-error>
+                        }
+                        @if (form.controls.title.hasError('minlength')) {
+                            <mat-error>Menu title isn't long enough, minimum of 3 characters</mat-error>
+                        }
+                    </mat-form-field> 
+                    <mat-form-field class="w-100">
+                        <mat-label>Icon</mat-label>
+                        <mat-select formControlName="icon">
+                            @for (icon of icons; track icon) {
+                                <mat-option [value]="icon">
+                                    <mat-icon>{{ icon }}</mat-icon>{{ icon }}
+                                </mat-option>
+                            }                            
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="w-100">
+                        <mat-label>RouterLink</mat-label>
+                        <input matInput formControlName="routerLink" matTooltip="e.g. /dashboard" matTooltipPosition="after">
+                        @if (form.controls.routerLink.errors?.required) {
+                            <mat-error>Routerlink or href is required</mat-error>
+                        }                       
+                    </mat-form-field>
+                    <mat-checkbox formControlName="hasSubMenu" color="primary">Has sub menu</mat-checkbox>
+                    <mat-form-field class="w-100">
+                        <mat-label>Href</mat-label>
+                        <input matInput formControlName="href" matTooltip="e.g. http://themeseason.com" matTooltipPosition="after">
+                        @if (form.controls.href.errors?.required) {
+                            <mat-error>Href or routerlink is required</mat-error>
+                        }                    
+                    </mat-form-field>
+                    <mat-radio-group formControlName="target">
+                        <mat-radio-button value="_blank">_blank</mat-radio-button>
+                        <mat-radio-button value="_self" class="mx-1">_self</mat-radio-button>
+                    </mat-radio-group>
+                    <mat-form-field class="w-100">
+                        <mat-label>Parent menu</mat-label>
+                        <mat-select formControlName="parentId">
+                            <mat-option value="0">-- Select Parent Menu --</mat-option>
+                            @for (menuItem of menuItems; track menuItem.id) {
+                                <mat-option [value]="menuItem.id">{{menuItem.title}}</mat-option>
+                            }                        
+                        </mat-select>
+                    </mat-form-field>
+                    <div fxLayout="row" fxLayoutAlign="center">
+                        <button mat-raised-button color="primary" [disabled]="!form.valid" type="submit">Add New Menu Item</button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+      </div> 
+</div> 

@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit(form.value)" fxLayout="col wrap" class="user-form bill-summary">
+    <div fxLayout="row wrap" fxLayoutGap="11" fxLayoutAlign="start" class="w-100">
+        <div fxFlex="none">
+            <mat-form-field appearance="outline">
+                <mat-label>Select From - To</mat-label>
+                <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate formControlName="fromDate" placeholder="Start date">
+                    <input matEndDate formControlName="toDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>dd/MM/YYYY – dd/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+        </div>
+        <div fxFlex="none">
+            <app-multi-select 
+            formControlName="exId"
+            [labelName] = "'Select Exchange'"
+            [dataList]="exchangeDDLList"
+            formCont></app-multi-select>
+        </div>
+        <div fxFlex="none">
+            <app-multi-select 
+            formControlName="branchIds"
+            [labelName] = "'Select Branch'"
+            [dataList]="branchDDLList"
+            formCont></app-multi-select>
+        </div>
+        <div fxFlex="100" fxFlex.gt-sm="20" fxFlex.sm="20" class="branch-field">
+            <app-multi-select 
+            formControlName="account"
+            [labelName] = "'Select Account'"
+            [dataList]="accountDDLList"
+            formCont></app-multi-select>
+        </div>
+        <div fxFlex="none">
+            <mat-form-field appearance="outline">
+                <mat-label>Option</mat-label>
+                <mat-select formControlName="option" placeholder="Select Option">
+                  @for (item of optionsList | keyvalue; track item.key) {
+                    <mat-option [value]="item.value">{{item.value}}</mat-option>
+                  }
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxFlex="none" class="text-center">
+            <button mat-raised-button color="primary" class="uppercase mx-1" type="submit">Search</button>             
+        </div>
+    </div>
+</form>
+<div class="row">    
+    <div class="col-xl-12 mt-2">
+        <ag-grid-angular style="
+            height: calc(100vh - 16.5rem);
+            width: 100%;"
+            class="ag-theme-alpine bill-summary-table"
+            [rowData]="gridDataList"
+            [pagination]="true"
+            [rowHeight]="31"
+            [isFullWidthRow]="isFullWidthRow"
+            [fullWidthCellRenderer]="fullWidthCellRenderer"
+            [columnDefs]="columnDefs"
+            [defaultColDef]="agGridOptions.defaultColDef"
+            (cellClicked)="onGridClick($event)"
+             [gridOptions]="agGridOptions"
+            (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+</div>

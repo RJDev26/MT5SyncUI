@@ -1,0 +1,57 @@
+<div class="p-2">
+    <mat-card>
+        <mat-card-header>                
+            <mat-card-title>Slider configuration</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="pt-3">
+            <section class="py-1"> 
+                <mat-form-field class="mr-3" appearance="fill">
+                    <mat-label>Value</mat-label>
+                    <input matInput type="number" [(ngModel)]="value">
+                  </mat-form-field>
+                <mat-form-field class="mr-3" appearance="fill">
+                    <mat-label>Min value</mat-label>
+                    <input matInput type="number" [(ngModel)]="min">
+                </mat-form-field>
+                <mat-form-field class="mr-3" appearance="fill">
+                    <mat-label>Max value</mat-label>
+                    <input matInput type="number" [(ngModel)]="max">
+                </mat-form-field>
+                <mat-form-field class="mr-3" appearance="fill">
+                    <mat-label>Step size</mat-label>
+                    <input matInput type="number" [(ngModel)]="step">
+                </mat-form-field> 
+            </section>
+
+            <section class="py-1">
+                <mat-checkbox [(ngModel)]="showTicks">Show ticks</mat-checkbox>  
+            </section> 
+            <section class="py-1">
+                <mat-checkbox [(ngModel)]="thumbLabel">Show thumb label</mat-checkbox>
+            </section> 
+            <section class="py-1">
+                <mat-checkbox [(ngModel)]="disabled">Disabled</mat-checkbox>
+            </section>
+
+            <mat-divider></mat-divider>
+
+            <h2 class="py-3">Result</h2> 
+            
+            <div fxLayoutAlign="space-between" class="custom-slider">
+                <label id="example-name-label">Value</label>
+                <label>{{value}}</label>
+            </div>
+
+            <mat-slider class="custom-slider"
+                        [disabled]="disabled"
+                        [max]="max"
+                        [min]="min"
+                        [step]="step"
+                        [discrete]="thumbLabel"
+                        [showTickMarks]="showTicks">
+                <input matSliderThumb [(ngModel)]="value">
+            </mat-slider>
+                        
+        </mat-card-content>
+    </mat-card>
+</div>  

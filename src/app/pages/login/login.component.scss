@@ -1,0 +1,38 @@
+mat-sidenav-container {
+  background: linear-gradient(135deg, #f3f1ff 0%, #ffffff 100%);
+  height: 100vh;
+}
+
+.box-content-header {
+  color: #7f7fd5;
+}
+
+.mat-card {
+  background: #fff;
+  color: #555;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: transparent;
+  --mdc-outlined-text-field-container-color: transparent;
+  --mdc-outlined-text-field-outline-color: #7f7fd5;
+  --mdc-outlined-text-field-hover-outline-color: #7f7fd5;
+  --mdc-outlined-text-field-focused-outline-color: #7f7fd5;
+}
+
+.mat-mdc-input-element {
+  background-color: transparent;
+  color: #555;
+}
+
+.mat-mdc-input-element::placeholder {
+  color: #888;
+}
+
+.mdc-floating-label {
+  color: #7f7fd5 !important;
+}

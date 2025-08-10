@@ -1,0 +1,30 @@
+<div fxLayout="column">
+    <div class="p-2"> 
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center center">                
+                <mat-card-title>Bubble Chart</mat-card-title>
+            </mat-card-header>
+            <div class="w-100 h-300p">
+                <ngx-charts-bubble-chart
+                    [results]="bubble"
+                    [showGridLines]="showGridLines"
+                    [legend]="showLegend"
+                    [legendTitle]="legendTitle"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    [autoScale]="autoScale"
+                    [scheme]="colorScheme"
+                    [schemeType]="schemeType"
+                    [roundDomains]="roundDomains"
+                    [tooltipDisabled]="tooltipDisabled"
+                    [minRadius]="minRadius"
+                    [maxRadius]="maxRadius">
+                </ngx-charts-bubble-chart>                  
+            </div>
+        </mat-card>
+    </div>
+</div>

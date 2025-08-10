@@ -1,0 +1,92 @@
+<div fxLayout="column" fxLayout.gt-sm="row wrap">
+    <div fxFlex="50" class="p-2"> 
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center center">                
+                <mat-card-title>Line Chart</mat-card-title>
+            </mat-card-header>
+            <div class="w-100 h-300p">
+                <ngx-charts-line-chart
+                    [scheme]="colorScheme"
+                    [results]="multi"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    [autoScale]="autoScale"
+                    (select)="onSelect($event)">
+                </ngx-charts-line-chart>                  
+            </div>
+        </mat-card>
+    </div>
+    <div fxFlex="50" class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center center">                
+                <mat-card-title>Area Chart</mat-card-title>
+            </mat-card-header>
+            <div class="w-100 h-300p">
+                <ngx-charts-area-chart
+                    [scheme]="colorScheme"
+                    [results]="multi"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    [autoScale]="autoScale"
+                    (select)="onSelect($event)">
+                </ngx-charts-area-chart>         
+            </div>
+        </mat-card>
+    </div>
+    <div fxFlex="50" class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center center">                
+                <mat-card-title>Stacked Area Chart</mat-card-title>
+            </mat-card-header>
+            <div class="w-100 h-300p">
+                <ngx-charts-area-chart-stacked                     
+                    [scheme]="colorScheme"
+                    [results]="multi"
+                    [gradient]="gradient"
+                    [xAxis]="showXAxis"
+                    [yAxis]="showYAxis"
+                    [legend]="showLegend"
+                    [showXAxisLabel]="showXAxisLabel"
+                    [showYAxisLabel]="showYAxisLabel"
+                    [xAxisLabel]="xAxisLabel"
+                    [yAxisLabel]="yAxisLabel"
+                    (select)="onSelect($event)">
+                </ngx-charts-area-chart-stacked>         
+            </div>
+        </mat-card>
+    </div>
+    <div fxFlex="50" class="p-2">
+      <mat-card>
+          <mat-card-header fxLayoutAlign="center center">                
+              <mat-card-title>Normalized Area Chart</mat-card-title>
+          </mat-card-header>
+          <div class="w-100 h-300p">
+              <ngx-charts-area-chart-normalized
+                  [scheme]="colorScheme"
+                  [results]="multi"
+                  [gradient]="gradient"
+                  [xAxis]="showXAxis"
+                  [yAxis]="showYAxis"
+                  [legend]="showLegend"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel"
+                  (select)="onSelect($event)">
+              </ngx-charts-area-chart-normalized>          
+          </div>
+      </mat-card>
+  </div>
+</div>

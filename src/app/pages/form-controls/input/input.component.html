@@ -1,0 +1,137 @@
+<div fxLayout="column">
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">                
+                <mat-card-title>Basic Inputs</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <form fxLayout="column" fxLayoutAlign="center">
+                    <mat-form-field>
+                        <mat-label>Favorite food</mat-label>
+                        <input matInput value="Sushi">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Leave a comment</mat-label>
+                        <textarea matInput></textarea>
+                    </mat-form-field>
+                </form>                              
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">                
+                <mat-card-title>Input with a custom ErrorStateMatcher</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <form fxLayout="column" fxLayoutAlign="center">
+                    <mat-form-field>
+                        <mat-label>Email</mat-label>
+                        <input matInput [formControl]="emailFormControl" [errorStateMatcher]="matcher">
+                        <mat-hint>Errors appear instantly!</mat-hint>
+                        @if (emailFormControl.hasError('email') && !emailFormControl.hasError('required')) {
+                            <mat-error>Please enter a valid email address</mat-error>
+                        }
+                        @if (emailFormControl.hasError('required')) {
+                            <mat-error>Email is <strong>required</strong></mat-error>
+                        } 
+                    </mat-form-field>
+                </form>                              
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">                
+                <mat-card-title>Auto-resizing textarea</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3" fxLayout="column" fxLayoutAlign="center">
+                <mat-form-field>
+                    <mat-label>Autosize textarea</mat-label>
+                    <textarea matInput
+                              matTextareaAutosize 
+                              matAutosizeMinRows="2"
+                              matAutosizeMaxRows="5"></textarea>
+                </mat-form-field>                       
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">                
+                <mat-card-title>Input with a clear button</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3" fxLayout="column" fxLayoutAlign="center">
+                <mat-form-field class="example-form-field">
+                    <mat-label>Clearable input</mat-label>
+                    <input matInput type="text" [(ngModel)]="value">
+                    @if (value) {
+                        <button matSuffix mat-icon-button (click)="value=''">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    } 
+                </mat-form-field>                     
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="p-2">
+        <mat-card>
+            <mat-card-header fxLayoutAlign="center">                
+                <mat-card-title>Inputs in a form</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="pt-3">
+                <form fxLayout="column" fxLayoutAlign="center">
+                  
+                    <mat-form-field>
+                        <input matInput placeholder="Company (disabled)" disabled value="Google">
+                    </mat-form-field>
+
+                    <table cellspacing="0" class="w-100">
+                        <tr>
+                            <td class="pr-2">
+                                <mat-form-field class="w-100">
+                                    <input matInput placeholder="First name">
+                                </mat-form-field>
+                            </td>
+                            <td class="pl-2">
+                                <mat-form-field class="w-100">
+                                    <input matInput placeholder="Long Last Name That Will Be Truncated">
+                                </mat-form-field>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <mat-form-field class="w-100">
+                        <textarea matInput placeholder="Address">1600 Amphitheatre Pkwy</textarea>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-100">
+                        <textarea matInput placeholder="Address 2"></textarea>
+                    </mat-form-field>                   
+
+                    <table cellspacing="0" class="w-100">
+                        <tr>
+                            <td>
+                                <mat-form-field class="w-100">
+                                    <input matInput placeholder="City">
+                                </mat-form-field>
+                            </td>
+                            <td class="px-3">
+                                <mat-form-field class="w-100">
+                                    <input matInput placeholder="State">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field class="w-100">
+                                    <input matInput #postalCode maxlength="5" placeholder="Postal Code" value="94043">
+                                    <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint>
+                                </mat-form-field>
+                            </td>
+                        </tr>
+                    </table>
+
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
