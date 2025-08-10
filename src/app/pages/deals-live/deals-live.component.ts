@@ -60,7 +60,7 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
       switchMap(() =>
         this.svc.getLiveDeals({
           date: this.selectedDateParam,
-          sinceTime: this.lastMaxTime ?? undefined,
+          sinceTime: this.lastMaxTime ?? 'NULL',
           pageSize: this.lastMaxTime ? 1000 : 500,
           asc: false,
         })
@@ -69,7 +69,9 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
         if (res.rows?.length) {
           this.gridApi.applyTransaction({ add: res.rows });
         }
-        if (res.maxTime) this.lastMaxTime = res.maxTime;
+        if (res.maxTime != null) {
+          this.lastMaxTime = res.maxTime;
+        }
       })
     ).subscribe();
   }
