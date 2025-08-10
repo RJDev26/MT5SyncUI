@@ -1,14 +1,15 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DealsService } from '@services/deals.service';
 import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
-import { interval, Subscription, switchMap, tap, startWith } from 'rxjs';
+import { interval, Subscription, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-deals-live',
   standalone: true,
-  imports: [CommonModule, AgGridModule, AgGridAngular],
+  imports: [CommonModule, FormsModule, AgGridModule, AgGridAngular],
   templateUrl: './deals-live.component.html',
   styleUrls: ['./deals-live.component.scss']
 })
@@ -57,6 +58,7 @@ export class DealsLiveComponent implements OnDestroy {
 
   private gridApi!: GridApi;
   private sub?: Subscription;
+  autoRefresh = false;
   lastMaxTime?: string;
   // Hard-coded date for retrieving sample live deals
   selectedDateParam = '8/8/2025';
@@ -68,17 +70,28 @@ export class DealsLiveComponent implements OnDestroy {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.sub = interval(1000)
+    this.fetchDeals().subscribe();
+  }
+
+  onAutoRefreshChange() {
+    if (this.autoRefresh) {
+      this.sub = interval(1000)
+        .pipe(switchMap(() => this.fetchDeals()))
+        .subscribe();
+    } else {
+      this.sub?.unsubscribe();
+    }
+  }
+
+  private fetchDeals() {
+    return this.svc
+      .getLiveDeals({
+        date: this.selectedDateParam,
+        sinceTime: this.lastMaxTime ?? 'NULL',
+        pageSize: this.lastMaxTime ? 1000 : 500,
+        asc: false,
+      })
       .pipe(
-        startWith(0),
-        switchMap(() =>
-          this.svc.getLiveDeals({
-            date: this.selectedDateParam,
-            sinceTime: this.lastMaxTime ?? 'NULL',
-            pageSize: this.lastMaxTime ? 1000 : 500,
-            asc: false,
-          })
-        ),
         tap(res => {
           if (res.rows?.length) {
             this.gridApi.applyTransaction({ add: res.rows });
@@ -87,7 +100,6 @@ export class DealsLiveComponent implements OnDestroy {
             this.lastMaxTime = res.maxTime;
           }
         })
-      )
-      .subscribe();
+      );
   }
 }
