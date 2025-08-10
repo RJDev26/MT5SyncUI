@@ -23,7 +23,7 @@ export class DealsService {
   constructor(private http: HttpClient) {}
 
   getLiveDeals(params: {
-    onDate: string;
+    date: string;
     sinceTime?: string;
     symbol?: string;
     action?: string;
@@ -32,7 +32,7 @@ export class DealsService {
   }): Observable<{ rows: DealRow[]; maxTime: string | null; rowCount: number }> {
     const httpParams = new HttpParams({ fromObject: params as any });
     return this.http.get<{ rows: DealRow[]; maxTime: string | null; rowCount: number }>(
-      '/api/deals/live',
+      '/api/Deals/live',
       { params: httpParams }
     );
   }

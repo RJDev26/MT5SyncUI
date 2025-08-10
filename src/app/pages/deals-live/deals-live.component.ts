@@ -50,19 +50,21 @@ export class DealsLiveComponent implements OnInit, OnDestroy {
   private gridApi!: GridApi;
   private sub?: Subscription;
   lastMaxTime?: string;
-  selectedDateISO = new Date().toISOString().slice(0, 10);
+  selectedDateParam = new Date().toLocaleDateString('en-US');
 
   constructor(private svc: DealsService) {}
 
   ngOnInit(): void {
     this.sub = interval(1000).pipe(
       startWith(0),
-      switchMap(() => this.svc.getLiveDeals({
-        onDate: this.selectedDateISO,
-        sinceTime: this.lastMaxTime ?? undefined,
-        pageSize: this.lastMaxTime ? 1000 : 500,
-        asc: true
-      })),
+      switchMap(() =>
+        this.svc.getLiveDeals({
+          date: this.selectedDateParam,
+          sinceTime: this.lastMaxTime ?? undefined,
+          pageSize: this.lastMaxTime ? 1000 : 500,
+          asc: false,
+        })
+      ),
       tap(res => {
         if (res.rows?.length) {
           this.gridApi.applyTransaction({ add: res.rows });
