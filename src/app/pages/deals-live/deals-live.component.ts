@@ -112,7 +112,7 @@ export class DealsLiveComponent implements OnDestroy {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.gridApi.setRowData(SAMPLE_ROWS);
+    this.gridApi.setGridOption('rowData', SAMPLE_ROWS);
     this.fetchDeals().subscribe();
   }
 
@@ -140,7 +140,7 @@ export class DealsLiveComponent implements OnDestroy {
             if (this.lastMaxTime) {
               this.gridApi.applyTransaction({ add: res.rows });
             } else {
-              this.gridApi.setRowData(res.rows);
+              this.gridApi.setGridOption('rowData', res.rows);
             }
           }
           if (res.maxTime != null) {
