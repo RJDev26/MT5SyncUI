@@ -2,9 +2,17 @@ import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DealsService } from '@services/deals.service';
-import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import {
+  GridApi,
+  GridOptions,
+  GridReadyEvent,
+  ModuleRegistry,
+  AllCommunityModule,
+} from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
 import { interval, Subscription, switchMap, tap } from 'rxjs';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-deals-live',
