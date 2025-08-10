@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DealsService, DealRow } from '@services/deals.service';
+import { DealsService } from '@services/deals.service';
 import { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
 import { interval, Subscription, switchMap, tap, startWith } from 'rxjs';
@@ -60,8 +60,6 @@ export class DealsLiveComponent implements OnDestroy {
   lastMaxTime?: string;
   // Hard-coded date for retrieving sample live deals
   selectedDateParam = '8/8/2025';
-  private rows: DealRow[] = [];
-
   constructor(private svc: DealsService) {}
 
   ngOnDestroy(): void {
@@ -83,8 +81,7 @@ export class DealsLiveComponent implements OnDestroy {
         ),
         tap(res => {
           if (res.rows?.length) {
-            this.rows.push(...res.rows);
-            this.gridApi.setGridOption('rowData', this.rows);
+            this.gridApi.applyTransaction({ add: res.rows });
           }
           if (res.maxTime != null) {
             this.lastMaxTime = res.maxTime;
