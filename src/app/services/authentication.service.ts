@@ -23,7 +23,7 @@ export class AuthenticationService {
   constructor(private httpClient: HttpClient) { }
 
   Login(formData: any): Observable<any> {
-    return this.httpClient.post<any>(environment.apiBaseUrl + 'Accounts/Login', formData);
+    return this.httpClient.post<any>(environment.apiBaseUrl + 'api/Auth/login', formData);
   }
 
   getUserData():Observable<any>{
