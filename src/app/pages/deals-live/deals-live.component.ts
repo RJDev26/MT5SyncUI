@@ -15,6 +15,7 @@ import { interval, Subscription, switchMap, tap } from 'rxjs';
 })
 export class DealsLiveComponent implements OnDestroy {
   gridOptions: GridOptions = {
+    theme: 'legacy',
     columnDefs: [
       {
         field: 'time',
