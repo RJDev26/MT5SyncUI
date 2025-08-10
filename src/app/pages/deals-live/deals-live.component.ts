@@ -58,7 +58,8 @@ export class DealsLiveComponent implements OnDestroy {
   private gridApi!: GridApi;
   private sub?: Subscription;
   lastMaxTime?: string;
-  selectedDateParam = new Date().toLocaleDateString('en-US');
+  // Hard-coded date for retrieving sample live deals
+  selectedDateParam = '8/8/2025';
 
   constructor(private svc: DealsService) {}
 
