@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DealsService } from '@services/deals.service';
+import { DealRow, DealsService } from '@services/deals.service';
 import {
   GridApi,
   GridOptions,
@@ -13,6 +13,39 @@ import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
 import { interval, Subscription, switchMap, tap } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
+
+const SAMPLE_ROWS: DealRow[] = [
+  {
+    login: 1083,
+    time: '2025-08-08T09:11:58',
+    deal: 117381,
+    symbol: 'GC-Z25',
+    contype: '0',
+    entry: 1,
+    qty: 0.5,
+    price: 3495.3,
+    volume: 5000,
+    volumeext: 50000000,
+    profit: -640,
+    commission: -1.5,
+    comment: ' '
+  },
+  {
+    login: 1105,
+    time: '2025-08-08T09:11:29',
+    deal: 117379,
+    symbol: 'GC-Z25',
+    contype: '1',
+    entry: 1,
+    qty: 0.2,
+    price: 3495.1,
+    volume: 2000,
+    volumeext: 20000000,
+    profit: 111.12,
+    commission: -1,
+    comment: ' '
+  }
+];
 
 @Component({
   selector: 'app-deals-live',
@@ -58,7 +91,7 @@ export class DealsLiveComponent implements OnDestroy {
       filter: true,
       minWidth: 110
     },
-    rowData: [],
+    rowData: SAMPLE_ROWS,
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
@@ -79,6 +112,7 @@ export class DealsLiveComponent implements OnDestroy {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
+    this.gridApi.setRowData(SAMPLE_ROWS);
     this.fetchDeals().subscribe();
   }
 
@@ -103,7 +137,11 @@ export class DealsLiveComponent implements OnDestroy {
       .pipe(
         tap(res => {
           if (res.rows?.length) {
-            this.gridApi.applyTransaction({ add: res.rows });
+            if (this.lastMaxTime) {
+              this.gridApi.applyTransaction({ add: res.rows });
+            } else {
+              this.gridApi.setRowData(res.rows);
+            }
           }
           if (res.maxTime != null) {
             this.lastMaxTime = res.maxTime;
