@@ -28,7 +28,7 @@ export class SettingsService {
     true,           //sidenavUserBlock 
     'vertical',     //horizontal , vertical
     'default',      //default, compact, mini
-    'black-dashboard', //indigo-light, teal-light, red-light, blue-dark, green-dark, pink-dark, black-dashboard
+    'indigo-light', //indigo-light, teal-light, red-light, blue-dark, green-dark, pink-dark, black-dashboard
     false,          // true = rtl, false = ltr
     true            // true = has footer, false = no footer
   )
