@@ -78,6 +78,7 @@ export class DealsLiveComponent implements OnDestroy {
   private sub?: Subscription;
   autoRefresh = false;
   lastMaxTime?: string;
+  rowCount = 0;
   selectedDate = new Date().toISOString().substring(0, 10);
   constructor(private svc: DealsService) {}
 
@@ -106,6 +107,11 @@ export class DealsLiveComponent implements OnDestroy {
     this.fetchDeals().subscribe();
   }
 
+  onFilterTextBoxChanged(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.gridApi.setGridOption('quickFilterText', value);
+  }
+
   private fetchDeals() {
     return this.svc
       .getLiveDeals({
@@ -125,6 +131,9 @@ export class DealsLiveComponent implements OnDestroy {
           }
           if (res.maxTime != null) {
             this.lastMaxTime = res.maxTime;
+          }
+          if (res.rowCount != null) {
+            this.rowCount = res.rowCount;
           }
         })
       );

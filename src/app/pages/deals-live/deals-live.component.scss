@@ -17,10 +17,31 @@
   height: 100%;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.right input {
+  padding: 0.25rem 0.5rem;
+}
+
 :host ::ng-deep .ag-row.deal-buy {
   background-color: #dcfce7; /* green-100 */
 }
 
 :host ::ng-deep .ag-row.deal-sell {
   background-color: #fee2e2; /* red-100 */
+}
+
+:host ::ng-deep .ag-theme-alpine {
+  --ag-odd-row-background-color: transparent;
 }
