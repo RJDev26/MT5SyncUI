@@ -20,7 +20,7 @@ export class Settings {
 export class SettingsService {
 
   public settings = new Settings(
-    'SaudaWeb',       //theme name
+    'Trade Tally',       //theme name
     true,           //loadingSpinner
     true,           //fixedHeader
     false,          //sidenavIsOpened

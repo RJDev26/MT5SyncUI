@@ -15,26 +15,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Dashboard' }
       },
       {
-        path: 'master',
-        loadChildren: () => import('./master/master.routes').then(p => p.routes),
-        data: { breadcrumb: 'Account Tax List' }
-      },
-      {
         path: 'users',
         loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
         data: { breadcrumb: 'Users' }
       },
      
-      {
-        path: 'acc-stat',
-        loadChildren: () => import('./account-statement/account-statement.routes').then(p => p.routes),
-        data: { breadcrumb: 'Account Statement' }
-      },
-      {
-        path: 'reports',
-        loadChildren: () => import('./reports/reports.routes').then(p => p.routes),
-        data: { breadcrumb: 'Reports' }
-      },
       {
         path: 'dynamic-menu',
         loadComponent: () => import('./dynamic-menu/dynamic-menu.component').then(c => c.DynamicMenuComponent),

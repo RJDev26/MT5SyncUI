@@ -9,7 +9,6 @@ export interface DealRow {
   deal: number;
   symbol: string;
   contype: string;
-  entry: number;
   qty: number;
   price: number;
   volume: number;
