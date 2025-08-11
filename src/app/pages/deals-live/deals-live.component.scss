@@ -43,11 +43,11 @@
 }
 
 :host ::ng-deep .ag-row.row-buy {
-  background-color: #dcfce7; /* green-100 */
+  background-color: #dcfce7 !important; /* green-100 */
 }
 
 :host ::ng-deep .ag-row.row-sell {
-  background-color: #fee2e2; /* red-100 */
+  background-color: #fee2e2 !important; /* red-100 */
 }
 
 :host ::ng-deep .ag-theme-alpine {

@@ -73,12 +73,13 @@ export class LiveOrdersComponent implements OnDestroy {
           String(p.data?.orderTypeName).toUpperCase()
         ),
     },
-    rowData: [],
     rowHeight: 32,
     rowSelection: 'single',
     animateRows: true,
     getRowId: p => String(p.data.order),
   };
+
+  rowData: OrderRow[] = [];
 
   autoRefresh = false;
   lastMaxTime?: string;
@@ -102,7 +103,7 @@ export class LiveOrdersComponent implements OnDestroy {
 
   loadData() {
     this.svc.getOrdersSnapshot().subscribe(res => {
-      this.gridApi.setGridOption('rowData', res.rows);
+      this.rowData = res.rows;
       this.lastMaxTime = res.maxTime || undefined;
       this.rowCount = res.rowCount;
     });
