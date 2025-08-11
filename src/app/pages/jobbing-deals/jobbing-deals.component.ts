@@ -82,6 +82,8 @@ export class JobbingDealsComponent implements OnDestroy {
 
   intervalMinutes = 5;
   autoRefresh = false;
+  lastMaxTime?: string;
+  rowCount = 0;
   private refreshSub?: Subscription;
   private gridApi!: GridApi<JobbingDealRow>;
 
@@ -104,8 +106,10 @@ export class JobbingDealsComponent implements OnDestroy {
   }
 
   loadData() {
-    this.svc.getJobbingDeals(this.intervalMinutes).subscribe(rows => {
-      this.gridApi.setGridOption('rowData', rows);
+    this.svc.getJobbingDeals(this.intervalMinutes).subscribe(res => {
+      this.gridApi.setGridOption('rowData', res.rows);
+      this.lastMaxTime = res.maxTime || undefined;
+      this.rowCount = res.rowCount;
     });
   }
 
