@@ -29,7 +29,7 @@ export class DealsLiveComponent implements OnDestroy {
         field: 'time',
         headerName: 'Time',
         valueFormatter: p => new Date(p.value).toLocaleTimeString(),
-        sort: 'asc'
+        sort: 'desc'
       },
       { field: 'login', headerName: 'Login' },
       { field: 'deal', headerName: 'Deal' },
