@@ -34,11 +34,11 @@
   padding: 0.25rem 0.5rem;
 }
 
-:host ::ng-deep .ag-row.deal-buy {
+:host ::ng-deep .ag-cell.contype-buy {
   background-color: #dcfce7; /* green-100 */
 }
 
-:host ::ng-deep .ag-row.deal-sell {
+:host ::ng-deep .ag-cell.contype-sell {
   background-color: #fee2e2; /* red-100 */
 }
 

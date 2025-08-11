@@ -34,7 +34,22 @@ export class DealsLiveComponent implements OnDestroy {
       { field: 'login', headerName: 'Login' },
       { field: 'deal', headerName: 'Deal' },
       { field: 'symbol', headerName: 'Symbol' },
-      { field: 'contype', headerName: 'ConType' },
+      {
+        field: 'contype',
+        headerName: 'ConType',
+        width: 62,
+        minWidth: 62,
+        cellClassRules: {
+          'contype-buy': p => {
+            const c = String(p.value).toUpperCase();
+            return c === 'B' || c === '0';
+          },
+          'contype-sell': p => {
+            const c = String(p.value).toUpperCase();
+            return c === 'S' || c === '1';
+          },
+        },
+      },
       { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
       { field: 'volume', headerName: 'Volume', type: 'numericColumn' },
@@ -61,17 +76,7 @@ export class DealsLiveComponent implements OnDestroy {
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
-    getRowId: p => String(p.data.deal),
-    rowClassRules: {
-      'deal-buy': p => {
-        const c = String(p.data?.contype).toUpperCase();
-        return c === 'B' || c === '0';
-      },
-      'deal-sell': p => {
-        const c = String(p.data?.contype).toUpperCase();
-        return c === 'S' || c === '1';
-      }
-    }
+    getRowId: p => String(p.data.deal)
   };
 
   private gridApi!: GridApi;
