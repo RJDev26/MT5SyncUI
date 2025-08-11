@@ -1,4 +1,8 @@
 <label class="mb-2 block">
+  Date:
+  <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
+</label>
+<label class="mb-2 block">
   <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()" />
   Auto Update
 </label>

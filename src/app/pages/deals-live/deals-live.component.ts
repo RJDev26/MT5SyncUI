@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DealRow, DealsService } from '@services/deals.service';
+import { DealsService } from '@services/deals.service';
 import {
   GridApi,
   GridOptions,
@@ -13,37 +13,6 @@ import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
 import { interval, Subscription, switchMap, tap } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-const SAMPLE_ROWS: DealRow[] = [
-  {
-    login: 1083,
-    time: '2025-08-08T09:11:58',
-    deal: 117381,
-    symbol: 'GC-Z25',
-    contype: '0',
-    qty: 0.5,
-    price: 3495.3,
-    volume: 5000,
-    volumeext: 50000000,
-    profit: -640,
-    commission: -1.5,
-    comment: ' '
-  },
-  {
-    login: 1105,
-    time: '2025-08-08T09:11:29',
-    deal: 117379,
-    symbol: 'GC-Z25',
-    contype: '1',
-    qty: 0.2,
-    price: 3495.1,
-    volume: 2000,
-    volumeext: 20000000,
-    profit: 111.12,
-    commission: -1,
-    comment: ' '
-  }
-];
 
 @Component({
   selector: 'app-deals-live',
@@ -88,7 +57,7 @@ export class DealsLiveComponent implements OnDestroy {
       filter: true,
       minWidth: 88
     },
-    rowData: SAMPLE_ROWS,
+    rowData: [],
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
@@ -109,8 +78,7 @@ export class DealsLiveComponent implements OnDestroy {
   private sub?: Subscription;
   autoRefresh = false;
   lastMaxTime?: string;
-  // Hard-coded date for retrieving sample live deals
-  selectedDateParam = '8/8/2025';
+  selectedDate = new Date().toISOString().substring(0, 10);
   constructor(private svc: DealsService) {}
 
   ngOnDestroy(): void {
@@ -119,7 +87,6 @@ export class DealsLiveComponent implements OnDestroy {
 
   onGridReady(event: GridReadyEvent) {
     this.gridApi = event.api;
-    this.gridApi.setGridOption('rowData', SAMPLE_ROWS);
     this.fetchDeals().subscribe();
   }
 
@@ -133,10 +100,16 @@ export class DealsLiveComponent implements OnDestroy {
     }
   }
 
+  onDateChange() {
+    this.lastMaxTime = undefined;
+    this.gridApi.setGridOption('rowData', []);
+    this.fetchDeals().subscribe();
+  }
+
   private fetchDeals() {
     return this.svc
       .getLiveDeals({
-        date: this.selectedDateParam,
+        date: new Date(this.selectedDate).toLocaleDateString('en-US'),
         sinceTime: this.lastMaxTime ?? 'NULL',
         pageSize: this.lastMaxTime ? 1000 : 500,
         asc: false,
