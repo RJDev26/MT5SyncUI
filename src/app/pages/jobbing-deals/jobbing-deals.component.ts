@@ -71,7 +71,6 @@ export class JobbingDealsComponent implements OnDestroy {
       resizable: true,
       sortable: true,
       filter: true,
-      minWidth: 88,
     },
     rowData: [],
     rowHeight: 32,
@@ -108,6 +107,7 @@ export class JobbingDealsComponent implements OnDestroy {
   loadData() {
     this.svc.getJobbingDeals(this.intervalMinutes).subscribe(res => {
       this.gridApi.setGridOption('rowData', res.rows);
+      this.gridApi.autoSizeAllColumns();
       this.lastMaxTime = res.maxTime || undefined;
       this.rowCount = res.rowCount;
     });
