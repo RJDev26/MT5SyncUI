@@ -11,6 +11,8 @@ import {
 } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
 import { interval, Subscription, switchMap, tap } from 'rxjs';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -34,22 +36,7 @@ export class DealsLiveComponent implements OnDestroy {
       { field: 'login', headerName: 'Login' },
       { field: 'deal', headerName: 'Deal' },
       { field: 'symbol', headerName: 'Symbol' },
-      {
-        field: 'contype',
-        headerName: 'ConType',
-        width: 62,
-        minWidth: 62,
-        cellClassRules: {
-          'contype-buy': p => {
-            const c = String(p.value).toUpperCase();
-            return c === 'B' || c === '0';
-          },
-          'contype-sell': p => {
-            const c = String(p.value).toUpperCase();
-            return c === 'S' || c === '1';
-          },
-        },
-      },
+      { field: 'contype', headerName: 'ConType', width: 62, minWidth: 62 },
       { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
       { field: 'volume', headerName: 'Volume', type: 'numericColumn' },
@@ -76,7 +63,17 @@ export class DealsLiveComponent implements OnDestroy {
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
-    getRowId: p => String(p.data.deal)
+    getRowId: p => String(p.data.deal),
+    rowClassRules: {
+      'row-buy': params => {
+        const c = String(params.data?.contype).toUpperCase();
+        return c === 'B' || c === '0';
+      },
+      'row-sell': params => {
+        const c = String(params.data?.contype).toUpperCase();
+        return c === 'S' || c === '1';
+      }
+    }
   };
 
   private gridApi!: GridApi;
@@ -115,6 +112,19 @@ export class DealsLiveComponent implements OnDestroy {
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  exportCsv() {
+    this.gridApi.exportDataAsCsv();
+  }
+
+  exportPdf() {
+    const cols = (this.gridOptions.columnDefs || []).map(c => (c as any).headerName);
+    const rows: any[] = [];
+    this.gridApi.forEachNode(n => rows.push((this.gridOptions.columnDefs || []).map(c => n.data[(c as any).field])));
+    const doc = new jsPDF();
+    (autoTable as any)(doc, { head: [cols], body: rows });
+    doc.save('deals.pdf');
   }
 
   private fetchDeals() {

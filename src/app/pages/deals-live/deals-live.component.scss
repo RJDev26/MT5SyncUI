@@ -30,18 +30,35 @@
   gap: 1rem;
 }
 
-.right input {
-  padding: 0.25rem 0.5rem;
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  input {
+    padding: 0.25rem 0.5rem;
+  }
 }
 
-:host ::ng-deep .ag-cell.contype-buy {
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+:host ::ng-deep .ag-row.row-buy {
   background-color: #dcfce7; /* green-100 */
 }
 
-:host ::ng-deep .ag-cell.contype-sell {
+:host ::ng-deep .ag-row.row-sell {
   background-color: #fee2e2; /* red-100 */
 }
 
 :host ::ng-deep .ag-theme-alpine {
   --ag-odd-row-background-color: transparent;
+  --ag-header-background-color: #f1f5f9;
+  --ag-header-foreground-color: #1f2937;
+  --ag-row-hover-color: #e2e8f0;
 }
