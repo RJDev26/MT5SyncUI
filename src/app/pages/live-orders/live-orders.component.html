@@ -5,6 +5,8 @@
         (change)="onAutoRefreshChange()"
         >Auto Update</mat-checkbox
       >
+      <span class="info">Last: {{ lastMaxTime ? (lastMaxTime | date: 'short') : '-' }}</span>
+      <span class="info">Rows: {{ rowCount }}</span>
     </div>
     <div class="right">
       <mat-form-field appearance="outline">

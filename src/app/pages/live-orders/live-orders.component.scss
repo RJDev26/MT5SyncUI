@@ -28,6 +28,7 @@
 .left {
   display: flex;
   align-items: center;
+  gap: 1rem;
 }
 
 .right {
@@ -41,4 +42,12 @@
 
 :host ::ng-deep .ag-theme-alpine {
   --ag-odd-row-background-color: transparent;
+}
+
+:host ::ng-deep .ag-row.row-buy {
+  background-color: #dcfce7;
+}
+
+:host ::ng-deep .ag-row.row-sell {
+  background-color: #fee2e2;
 }

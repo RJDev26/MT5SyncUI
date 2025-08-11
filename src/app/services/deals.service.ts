@@ -75,8 +75,8 @@ export class DealsService {
     );
   }
 
-  getOrdersSnapshot(): Observable<OrderRow[]> {
-    return this.http.get<OrderRow[]>(
+  getOrdersSnapshot(): Observable<{ rows: OrderRow[]; maxTime: string | null; rowCount: number }> {
+    return this.http.get<{ rows: OrderRow[]; maxTime: string | null; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/orders-snapshot'
     );
   }

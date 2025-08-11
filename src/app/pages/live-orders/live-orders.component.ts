@@ -63,6 +63,16 @@ export class LiveOrdersComponent implements OnDestroy {
       filter: true,
       minWidth: 88,
     },
+    rowClassRules: {
+      'row-buy': p =>
+        ['BUYLIMIT', 'BUYSTOP'].includes(
+          String(p.data?.orderTypeName).toUpperCase()
+        ),
+      'row-sell': p =>
+        ['SELLLIMIT', 'SELLSTOP'].includes(
+          String(p.data?.orderTypeName).toUpperCase()
+        ),
+    },
     rowData: [],
     rowHeight: 32,
     rowSelection: 'single',
@@ -71,6 +81,8 @@ export class LiveOrdersComponent implements OnDestroy {
   };
 
   autoRefresh = false;
+  lastMaxTime?: string;
+  rowCount = 0;
   private refreshSub?: Subscription;
   private gridApi!: GridApi<OrderRow>;
 
@@ -89,8 +101,10 @@ export class LiveOrdersComponent implements OnDestroy {
   }
 
   loadData() {
-    this.svc.getOrdersSnapshot().subscribe(rows => {
-      this.gridApi.setGridOption('rowData', rows);
+    this.svc.getOrdersSnapshot().subscribe(res => {
+      this.gridApi.setGridOption('rowData', res.rows);
+      this.lastMaxTime = res.maxTime || undefined;
+      this.rowCount = res.rowCount;
     });
   }
 
