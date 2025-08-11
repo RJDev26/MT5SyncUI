@@ -93,7 +93,12 @@ export class LiveOrdersComponent implements OnDestroy {
     const dateStr = new Date().toISOString().split('T')[0];
     const cols = (this.gridOptions.columnDefs || []).map(c => (c as any).headerName);
     const rows: any[] = [];
-    this.gridApi.forEachNode(n => rows.push((this.gridOptions.columnDefs || []).map(c => n.data[(c as any).field])));
+    this.gridApi.forEachNode(n => {
+      const row = n.data as Record<string, unknown> | undefined;
+      if (row) {
+        rows.push((this.gridOptions.columnDefs || []).map(c => row[(c as any).field]));
+      }
+    });
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
     doc.save(`Deals-${dateStr}.pdf`);
