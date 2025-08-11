@@ -16,3 +16,11 @@
   width: 100%;
   height: 100%;
 }
+
+:host ::ng-deep .ag-row.deal-buy {
+  background-color: #dcfce7; /* green-100 */
+}
+
+:host ::ng-deep .ag-row.deal-sell {
+  background-color: #fee2e2; /* red-100 */
+}

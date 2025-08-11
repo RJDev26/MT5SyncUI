@@ -89,13 +89,23 @@ export class DealsLiveComponent implements OnDestroy {
       resizable: true,
       sortable: true,
       filter: true,
-      minWidth: 110
+      minWidth: 88
     },
     rowData: SAMPLE_ROWS,
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,
-    getRowId: p => String(p.data.deal)
+    getRowId: p => String(p.data.deal),
+    rowClassRules: {
+      'deal-buy': p => {
+        const c = String(p.data?.contype).toUpperCase();
+        return c === 'B' || c === '0';
+      },
+      'deal-sell': p => {
+        const c = String(p.data?.contype).toUpperCase();
+        return c === 'S' || c === '1';
+      }
+    }
   };
 
   private gridApi!: GridApi;
