@@ -56,6 +56,16 @@ export const routes: Routes = [
         loadComponent: () => import('./deals-live/deals-live.component').then(c => c.DealsLiveComponent),
         data: { breadcrumb: 'Live Deals' }
       },
+      {
+        path: 'live-orders',
+        loadComponent: () => import('./live-orders/live-orders.component').then(c => c.LiveOrdersComponent),
+        data: { breadcrumb: 'Live Orders' }
+      },
+      {
+        path: 'jobbing-deals',
+        loadComponent: () => import('./jobbing-deals/jobbing-deals.component').then(c => c.JobbingDealsComponent),
+        data: { breadcrumb: 'Jobbing Deals' }
+      },
 
 
     ]

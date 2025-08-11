@@ -1,0 +1,16 @@
+<div class="toolbar">
+  <div class="right">
+    <input
+      type="text"
+      placeholder="Search..."
+      (input)="onFilterTextBoxChanged($event)"
+    />
+  </div>
+</div>
+<div class="grid-wrapper">
+  <ag-grid-angular
+    class="ag-theme-alpine full-grid"
+    [gridOptions]="gridOptions"
+    (gridReady)="onGridReady($event)"
+  ></ag-grid-angular>
+</div>

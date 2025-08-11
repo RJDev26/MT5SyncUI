@@ -18,6 +18,44 @@ export interface DealRow {
   comment: string;
 }
 
+export interface OrderRow {
+  login: number;
+  time: string;
+  order: number;
+  symbol: string;
+  qty: number;
+  price: number;
+  volume: number;
+  orderType: number;
+  orderTypeName: string;
+}
+
+export interface JobbingDealRow {
+  login: number;
+  buyTime: string;
+  sellTime: string;
+  buyDeal: number;
+  sellDeal: number;
+  diffSec: number;
+  symbol: string;
+  buySymbol: string;
+  sellSymbol: string;
+  international: string;
+  bQty: number;
+  sQty: number;
+  buyPrice: number;
+  sellPrice: number;
+  priceDiff: number;
+  mtm: number;
+  comm: number;
+  commR: number;
+  mtmr: number;
+  date: string;
+  dateString: string;
+  buyTimeString: string;
+  sellTimeString: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DealsService {
   constructor(private http: HttpClient) {}
@@ -34,6 +72,20 @@ export class DealsService {
     return this.http.get<{ rows: DealRow[]; maxTime: string | null; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/live',
       { params: httpParams }
+    );
+  }
+
+  getOrdersSnapshot(): Observable<OrderRow[]> {
+    return this.http.get<OrderRow[]>(
+      environment.apiBaseUrl + 'api/Deals/orders-snapshot'
+    );
+  }
+
+  getJobbingDeals(intervalMinutes: number): Observable<JobbingDealRow[]> {
+    const params = new HttpParams().set('intervalMinutes', intervalMinutes);
+    return this.http.get<JobbingDealRow[]>(
+      environment.apiBaseUrl + 'api/Deals/jobbing-deals',
+      { params }
     );
   }
 }
