@@ -1,6 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { DealsService } from '@services/deals.service';
 import {
   GridApi,
@@ -19,7 +26,19 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-deals-live',
   standalone: true,
-  imports: [CommonModule, FormsModule, AgGridModule, AgGridAngular],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+    MatIconModule,
+    AgGridModule,
+    AgGridAngular,
+  ],
   templateUrl: './deals-live.component.html',
   styleUrls: ['./deals-live.component.scss']
 })
@@ -81,7 +100,7 @@ export class DealsLiveComponent implements OnDestroy {
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
-  selectedDate = new Date().toISOString().substring(0, 10);
+  selectedDate: Date = new Date();
   constructor(private svc: DealsService) {}
 
   ngOnDestroy(): void {
@@ -115,7 +134,8 @@ export class DealsLiveComponent implements OnDestroy {
   }
 
   exportCsv() {
-    this.gridApi.exportDataAsCsv({ fileName: `Deal-${this.selectedDate}.csv` });
+    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    this.gridApi.exportDataAsCsv({ fileName: `Deal-${dateStr}.csv` });
   }
 
   exportPdf() {
@@ -124,13 +144,14 @@ export class DealsLiveComponent implements OnDestroy {
     this.gridApi.forEachNode(n => rows.push((this.gridOptions.columnDefs || []).map(c => n.data[(c as any).field])));
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
-    doc.save(`Deal-${this.selectedDate}.pdf`);
+    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    doc.save(`Deal-${dateStr}.pdf`);
   }
 
   private fetchDeals() {
     return this.svc
       .getLiveDeals({
-        date: new Date(this.selectedDate).toLocaleDateString('en-US'),
+        date: this.selectedDate.toLocaleDateString('en-US'),
         sinceTime: this.lastMaxTime ?? 'NULL',
         pageSize: this.lastMaxTime ? 1000 : 500,
         asc: false,

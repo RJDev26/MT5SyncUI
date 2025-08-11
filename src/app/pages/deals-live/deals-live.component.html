@@ -1,36 +1,43 @@
-<div class="toolbar">
-  <div class="left">
-    <label>
-      Date:
-      <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
-    </label>
-    <label>
-      <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()" />
-      Auto Update
-    </label>
-    <span class="info">
-      Last: {{ lastMaxTime ? (lastMaxTime | date: 'short') : '-' }}
-    </span>
-    <span class="info">Rows: {{ rowCount }}</span>
+  <div class="toolbar">
+    <div class="left">
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [(ngModel)]="selectedDate"
+          (dateChange)="onDateChange()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-checkbox
+        [(ngModel)]="autoRefresh"
+        (change)="onAutoRefreshChange()"
+        >Auto Update</mat-checkbox
+      >
+      <span class="info">
+        Last: {{ lastMaxTime ? (lastMaxTime | date: 'short') : '-' }}
+      </span>
+      <span class="info">Rows: {{ rowCount }}</span>
+    </div>
+    <div class="right">
+      <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input matInput (input)="onFilterTextBoxChanged($event)" />
+      </mat-form-field>
+      <button mat-icon-button title="Export CSV" (click)="exportCsv()">
+        <mat-icon>table_view</mat-icon>
+      </button>
+      <button mat-icon-button title="Export PDF" (click)="exportPdf()">
+        <mat-icon>picture_as_pdf</mat-icon>
+      </button>
+    </div>
   </div>
-  <div class="right">
-    <input
-      type="text"
-      placeholder="Search..."
-      (input)="onFilterTextBoxChanged($event)"
-    />
-    <button class="icon-btn" title="Export CSV" (click)="exportCsv()">
-      <span class="material-icons">table_view</span>
-    </button>
-    <button class="icon-btn" title="Export PDF" (click)="exportPdf()">
-      <span class="material-icons">picture_as_pdf</span>
-    </button>
+  <div class="grid-wrapper">
+    <ag-grid-angular
+      class="ag-theme-alpine full-grid"
+      [gridOptions]="gridOptions"
+      (gridReady)="onGridReady($event)"
+    ></ag-grid-angular>
   </div>
-</div>
-<div class="grid-wrapper">
-  <ag-grid-angular
-    class="ag-theme-alpine full-grid"
-    [gridOptions]="gridOptions"
-    (gridReady)="onGridReady($event)"
-  ></ag-grid-angular>
-</div>

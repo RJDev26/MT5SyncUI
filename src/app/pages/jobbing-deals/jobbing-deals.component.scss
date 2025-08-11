@@ -29,26 +29,18 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.right input {
-  padding: 0.25rem 0.5rem;
-  width: 250px;
+  mat-form-field {
+    width: 120px;
+  }
 }
 
 .right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.icon-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0;
+  mat-form-field {
+    width: 250px;
+  }
 }
 
 :host ::ng-deep .ag-theme-alpine {

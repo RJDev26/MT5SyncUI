@@ -1,6 +1,11 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -19,7 +24,17 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-jobbing-deals',
   standalone: true,
-  imports: [CommonModule, FormsModule, AgGridModule, AgGridAngular],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatIconModule,
+    AgGridModule,
+    AgGridAngular,
+  ],
   templateUrl: './jobbing-deals.component.html',
   styleUrls: ['./jobbing-deals.component.scss'],
 })

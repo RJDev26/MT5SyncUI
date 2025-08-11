@@ -28,25 +28,18 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  mat-form-field {
+    width: 200px;
+  }
 }
 
 .right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  input {
-    padding: 0.25rem 0.5rem;
+  mat-form-field {
     width: 300px;
   }
-}
-
-.icon-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0;
 }
 
 :host ::ng-deep .ag-row.row-buy {
