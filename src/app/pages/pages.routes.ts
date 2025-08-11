@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
 import { PagesComponent } from './pages.component';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 export const routes: Routes = [
   {
