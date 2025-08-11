@@ -115,7 +115,7 @@ export class DealsLiveComponent implements OnDestroy {
   }
 
   exportCsv() {
-    this.gridApi.exportDataAsCsv();
+    this.gridApi.exportDataAsCsv({ fileName: `Deal-${this.selectedDate}.csv` });
   }
 
   exportPdf() {
@@ -124,7 +124,7 @@ export class DealsLiveComponent implements OnDestroy {
     this.gridApi.forEachNode(n => rows.push((this.gridOptions.columnDefs || []).map(c => n.data[(c as any).field])));
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
-    doc.save('deals.pdf');
+    doc.save(`Deal-${this.selectedDate}.pdf`);
   }
 
   private fetchDeals() {
