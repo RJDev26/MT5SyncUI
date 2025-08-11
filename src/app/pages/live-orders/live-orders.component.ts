@@ -86,7 +86,7 @@ export class LiveOrdersComponent implements OnDestroy {
 
   exportCsv() {
     const dateStr = new Date().toISOString().split('T')[0];
-    this.gridApi.exportDataAsCsv({ fileName: `Deal-${dateStr}.csv` });
+    this.gridApi.exportDataAsCsv({ fileName: `Order-${dateStr}.csv` });
   }
 
   exportPdf() {
@@ -101,7 +101,7 @@ export class LiveOrdersComponent implements OnDestroy {
     });
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
-    doc.save(`Deal-${dateStr}.pdf`);
+    doc.save(`Order-${dateStr}.pdf`);
   }
 
   ngOnDestroy() {

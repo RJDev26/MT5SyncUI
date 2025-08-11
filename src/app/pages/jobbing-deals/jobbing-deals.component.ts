@@ -11,6 +11,8 @@ import {
   AllCommunityModule,
 } from 'ag-grid-community';
 import { AgGridModule, AgGridAngular } from 'ag-grid-angular';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -95,6 +97,26 @@ export class JobbingDealsComponent implements OnDestroy {
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  exportCsv() {
+    const dateStr = new Date().toISOString().split('T')[0];
+    this.gridApi.exportDataAsCsv({ fileName: `jobbing-deals-${dateStr}.csv` });
+  }
+
+  exportPdf() {
+    const dateStr = new Date().toISOString().split('T')[0];
+    const cols = (this.gridOptions.columnDefs || []).map(c => (c as any).headerName);
+    const rows: any[] = [];
+    this.gridApi.forEachNode(n => {
+      const row = n.data as Record<string, unknown> | undefined;
+      if (row) {
+        rows.push((this.gridOptions.columnDefs || []).map(c => row[(c as any).field]));
+      }
+    });
+    const doc = new jsPDF();
+    (autoTable as any)(doc, { head: [cols], body: rows });
+    doc.save(`jobbing-deals-${dateStr}.pdf`);
   }
 
   ngOnDestroy() {
