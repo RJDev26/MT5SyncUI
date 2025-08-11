@@ -64,14 +64,20 @@ export class LiveOrdersComponent implements OnDestroy {
       minWidth: 88,
     },
     rowClassRules: {
-      'row-buy': p =>
-        ['BUYLIMIT', 'BUYSTOP'].includes(
-          String(p.data?.orderTypeName).toUpperCase()
-        ),
-      'row-sell': p =>
-        ['SELLLIMIT', 'SELLSTOP'].includes(
-          String(p.data?.orderTypeName).toUpperCase()
-        ),
+      'row-buy': p => {
+        const name = String(p.data?.orderTypeName || '')
+          .trim()
+          .toUpperCase();
+        const type = Number(p.data?.orderType);
+        return name === 'BUYLIMIT' || name === 'BUYSTOP' || [2, 4].includes(type);
+      },
+      'row-sell': p => {
+        const name = String(p.data?.orderTypeName || '')
+          .trim()
+          .toUpperCase();
+        const type = Number(p.data?.orderType);
+        return name === 'SELLLIMIT' || name === 'SELLSTOP' || [3, 5].includes(type);
+      },
     },
     rowHeight: 32,
     rowSelection: 'single',
