@@ -9,6 +9,7 @@
   min-height: 0;
   display: flex;
   height: 500px;
+  width: 100%;
 }
 
 .full-grid {
@@ -19,13 +20,19 @@
 
 .toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
+.left {
+  display: flex;
+  align-items: center;
+}
+
 .right input {
   padding: 0.25rem 0.5rem;
+  width: 250px;
 }
 
 :host ::ng-deep .ag-theme-alpine {

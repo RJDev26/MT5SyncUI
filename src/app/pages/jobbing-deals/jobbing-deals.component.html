@@ -8,6 +8,10 @@
         (change)="onIntervalChange()"
       />
     </label>
+    <label>
+      <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()" />
+      Auto Update
+    </label>
   </div>
   <div class="right">
     <input

@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
+import { interval, Subscription } from 'rxjs';
 import {
   GridApi,
   GridOptions,
@@ -20,7 +21,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './jobbing-deals.component.html',
   styleUrls: ['./jobbing-deals.component.scss'],
 })
-export class JobbingDealsComponent {
+export class JobbingDealsComponent implements OnDestroy {
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -56,12 +57,15 @@ export class JobbingDealsComponent {
       minWidth: 88,
     },
     rowData: [],
+    rowHeight: 32,
     rowSelection: 'single',
     animateRows: true,
     getRowId: p => String(p.data.buyDeal) + '-' + String(p.data.sellDeal),
   };
 
   intervalMinutes = 5;
+  autoRefresh = false;
+  private refreshSub?: Subscription;
   private gridApi!: GridApi<JobbingDealRow>;
 
   constructor(private svc: DealsService) {}
@@ -75,6 +79,13 @@ export class JobbingDealsComponent {
     this.loadData();
   }
 
+  onAutoRefreshChange() {
+    this.refreshSub?.unsubscribe();
+    if (this.autoRefresh) {
+      this.refreshSub = interval(5000).subscribe(() => this.loadData());
+    }
+  }
+
   loadData() {
     this.svc.getJobbingDeals(this.intervalMinutes).subscribe(rows => {
       this.gridApi.setGridOption('rowData', rows);
@@ -84,5 +95,9 @@ export class JobbingDealsComponent {
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  ngOnDestroy() {
+    this.refreshSub?.unsubscribe();
   }
 }

@@ -1,4 +1,10 @@
 <div class="toolbar">
+  <div class="left">
+    <label>
+      <input type="checkbox" [(ngModel)]="autoRefresh" (change)="onAutoRefreshChange()" />
+      Auto Update
+    </label>
+  </div>
   <div class="right">
     <input
       type="text"
