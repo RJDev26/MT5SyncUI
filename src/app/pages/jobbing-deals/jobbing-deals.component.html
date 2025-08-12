@@ -4,19 +4,21 @@
         <mat-label>From</mat-label>
         <input
           matInput
-          type="date"
+          [matDatepicker]="fromPicker"
           [(ngModel)]="fromDate"
-          (change)="onDateChange()"
         />
+        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromPicker></mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>To</mat-label>
         <input
           matInput
-          type="date"
+          [matDatepicker]="toPicker"
           [(ngModel)]="toDate"
-          (change)="onDateChange()"
         />
+        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <mat-datepicker #toPicker></mat-datepicker>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Interval</mat-label>
@@ -24,9 +26,9 @@
           matInput
           type="number"
           [(ngModel)]="intervalMinutes"
-          (change)="onIntervalChange()"
         />
       </mat-form-field>
+      <button mat-raised-button color="primary" (click)="loadData()">Show</button>
       <mat-checkbox
         [(ngModel)]="autoRefresh"
         (change)="onAutoRefreshChange()"

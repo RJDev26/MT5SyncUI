@@ -6,6 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -30,6 +32,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
     AgGridModule,
@@ -80,8 +84,8 @@ export class JobbingDealsComponent implements OnDestroy {
   };
 
   intervalMinutes = 5;
-  fromDate = new Date().toISOString().split('T')[0];
-  toDate = new Date().toISOString().split('T')[0];
+  fromDate: Date = new Date();
+  toDate: Date = new Date();
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
@@ -95,24 +99,17 @@ export class JobbingDealsComponent implements OnDestroy {
     this.loadData();
   }
 
-  onIntervalChange() {
-    this.loadData();
-  }
-
-  onDateChange() {
-    this.loadData();
-  }
-
   onAutoRefreshChange() {
     this.refreshSub?.unsubscribe();
     if (this.autoRefresh) {
       this.refreshSub = interval(5000).subscribe(() => this.loadData());
+      this.loadData();
     }
   }
 
   loadData() {
-    const from = this.fromDate.replace(/-/g, '/');
-    const to = this.toDate.replace(/-/g, '/');
+    const from = this.formatDate(this.fromDate);
+    const to = this.formatDate(this.toDate);
     this.svc
       .getJobbingDeals(from, to, this.intervalMinutes)
       .subscribe(res => {
@@ -121,6 +118,10 @@ export class JobbingDealsComponent implements OnDestroy {
         this.lastMaxTime = res.maxTime || undefined;
         this.rowCount = res.rowCount;
       });
+  }
+
+  private formatDate(d: Date): string {
+    return d.toISOString().split('T')[0].replace(/-/g, '/');
   }
 
   onFilterTextBoxChanged(event: Event) {
