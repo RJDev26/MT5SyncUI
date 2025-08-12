@@ -80,6 +80,8 @@ export class JobbingDealsComponent implements OnDestroy {
   };
 
   intervalMinutes = 5;
+  fromDate = new Date().toISOString().split('T')[0];
+  toDate = new Date().toISOString().split('T')[0];
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
@@ -97,6 +99,10 @@ export class JobbingDealsComponent implements OnDestroy {
     this.loadData();
   }
 
+  onDateChange() {
+    this.loadData();
+  }
+
   onAutoRefreshChange() {
     this.refreshSub?.unsubscribe();
     if (this.autoRefresh) {
@@ -105,12 +111,16 @@ export class JobbingDealsComponent implements OnDestroy {
   }
 
   loadData() {
-    this.svc.getJobbingDeals(this.intervalMinutes).subscribe(res => {
-      this.gridApi.setGridOption('rowData', res.rows);
-      this.gridApi.autoSizeAllColumns();
-      this.lastMaxTime = res.maxTime || undefined;
-      this.rowCount = res.rowCount;
-    });
+    const from = this.fromDate.replace(/-/g, '/');
+    const to = this.toDate.replace(/-/g, '/');
+    this.svc
+      .getJobbingDeals(from, to, this.intervalMinutes)
+      .subscribe(res => {
+        this.gridApi.setGridOption('rowData', res.rows);
+        this.gridApi.autoSizeAllColumns();
+        this.lastMaxTime = res.maxTime || undefined;
+        this.rowCount = res.rowCount;
+      });
   }
 
   onFilterTextBoxChanged(event: Event) {

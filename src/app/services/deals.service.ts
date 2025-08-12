@@ -82,9 +82,14 @@ export class DealsService {
   }
 
   getJobbingDeals(
+    fromTime: string,
+    toTime: string,
     intervalMinutes: number
   ): Observable<{ rows: JobbingDealRow[]; maxTime: string | null; rowCount: number }> {
-    const params = new HttpParams().set('intervalMinutes', intervalMinutes);
+    const params = new HttpParams()
+      .set('fromTime', fromTime)
+      .set('toTime', toTime)
+      .set('intervalMinutes', intervalMinutes);
     return this.http.get<{ rows: JobbingDealRow[]; maxTime: string | null; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/jobbing-deals',
       { params }
