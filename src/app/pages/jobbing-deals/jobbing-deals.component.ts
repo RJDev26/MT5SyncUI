@@ -70,6 +70,7 @@ export class JobbingDealsComponent implements OnDestroy {
       { field: 'comm', headerName: 'Comm', type: 'numericColumn' },
       { field: 'commR', headerName: 'CommR', type: 'numericColumn' },
       { field: 'mtmr', headerName: 'MTMR', type: 'numericColumn' },
+      { field: 'dateString', headerName: 'Date' },
     ],
     defaultColDef: {
       resizable: true,
