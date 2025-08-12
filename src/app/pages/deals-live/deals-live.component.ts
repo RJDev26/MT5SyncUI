@@ -79,6 +79,7 @@ export class DealsLiveComponent implements OnDestroy {
       minWidth: 88
     },
     rowData: [],
+    rowHeight: 26,
     rowBuffer: 0,
     rowSelection: 'single',
     animateRows: true,

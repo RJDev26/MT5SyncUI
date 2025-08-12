@@ -47,6 +47,7 @@ export class JobbingDealsComponent implements OnDestroy {
     theme: 'legacy',
     columnDefs: [
       { field: 'login', headerName: 'Login' },
+      { field: 'symbol', headerName: 'Symbol' },
       { field: 'dateString', headerName: 'Date' },
       {
         field: 'buyTime',
@@ -58,16 +59,15 @@ export class JobbingDealsComponent implements OnDestroy {
         headerName: 'Sell Time',
         valueFormatter: p => new Date(p.value).toLocaleTimeString(),
       },
-      { field: 'buyDeal', headerName: 'Buy Deal' },
-      { field: 'sellDeal', headerName: 'Sell Deal' },
       { field: 'diffSec', headerName: 'DiffSec', type: 'numericColumn' },
-      { field: 'symbol', headerName: 'Symbol' },
       { field: 'bQty', headerName: 'B Qty', type: 'numericColumn' },
       { field: 'sQty', headerName: 'S Qty', type: 'numericColumn' },
       { field: 'buyPrice', headerName: 'Buy Price', type: 'numericColumn' },
       { field: 'sellPrice', headerName: 'Sell Price', type: 'numericColumn' },
       { field: 'priceDiff', headerName: 'Price Diff', type: 'numericColumn' },
       { field: 'mtm', headerName: 'MTM', type: 'numericColumn' },
+      { field: 'buyDeal', headerName: 'Buy Deal' },
+      { field: 'sellDeal', headerName: 'Sell Deal' },
     ],
     defaultColDef: {
       resizable: true,
