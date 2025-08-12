@@ -47,6 +47,7 @@ export class JobbingDealsComponent implements OnDestroy {
     theme: 'legacy',
     columnDefs: [
       { field: 'login', headerName: 'Login' },
+      { field: 'dateString', headerName: 'Date' },
       {
         field: 'buyTime',
         headerName: 'Buy Time',
@@ -67,10 +68,6 @@ export class JobbingDealsComponent implements OnDestroy {
       { field: 'sellPrice', headerName: 'Sell Price', type: 'numericColumn' },
       { field: 'priceDiff', headerName: 'Price Diff', type: 'numericColumn' },
       { field: 'mtm', headerName: 'MTM', type: 'numericColumn' },
-      { field: 'comm', headerName: 'Comm', type: 'numericColumn' },
-      { field: 'commR', headerName: 'CommR', type: 'numericColumn' },
-      { field: 'mtmr', headerName: 'MTMR', type: 'numericColumn' },
-      { field: 'dateString', headerName: 'Date' },
     ],
     defaultColDef: {
       resizable: true,
@@ -106,6 +103,10 @@ export class JobbingDealsComponent implements OnDestroy {
       this.refreshSub = interval(5000).subscribe(() => this.loadData());
       this.loadData();
     }
+  }
+
+  onDateChange() {
+    this.loadData();
   }
 
   loadData() {

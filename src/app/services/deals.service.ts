@@ -47,9 +47,6 @@ export interface JobbingDealRow {
   sellPrice: number;
   priceDiff: number;
   mtm: number;
-  comm: number;
-  commR: number;
-  mtmr: number;
   date: string;
   dateString: string;
   buyTimeString: string;

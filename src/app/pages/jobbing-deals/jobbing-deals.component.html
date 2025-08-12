@@ -6,6 +6,7 @@
           matInput
           [matDatepicker]="fromPicker"
           [(ngModel)]="fromDate"
+          (dateChange)="onDateChange()"
         />
         <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
         <mat-datepicker #fromPicker></mat-datepicker>
@@ -16,6 +17,7 @@
           matInput
           [matDatepicker]="toPicker"
           [(ngModel)]="toDate"
+          (dateChange)="onDateChange()"
         />
         <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
         <mat-datepicker #toPicker></mat-datepicker>
