@@ -52,12 +52,12 @@ export class JobbingDealsComponent implements OnDestroy {
       {
         field: 'buyTime',
         headerName: 'Buy Time',
-        valueFormatter: p => new Date(p.value).toLocaleTimeString(),
+        valueFormatter: p => this.formatTime(p.value),
       },
       {
         field: 'sellTime',
         headerName: 'Sell Time',
-        valueFormatter: p => new Date(p.value).toLocaleTimeString(),
+        valueFormatter: p => this.formatTime(p.value),
       },
       { field: 'diffSec', headerName: 'DiffSec', type: 'numericColumn' },
       { field: 'bQty', headerName: 'B Qty', type: 'numericColumn' },
@@ -127,6 +127,18 @@ export class JobbingDealsComponent implements OnDestroy {
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}/${month}/${day}`;
+  }
+
+  private formatTime(value: string): string {
+    if (!value) return '';
+    const date = new Date(value);
+    return date.toLocaleTimeString('en-GB', {
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      fractionalSecondDigits: 3,
+    });
   }
 
   onFilterTextBoxChanged(event: Event) {
