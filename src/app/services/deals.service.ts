@@ -11,8 +11,6 @@ export interface DealRow {
   contype: string;
   qty: number;
   price: number;
-  volume: number;
-  volumeext: number;
   profit: number;
   commission: number;
   comment: string;

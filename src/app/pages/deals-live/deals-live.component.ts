@@ -58,8 +58,6 @@ export class DealsLiveComponent implements OnDestroy {
       { field: 'contype', headerName: 'ConType', width: 62, minWidth: 62 },
       { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
-      { field: 'volume', headerName: 'Volume', type: 'numericColumn' },
-      { field: 'volumeext', headerName: 'VolumeExt', type: 'numericColumn' },
       {
         field: 'profit',
         headerName: 'Profit',
