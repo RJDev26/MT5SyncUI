@@ -53,6 +53,7 @@ export class DealsLiveComponent implements OnDestroy {
         sort: 'desc'
       },
       { field: 'login', headerName: 'Login' },
+      { field: 'lastIP', headerName: 'LastIP' },
       { field: 'deal', headerName: 'Deal' },
       { field: 'symbol', headerName: 'Symbol' },
       { field: 'contype', headerName: 'ConType', width: 62, minWidth: 62 },

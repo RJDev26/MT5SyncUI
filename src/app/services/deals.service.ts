@@ -9,6 +9,7 @@ export interface DealRow {
   deal: number;
   symbol: string;
   contype: string;
+  lastIP: string;
   qty: number;
   price: number;
   profit: number;
@@ -21,6 +22,7 @@ export interface OrderRow {
   time: string;
   order: number;
   symbol: string;
+  lastIP: string;
   qty: number;
   price: number;
   volume: number;

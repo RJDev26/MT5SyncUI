@@ -45,16 +45,16 @@ export class LiveOrdersComponent implements OnDestroy {
       {
         field: 'time',
         headerName: 'Time',
-        valueFormatter: p => new Date(p.value).toLocaleTimeString(),
+        valueFormatter: p =>
+          new Date(p.value).toLocaleTimeString('en-GB', { hour12: false }),
         sort: 'desc',
       },
       { field: 'login', headerName: 'Login' },
+      { field: 'lastIP', headerName: 'LastIP' },
       { field: 'order', headerName: 'Order' },
       { field: 'symbol', headerName: 'Symbol' },
       { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
-      { field: 'volume', headerName: 'Volume', type: 'numericColumn' },
-      { field: 'orderType', headerName: 'OrderType', type: 'numericColumn' },
       { field: 'orderTypeName', headerName: 'OrderTypeName' },
     ],
     defaultColDef: {
