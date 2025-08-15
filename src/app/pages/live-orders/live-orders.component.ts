@@ -50,12 +50,12 @@ export class LiveOrdersComponent implements OnDestroy {
         sort: 'desc',
       },
       { field: 'login', headerName: 'Login' },
-      { field: 'lastIP', headerName: 'LastIP' },
       { field: 'order', headerName: 'Order' },
       { field: 'symbol', headerName: 'Symbol' },
       { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
       { field: 'orderTypeName', headerName: 'OrderTypeName' },
+      { field: 'lastIP', headerName: 'LastIP' },
     ],
     defaultColDef: {
       resizable: true,
