@@ -66,6 +66,16 @@ export const routes: Routes = [
         loadComponent: () => import('./jobbing-deals/jobbing-deals.component').then(c => c.JobbingDealsComponent),
         data: { breadcrumb: 'Jobbing Deals' }
       },
+      {
+        path: 'manager-master',
+        loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
+        data: { breadcrumb: 'Manager Master' }
+      },
+      {
+        path: 'broker-master',
+        loadComponent: () => import('./broker-master/broker-master.component').then(c => c.BrokerMasterComponent),
+        data: { breadcrumb: 'Broker Master' }
+      },
 
 
     ]
