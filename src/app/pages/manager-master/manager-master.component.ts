@@ -56,7 +56,7 @@ export class ManagerMasterComponent {
 @Component({
   selector: 'app-manager-dialog',
   standalone: true,
-  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, FormsModule],
+  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDialogModule, FormsModule],
   template: `
     <h2 mat-dialog-title>{{ data.id ? 'Edit' : 'Add' }} Manager</h2>
     <div mat-dialog-content>
