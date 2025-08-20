@@ -46,10 +46,10 @@
   --ag-odd-row-background-color: transparent;
 }
 
-:host ::ng-deep .ag-row.row-buy {
-  background-color: #dcfce7;
+:host ::ng-deep .ag-row.row-buy .ag-cell {
+  background-color: #dcfce7 !important;
 }
 
-:host ::ng-deep .ag-row.row-sell {
-  background-color: #fee2e2;
+:host ::ng-deep .ag-row.row-sell .ag-cell {
+  background-color: #fee2e2 !important;
 }

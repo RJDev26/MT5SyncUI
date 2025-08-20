@@ -66,18 +66,14 @@ export class LiveOrdersComponent implements OnDestroy {
     },
     rowClassRules: {
       'row-buy': p => {
-        const name = String(p.data?.orderTypeName || '')
-          .trim()
-          .toUpperCase();
+        const name = String(p.data?.orderTypeName ?? '').toUpperCase();
         const type = Number(p.data?.orderType);
-        return name === 'BUYLIMIT' || name === 'BUYSTOP' || [2, 4].includes(type);
+        return name.includes('BUY') || [0, 2, 4].includes(type);
       },
       'row-sell': p => {
-        const name = String(p.data?.orderTypeName || '')
-          .trim()
-          .toUpperCase();
+        const name = String(p.data?.orderTypeName ?? '').toUpperCase();
         const type = Number(p.data?.orderType);
-        return name === 'SELLLIMIT' || name === 'SELLSTOP' || [3, 5].includes(type);
+        return name.includes('SELL') || [1, 3, 5].includes(type);
       },
     },
     // Match row height with the deals-live grid for visual consistency
