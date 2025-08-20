@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+import { PreloadAllModules, provideRouter, withPreloading, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -30,8 +30,9 @@ export const appConfig: ApplicationConfig = {
     { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
     provideRouter(
       routes,
+      withHashLocation(),
       // withPreloading(PreloadAllModules),  // comment this line for enable lazy-loading
-    ), 
+    ),
     provideAnimationsAsync(),
     provideHttpClient(withInterceptorsFromDi()),
     // importProvidersFrom(InMemoryWebApiModule.forRoot(UsersData, { delay: 1000 })),
