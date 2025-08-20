@@ -79,7 +79,8 @@ export class LiveOrdersComponent implements OnDestroy {
         return name === 'SELLLIMIT' || name === 'SELLSTOP' || [3, 5].includes(type);
       },
     },
-    rowHeight: 32,
+    // Match row height with the deals-live grid for visual consistency
+    rowHeight: 26,
     rowSelection: 'single',
     animateRows: true,
     getRowId: p => String(p.data.order),

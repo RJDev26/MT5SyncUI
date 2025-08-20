@@ -1,9 +1,12 @@
+// Ensure the component and grid stretch across the available viewport
 :host {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
 }
 
+// Wrapper that lets ag-grid fill remaining space
 .grid-wrapper {
   flex: 1 1 auto;
   min-height: 0;

@@ -75,7 +75,8 @@ export class JobbingDealsComponent implements OnDestroy {
       filter: true,
     },
     rowData: [],
-    rowHeight: 32,
+    // Align row height with deals-live grid
+    rowHeight: 26,
     rowSelection: 'single',
     animateRows: true,
     getRowId: p => String(p.data.buyDeal) + '-' + String(p.data.sellDeal),
