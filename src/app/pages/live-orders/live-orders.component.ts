@@ -62,6 +62,7 @@ export class LiveOrdersComponent implements OnDestroy {
       sortable: true,
       filter: true,
       minWidth: 88,
+      flex: 1,
     },
     rowClassRules: {
       'row-buy': p => {
@@ -108,13 +109,15 @@ export class LiveOrdersComponent implements OnDestroy {
     }
   }
 
-  loadData() {
-    this.svc.getOrdersSnapshot().subscribe(res => {
-      this.rowData = res.rows;
-      this.lastMaxTime = res.maxTime || undefined;
-      this.rowCount = res.rowCount;
-    });
-  }
+    loadData() {
+      this.svc.getOrdersSnapshot().subscribe(res => {
+        this.rowData = res.rows;
+        this.gridApi.setGridOption('rowData', this.rowData);
+        this.lastMaxTime = res.maxTime || undefined;
+        this.rowCount = res.rowCount;
+        setTimeout(() => this.gridApi.sizeColumnsToFit());
+      });
+    }
 
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
