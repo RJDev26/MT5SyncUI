@@ -49,7 +49,10 @@ export class DealsLiveComponent implements OnDestroy {
       {
         field: 'time',
         headerName: 'Time',
-        valueFormatter: p => new Date(p.value).toLocaleTimeString(),
+        valueFormatter: p =>
+          new Date(p.value).toLocaleTimeString('en-GB', {
+            hour12: false,
+          }),
         sort: 'desc'
       },
       { field: 'login', headerName: 'Login' },
