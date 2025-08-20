@@ -73,6 +73,8 @@ export class JobbingDealsComponent implements OnDestroy {
       resizable: true,
       sortable: true,
       filter: true,
+      minWidth: 88,
+      flex: 1,
     },
     rowData: [],
     // Align row height with deals-live grid
@@ -117,7 +119,7 @@ export class JobbingDealsComponent implements OnDestroy {
       .getJobbingDeals(from, to, this.intervalMinutes)
       .subscribe(res => {
         this.gridApi.setGridOption('rowData', res.rows);
-        this.gridApi.autoSizeAllColumns();
+        setTimeout(() => this.gridApi.sizeColumnsToFit());
         this.lastMaxTime = res.maxTime || undefined;
         this.rowCount = res.rowCount;
       });
