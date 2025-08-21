@@ -1,0 +1,31 @@
+  <div class="toolbar">
+    <div class="left">
+      <mat-checkbox
+        [(ngModel)]="autoRefresh"
+        (change)="onAutoRefreshChange()"
+        >Auto Update</mat-checkbox
+      >
+      <span class="info">Last: {{ lastMaxTime ? (lastMaxTime | date: 'short') : '-' }}</span>
+      <span class="info">Rows: {{ rowCount }}</span>
+    </div>
+    <div class="right">
+      <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input matInput (input)="onFilterTextBoxChanged($event)" />
+      </mat-form-field>
+      <button mat-icon-button title="Export CSV" (click)="exportCsv()">
+        <mat-icon>table_view</mat-icon>
+      </button>
+      <button mat-icon-button title="Export PDF" (click)="exportPdf()">
+        <mat-icon>picture_as_pdf</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="grid-wrapper">
+    <ag-grid-angular
+      class="ag-theme-alpine full-grid"
+      [gridOptions]="gridOptions"
+      [rowData]="rowData"
+      (gridReady)="onGridReady($event)"
+    ></ag-grid-angular>
+  </div>

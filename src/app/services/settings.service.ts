@@ -20,7 +20,7 @@ export class Settings {
 export class SettingsService {
 
   public settings = new Settings(
-    'SaudaWeb',       //theme name
+    'Trade Tally',       //theme name
     true,           //loadingSpinner
     true,           //fixedHeader
     false,          //sidenavIsOpened
@@ -28,7 +28,7 @@ export class SettingsService {
     true,           //sidenavUserBlock 
     'vertical',     //horizontal , vertical
     'default',      //default, compact, mini
-    'black-dashboard', //indigo-light, teal-light, red-light, blue-dark, green-dark, pink-dark, black-dashboard
+    'indigo-light', //indigo-light, teal-light, red-light, blue-dark, green-dark, pink-dark, black-dashboard
     false,          // true = rtl, false = ltr
     true            // true = has footer, false = no footer
   )

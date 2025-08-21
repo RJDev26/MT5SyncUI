@@ -38,7 +38,7 @@ export class LandingComponent {
     this.settings.menu = menu;
     this.settings.menuType = menuType;
     this.settings.rtl = isRtl;
-    this.settings.theme = 'black-dashboard';
+    this.settings.theme = 'indigo-light';
   }
 
   public changeTheme(theme: string){

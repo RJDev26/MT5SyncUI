@@ -1,0 +1,57 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
+export interface MasterItem {
+  id: number;
+  code: string;
+  name: string;
+  type: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class MasterService {
+  constructor(private http: HttpClient) {}
+
+  getManagers(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/managers'
+    );
+  }
+
+  saveManager(item: { id: number; code: string; name: string }): Observable<any> {
+    return this.http.post(environment.apiBaseUrl + 'api/Master', {
+      tableName: 'Manager',
+      ...item,
+    });
+  }
+
+  deleteManager(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('tableName', 'Manager')
+      .set('id', id);
+    return this.http.delete(environment.apiBaseUrl + 'api/Master', { params });
+  }
+
+  getBrokers(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/brokers'
+    );
+  }
+
+  saveBroker(item: { id: number; code: string; name: string }): Observable<any> {
+    return this.http.post(environment.apiBaseUrl + 'api/Master', {
+      tableName: 'Broker',
+      ...item,
+    });
+  }
+
+  deleteBroker(id: number): Observable<any> {
+    const params = new HttpParams()
+      .set('tableName', 'Broker')
+      .set('id', id);
+    return this.http.delete(environment.apiBaseUrl + 'api/Master', { params });
+  }
+}
+

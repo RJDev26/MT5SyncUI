@@ -1,0 +1,55 @@
+// Ensure the component and grid stretch across the available viewport
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+// Wrapper that lets ag-grid fill remaining space
+.grid-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+}
+
+.full-grid {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  mat-form-field {
+    width: 300px;
+  }
+}
+
+:host ::ng-deep .ag-theme-alpine {
+  --ag-odd-row-background-color: transparent;
+}
+
+:host ::ng-deep .ag-row.row-buy .ag-cell {
+  background-color: #dcfce7 !important;
+}
+
+:host ::ng-deep .ag-row.row-sell .ag-cell {
+  background-color: #fee2e2 !important;
+}

@@ -1,8 +1,5 @@
 import { Routes } from '@angular/router';
 import { PagesComponent } from './pages.component';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 export const routes: Routes = [
   {
@@ -15,26 +12,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Dashboard' }
       },
       {
-        path: 'master',
-        loadChildren: () => import('./master/master.routes').then(p => p.routes),
-        data: { breadcrumb: 'Account Tax List' }
-      },
-      {
         path: 'users',
         loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
         data: { breadcrumb: 'Users' }
       },
      
-      {
-        path: 'acc-stat',
-        loadChildren: () => import('./account-statement/account-statement.routes').then(p => p.routes),
-        data: { breadcrumb: 'Account Statement' }
-      },
-      {
-        path: 'reports',
-        loadChildren: () => import('./reports/reports.routes').then(p => p.routes),
-        data: { breadcrumb: 'Reports' }
-      },
       {
         path: 'dynamic-menu',
         loadComponent: () => import('./dynamic-menu/dynamic-menu.component').then(c => c.DynamicMenuComponent),
@@ -68,8 +50,34 @@ export const routes: Routes = [
         loadComponent: () => import('./drag-drop/drag-drop.component').then(c => c.DragDropComponent),
         data: { breadcrumb: 'Drag & Drop' }
       },
-      
-      
+
+      {
+        path: 'deals-live',
+        loadComponent: () => import('./deals-live/deals-live.component').then(c => c.DealsLiveComponent),
+        data: { breadcrumb: 'Live Deals' }
+      },
+      {
+        path: 'live-orders',
+        loadComponent: () => import('./live-orders/live-orders.component').then(c => c.LiveOrdersComponent),
+        data: { breadcrumb: 'Live Orders' }
+      },
+      {
+        path: 'jobbing-deals',
+        loadComponent: () => import('./jobbing-deals/jobbing-deals.component').then(c => c.JobbingDealsComponent),
+        data: { breadcrumb: 'Jobbing Deals' }
+      },
+      {
+        path: 'manager-master',
+        loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
+        data: { breadcrumb: 'Manager Master' }
+      },
+      {
+        path: 'broker-master',
+        loadComponent: () => import('./broker-master/broker-master.component').then(c => c.BrokerMasterComponent),
+        data: { breadcrumb: 'Broker Master' }
+      },
+
+
     ]
   }
 ];

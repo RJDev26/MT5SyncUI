@@ -15,6 +15,8 @@
 @import "../node_modules/@swimlane/ngx-datatable/themes/material.css";
 @import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
 @import "../node_modules/leaflet/dist/leaflet.css";
+@import "ag-grid-community/styles/ag-grid.css";
+@import "ag-grid-community/styles/ag-theme-alpine.css";
 
 @import "app/theme/styles/base";
 @import "app/theme/styles/spaces";
@@ -84,23 +86,6 @@ html, body {
 }
 
 .sidenav-content-inner {
-    app-ledger-report, app-standing-statement-report, app-trail-balance, app-live-bill-summary-report {
-        height: calc(100% - 4rem);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-}
-
-.ledger-report, .standing-report, .trail-balance-report {
-    .date-picker {
-        .mat-mdc-form-field-infix {
-            width: 7.5rem;
-        }
-    }
-}
-
-.sidenav-content-inner {
     .mat-mdc-text-field-wrapper {
         height: 2.75rem;
         padding: 0 0.75rem;
@@ -150,12 +135,6 @@ html, body {
         .mat-mdc-form-field-hint {
             font-size: 0.6875rem;
         }
-    }
-}
-
-.ledger-report, .standing-report, .trail-balance-report {
-    .mat-mdc-form-field-hint-wrapper {
-        padding-left: 0;
     }
 }
 
