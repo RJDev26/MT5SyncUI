@@ -60,11 +60,14 @@ export class MasterService {
     );
   }
 
-  getLoginsWithClientInfo(login: number, onlyWithClientRecord: boolean): Observable<any[]> {
+  getLoginsWithClientInfo(
+    login: number,
+    onlyWithClientRecord: boolean
+  ): Observable<LoginClientInfo[]> {
     const params = new HttpParams()
       .set('login', String(login))
       .set('onlyWithClientRecord', String(onlyWithClientRecord));
-    return this.http.get<any[]>(
+    return this.http.get<LoginClientInfo[]>(
       environment.apiBaseUrl + 'api/Master/logins-with-client-info',
       { params }
     );
@@ -98,6 +101,20 @@ export interface ClientMasterRequest {
   currency: string;
   commission: number;
   createdBy: number;
+}
+
+export interface LoginClientInfo {
+  login: number;
+  userName: string;
+  clientId: number | null;
+  managerName: string;
+  brokerName: string;
+  exchange: string;
+  brokShare: number | null;
+  managerShare: number | null;
+  currency: string;
+  commission: number | null;
+  createdDate: string | null;
 }
 
 

@@ -13,11 +13,16 @@ import {
   GridApi,
   GridOptions,
   GridReadyEvent,
+  CellClickedEvent,
   ModuleRegistry,
   AllCommunityModule,
-  ICellRendererParams
+  ICellRendererParams,
 } from 'ag-grid-community';
-import { MasterService, ClientMasterRequest } from '@services/master.service';
+import {
+  MasterService,
+  ClientMasterRequest,
+  LoginClientInfo,
+} from '@services/master.service';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -45,7 +50,7 @@ export class ClientMasterComponent implements OnInit {
   logins: number[] = [];
   selectedLogin?: number;
   showUpdated = false;
-  gridOptions: GridOptions = {
+  gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
     columnDefs: [
       { field: 'login', headerName: 'Login' },
@@ -74,10 +79,10 @@ export class ClientMasterComponent implements OnInit {
       filter: true,
       minWidth: 100
     },
-    rowData: []
+    rowData: [] as LoginClientInfo[]
   };
 
-  private gridApi!: GridApi;
+  private gridApi!: GridApi<LoginClientInfo>;
 
   constructor(private svc: MasterService, private dialog: MatDialog) {}
 
@@ -85,7 +90,7 @@ export class ClientMasterComponent implements OnInit {
     this.svc.getLogins().subscribe(res => (this.logins = res));
   }
 
-  onGridReady(event: GridReadyEvent) {
+  onGridReady(event: GridReadyEvent<LoginClientInfo>) {
     this.gridApi = event.api;
   }
 
@@ -95,7 +100,7 @@ export class ClientMasterComponent implements OnInit {
     }
     this.svc
       .getLoginsWithClientInfo(this.selectedLogin, this.showUpdated)
-      .subscribe(res => this.gridApi.setGridOption('rowData', res));
+      .subscribe(res => this.gridApi.setRowData(res));
   }
 
   add() {
@@ -114,7 +119,7 @@ export class ClientMasterComponent implements OnInit {
     });
   }
 
-  onCellClicked(event: any) {
+  onCellClicked(event: CellClickedEvent<LoginClientInfo>) {
     if (event.colDef.headerName !== 'Actions') {
       return;
     }
