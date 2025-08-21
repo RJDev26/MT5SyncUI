@@ -7,14 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import {
-  MatDialog,
-  MatDialogModule,
-  MatDialogTitle,
-  MatDialogContent,
-  MatDialogActions,
-  MatDialogClose
-} from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import {
   AgGridModule,
   AgGridAngular
@@ -24,7 +17,8 @@ import {
   GridOptions,
   GridReadyEvent,
   ModuleRegistry,
-  AllCommunityModule
+  AllCommunityModule,
+  ICellRendererParams
 } from 'ag-grid-community';
 import { MasterService, ClientMasterRequest } from '@services/master.service';
 import { Inject } from '@angular/core';
@@ -45,10 +39,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatIconModule,
     MatInputModule,
     MatDialogModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose,
     AgGridModule,
     AgGridAngular
   ],
@@ -75,7 +65,7 @@ export class ClientMasterComponent implements OnInit {
       { field: 'createdDate', headerName: 'Created Date' },
       {
         headerName: 'Actions',
-        cellRenderer: params =>
+        cellRenderer: (params: ICellRendererParams) =>
           '<span class="material-icons action-icon edit">edit</span>' +
           '<span class="material-icons action-icon delete">delete</span>',
         width: 100,
