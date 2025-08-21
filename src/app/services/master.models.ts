@@ -16,8 +16,11 @@ export interface LoginClientInfo {
   login: number;
   userName: string;
   clientId: number | null;
+  managerId: number | null;
   managerName: string;
+  brokerId: number | null;
   brokerName: string;
+  exId: number | null;
   exchange: string;
   brokShare: number | null;
   managerShare: number | null;

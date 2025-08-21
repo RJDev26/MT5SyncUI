@@ -117,17 +117,42 @@ export class ClientMasterComponent implements OnInit {
   }
 
   onCellClicked(event: CellClickedEvent<LoginClientInfo>) {
-    if (event.colDef.headerName !== 'Actions') {
+    if (event.colDef.headerName !== 'Actions' || !event.data) {
       return;
     }
     const target = event.event?.target as HTMLElement | null;
     if (!target) return;
     if (target.classList.contains('edit')) {
-      const { clientId, ...rest } = event.data || {};
-      this.openDialog({ action: 'UPDATE', id: clientId || 0, createdBy: 0, ...rest });
+      const {
+        clientId,
+        login,
+        managerId,
+        brokerId,
+        exId,
+        brokShare,
+        managerShare,
+        currency,
+        commission,
+      } = event.data;
+      this.openDialog({
+        action: 'UPDATE',
+        id: clientId ?? 0,
+        login,
+        managerId: managerId ?? 0,
+        brokerId: brokerId ?? 0,
+        exId: exId ?? 0,
+        brokShare: brokShare ?? 0,
+        managerShare: managerShare ?? 0,
+        currency: currency ?? '',
+        commission: commission ?? 0,
+        createdBy: 0,
+      });
     }
     if (target.classList.contains('delete')) {
-      this.delete(event.data.clientId);
+      const id = event.data.clientId;
+      if (id) {
+        this.delete(id);
+      }
     }
   }
 
