@@ -28,3 +28,8 @@ export interface LoginClientInfo {
   commission: number | null;
   createdDate: string | null;
 }
+
+export interface LoginOption {
+  login: number;
+  name: string;
+}

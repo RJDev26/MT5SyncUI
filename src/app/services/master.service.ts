@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ClientMasterRequest, LoginClientInfo } from './master.models';
+import {
+  ClientMasterRequest,
+  LoginClientInfo,
+  LoginOption,
+} from './master.models';
 
 export interface MasterItem {
   id: number;
@@ -55,8 +59,8 @@ export class MasterService {
     return this.http.delete(environment.apiBaseUrl + 'api/Master', { params });
   }
 
-  getLogins(): Observable<number[]> {
-    return this.http.get<number[]>(
+  getLogins(): Observable<LoginOption[]> {
+    return this.http.get<LoginOption[]>(
       environment.apiBaseUrl + 'api/Master/logins'
     );
   }
@@ -90,4 +94,4 @@ export class MasterService {
   }
 }
 
-export { ClientMasterRequest, LoginClientInfo } from './master.models';
+export { ClientMasterRequest, LoginClientInfo, LoginOption } from './master.models';

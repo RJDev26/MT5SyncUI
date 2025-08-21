@@ -19,7 +19,11 @@ import {
   ICellRendererParams,
 } from 'ag-grid-community';
 import { MasterService } from '@services/master.service';
-import { ClientMasterRequest, LoginClientInfo } from '@services/master.models';
+import {
+  ClientMasterRequest,
+  LoginClientInfo,
+  LoginOption,
+} from '@services/master.models';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -44,7 +48,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrls: ['./client-master.component.scss']
 })
 export class ClientMasterComponent implements OnInit {
-  logins: number[] = [];
+  logins: LoginOption[] = [];
   selectedLogin?: number;
   showUpdated = false;
   gridOptions: GridOptions<LoginClientInfo> = {
