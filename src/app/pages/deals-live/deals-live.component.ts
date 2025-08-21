@@ -53,13 +53,15 @@ export class DealsLiveComponent implements OnDestroy {
           new Date(p.value).toLocaleTimeString('en-GB', {
             hour12: false,
           }),
-        sort: 'desc'
+        sort: 'desc',
+        width: 53,
+        minWidth: 53
       },
-      { field: 'login', headerName: 'Login' },
-      { field: 'deal', headerName: 'Deal' },
+      { field: 'login', headerName: 'Login', width: 53, minWidth: 53 },
+      { field: 'deal', headerName: 'Deal', width: 53, minWidth: 53 },
       { field: 'symbol', headerName: 'Symbol' },
       { field: 'contype', headerName: 'ConType', width: 62, minWidth: 62 },
-      { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
+      { field: 'qty', headerName: 'Qty', type: 'numericColumn', width: 53, minWidth: 53 },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
       {
         field: 'profit',
