@@ -18,11 +18,8 @@ import {
   AllCommunityModule,
   ICellRendererParams,
 } from 'ag-grid-community';
-import {
-  MasterService,
-  ClientMasterRequest,
-  LoginClientInfo,
-} from '@services/master.service';
+import { MasterService } from '@services/master.service';
+import { ClientMasterRequest, LoginClientInfo } from '@services/master.models';
 import { Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -100,7 +97,7 @@ export class ClientMasterComponent implements OnInit {
     }
     this.svc
       .getLoginsWithClientInfo(this.selectedLogin, this.showUpdated)
-      .subscribe(res => this.gridApi.setRowData(res));
+      .subscribe(res => this.gridApi.setGridOption('rowData', res));
   }
 
   add() {
@@ -123,7 +120,8 @@ export class ClientMasterComponent implements OnInit {
     if (event.colDef.headerName !== 'Actions') {
       return;
     }
-    const target = event.event.target as HTMLElement;
+    const target = event.event?.target as HTMLElement | null;
+    if (!target) return;
     if (target.classList.contains('edit')) {
       const { clientId, ...rest } = event.data || {};
       this.openDialog({ action: 'UPDATE', id: clientId || 0, createdBy: 0, ...rest });

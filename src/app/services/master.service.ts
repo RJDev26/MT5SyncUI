@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ClientMasterRequest, LoginClientInfo } from './master.models';
 
 export interface MasterItem {
   id: number;
@@ -89,32 +90,4 @@ export class MasterService {
   }
 }
 
-export interface ClientMasterRequest {
-  action: string;
-  id: number;
-  login: number;
-  managerId: number;
-  brokerId: number;
-  exId: number;
-  brokShare: number;
-  managerShare: number;
-  currency: string;
-  commission: number;
-  createdBy: number;
-}
-
-export interface LoginClientInfo {
-  login: number;
-  userName: string;
-  clientId: number | null;
-  managerName: string;
-  brokerName: string;
-  exchange: string;
-  brokShare: number | null;
-  managerShare: number | null;
-  currency: string;
-  commission: number | null;
-  createdDate: string | null;
-}
-
-
+export { ClientMasterRequest, LoginClientInfo } from './master.models';
