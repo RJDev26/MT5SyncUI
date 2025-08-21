@@ -82,7 +82,13 @@ export const routes: Routes = [
         data: { breadcrumb: 'Broker Master' }
       },
 
+      {
+        path: 'client-master',
+        loadComponent: () => import('./client-master/client-master.component').then(c => c.ClientMasterComponent),
+        data: { breadcrumb: 'Client Master' }
+      },
 
+      
     ]
   }
 ];

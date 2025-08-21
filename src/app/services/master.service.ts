@@ -53,5 +53,51 @@ export class MasterService {
       .set('id', id);
     return this.http.delete(environment.apiBaseUrl + 'api/Master', { params });
   }
+
+  getLogins(): Observable<number[]> {
+    return this.http.get<number[]>(
+      environment.apiBaseUrl + 'api/Master/logins'
+    );
+  }
+
+  getLoginsWithClientInfo(login: number, onlyWithClientRecord: boolean): Observable<any[]> {
+    const params = new HttpParams()
+      .set('login', String(login))
+      .set('onlyWithClientRecord', String(onlyWithClientRecord));
+    return this.http.get<any[]>(
+      environment.apiBaseUrl + 'api/Master/logins-with-client-info',
+      { params }
+    );
+  }
+
+  saveClientMaster(req: ClientMasterRequest): Observable<any> {
+    return this.http.post(
+      environment.apiBaseUrl + 'api/Master/client-master',
+      req
+    );
+  }
+
+  deleteClientMaster(id: number): Observable<any> {
+    const params = new HttpParams().set('id', id);
+    return this.http.delete(
+      environment.apiBaseUrl + 'api/Master/client-master',
+      { params }
+    );
+  }
 }
+
+export interface ClientMasterRequest {
+  action: string;
+  id: number;
+  login: number;
+  managerId: number;
+  brokerId: number;
+  exId: number;
+  brokShare: number;
+  managerShare: number;
+  currency: string;
+  commission: number;
+  createdBy: number;
+}
+
 
