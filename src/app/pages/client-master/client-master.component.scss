@@ -45,3 +45,7 @@
   cursor: pointer;
   margin-right: 4px;
 }
+
+:host ::ng-deep .ag-row {
+  height: 32px;
+}

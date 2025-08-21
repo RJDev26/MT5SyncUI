@@ -65,13 +65,23 @@ export class MasterService {
     );
   }
 
+  getExchanges(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/exchange'
+    );
+  }
+
   getLoginsWithClientInfo(
+    login: number | null,
     onlyWithClientRecord: boolean
   ): Observable<LoginClientInfo[]> {
-    const params = new HttpParams().set(
+    let params = new HttpParams().set(
       'onlyWithClientRecord',
       String(onlyWithClientRecord)
     );
+    if (login !== null) {
+      params = params.set('login', String(login));
+    }
     return this.http.get<LoginClientInfo[]>(
       environment.apiBaseUrl + 'api/Master/logins-with-client-info',
       { params }

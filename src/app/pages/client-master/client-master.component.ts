@@ -18,7 +18,7 @@ import {
   AllCommunityModule,
   ICellRendererParams,
 } from 'ag-grid-community';
-import { MasterService } from '@services/master.service';
+import { MasterService, MasterItem } from '@services/master.service';
 import {
   ClientMasterRequest,
   LoginClientInfo,
@@ -53,6 +53,7 @@ export class ClientMasterComponent implements OnInit {
   showUpdated = false;
   gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
+    rowHeight: 32,
     columnDefs: [
       { field: 'login', headerName: 'Login' },
       { field: 'userName', headerName: 'User Name' },
@@ -97,7 +98,7 @@ export class ClientMasterComponent implements OnInit {
 
   show() {
     this.svc
-      .getLoginsWithClientInfo(this.showUpdated)
+      .getLoginsWithClientInfo(this.selectedLogin ?? null, this.showUpdated)
       .subscribe(res => this.gridApi.setGridOption('rowData', res));
   }
 
@@ -192,7 +193,8 @@ export class ClientMasterComponent implements OnInit {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSelectModule
   ],
   template: `
     <h2 mat-dialog-title>{{ data.id ? 'Edit' : 'Add' }} Client</h2>
@@ -201,18 +203,32 @@ export class ClientMasterComponent implements OnInit {
         <mat-label>Login</mat-label>
         <input matInput type="number" [(ngModel)]="data.login" />
       </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Manager Id</mat-label>
-        <input matInput type="number" [(ngModel)]="data.managerId" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Broker Id</mat-label>
-        <input matInput type="number" [(ngModel)]="data.brokerId" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Exchange Id</mat-label>
-        <input matInput type="number" [(ngModel)]="data.exId" />
-      </mat-form-field>
+      <div class="triple-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Manager</mat-label>
+          <mat-select [(ngModel)]="data.managerId">
+            <mat-option *ngFor="let m of managers" [value]="m.id">
+              {{ m.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Broker</mat-label>
+          <mat-select [(ngModel)]="data.brokerId">
+            <mat-option *ngFor="let b of brokers" [value]="b.id">
+              {{ b.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Exchange</mat-label>
+          <mat-select [(ngModel)]="data.exId">
+            <mat-option *ngFor="let e of exchanges" [value]="e.id">
+              {{ e.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Brok Share</mat-label>
         <input matInput type="number" [(ngModel)]="data.brokShare" />
@@ -238,8 +254,35 @@ export class ClientMasterComponent implements OnInit {
       <button mat-button mat-dialog-close>Cancel</button>
       <button mat-flat-button color="primary" [mat-dialog-close]="data">Save</button>
     </div>
-  `
+  `,
+  styles: [
+    `
+      .triple-row {
+        display: flex;
+        gap: 1rem;
+      }
+      .triple-row mat-form-field {
+        flex: 1;
+      }
+      .w-100 {
+        width: 100%;
+      }
+    `
+  ]
 })
-export class ClientMasterDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: ClientMasterRequest) {}
+export class ClientMasterDialogComponent implements OnInit {
+  managers: MasterItem[] = [];
+  brokers: MasterItem[] = [];
+  exchanges: MasterItem[] = [];
+
+  constructor(
+    private svc: MasterService,
+    @Inject(MAT_DIALOG_DATA) public data: ClientMasterRequest
+  ) {}
+
+  ngOnInit(): void {
+    this.svc.getManagers().subscribe(res => (this.managers = res));
+    this.svc.getBrokers().subscribe(res => (this.brokers = res));
+    this.svc.getExchanges().subscribe(res => (this.exchanges = res));
+  }
 }
