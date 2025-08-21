@@ -8,10 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import {
-  AgGridModule,
-  AgGridAngular
-} from 'ag-grid-angular';
+import { AgGridModule } from 'ag-grid-angular';
 import {
   GridApi,
   GridOptions,
@@ -39,8 +36,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatIconModule,
     MatInputModule,
     MatDialogModule,
-    AgGridModule,
-    AgGridAngular
+    AgGridModule
   ],
   templateUrl: './client-master.component.html',
   styleUrls: ['./client-master.component.scss']
@@ -167,11 +163,7 @@ export class ClientMasterComponent implements OnInit {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatDialogModule,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
-    MatDialogClose
+    MatDialogModule
   ],
   template: `
     <h2 mat-dialog-title>{{ data.id ? 'Edit' : 'Add' }} Client</h2>
