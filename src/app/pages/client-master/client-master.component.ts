@@ -96,11 +96,8 @@ export class ClientMasterComponent implements OnInit {
   }
 
   show() {
-    if (this.selectedLogin == null) {
-      return;
-    }
     this.svc
-      .getLoginsWithClientInfo(this.selectedLogin, this.showUpdated)
+      .getLoginsWithClientInfo(this.showUpdated)
       .subscribe(res => this.gridApi.setGridOption('rowData', res));
   }
 

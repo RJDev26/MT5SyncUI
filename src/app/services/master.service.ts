@@ -66,12 +66,12 @@ export class MasterService {
   }
 
   getLoginsWithClientInfo(
-    login: number,
     onlyWithClientRecord: boolean
   ): Observable<LoginClientInfo[]> {
-    const params = new HttpParams()
-      .set('login', String(login))
-      .set('onlyWithClientRecord', String(onlyWithClientRecord));
+    const params = new HttpParams().set(
+      'onlyWithClientRecord',
+      String(onlyWithClientRecord)
+    );
     return this.http.get<LoginClientInfo[]>(
       environment.apiBaseUrl + 'api/Master/logins-with-client-info',
       { params }
