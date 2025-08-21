@@ -54,14 +54,14 @@ export class DealsLiveComponent implements OnDestroy {
             hour12: false,
           }),
         sort: 'desc',
-        width: 53,
-        minWidth: 53
+        width: 150,
+        minWidth: 150
       },
-      { field: 'login', headerName: 'Login', width: 53, minWidth: 53 },
-      { field: 'deal', headerName: 'Deal', width: 53, minWidth: 53 },
+      { field: 'login', headerName: 'Login', width: 150, minWidth: 150 },
+      { field: 'deal', headerName: 'Deal', width: 150, minWidth: 150 },
       { field: 'symbol', headerName: 'Symbol' },
-      { field: 'contype', headerName: 'ConType', width: 62, minWidth: 62 },
-      { field: 'qty', headerName: 'Qty', type: 'numericColumn', width: 53, minWidth: 53 },
+      { field: 'contype', headerName: 'ConType', width: 90, minWidth: 90 },
+      { field: 'qty', headerName: 'Qty', type: 'numericColumn', width: 150, minWidth: 150 },
       { field: 'price', headerName: 'Price', type: 'numericColumn' },
       {
         field: 'profit',
@@ -74,7 +74,7 @@ export class DealsLiveComponent implements OnDestroy {
       },
       { field: 'commission', headerName: 'Commission', type: 'numericColumn' },
       { field: 'comment', headerName: 'Comment' },
-      { field: 'lastIP', headerName: 'LastIP' }
+      { field: 'lastIP', headerName: 'LastIP', flex:2 }
     ],
     defaultColDef: {
       resizable: true,
