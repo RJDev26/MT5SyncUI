@@ -49,7 +49,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class ClientMasterComponent implements OnInit {
   logins: LoginOption[] = [];
-  selectedLogin?: number;
+  selectedLogin: number | null = null;
   showUpdated = false;
   gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
@@ -97,7 +97,7 @@ export class ClientMasterComponent implements OnInit {
 
   show() {
     this.svc
-      .getLoginsWithClientInfo(this.selectedLogin ?? null, this.showUpdated)
+      .getLoginsWithClientInfo(this.selectedLogin, this.showUpdated)
       .subscribe(res => this.gridApi.setGridOption('rowData', res));
   }
 

@@ -3,6 +3,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Login</mat-label>
       <mat-select [(ngModel)]="selectedLogin">
+        <mat-option [value]="null">-- Clear Selection --</mat-option>
         <mat-option *ngFor="let l of logins" [value]="l.login">
           {{ l.login }} - {{ l.name }}
         </mat-option>
