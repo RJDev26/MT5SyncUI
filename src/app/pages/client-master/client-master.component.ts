@@ -55,6 +55,14 @@ export class ClientMasterComponent implements OnInit {
     theme: 'legacy',
     rowHeight: 32,
     columnDefs: [
+      {
+        headerName: 'Actions',
+        cellRenderer: (params: ICellRendererParams) =>
+          '<span class="material-icons action-icon edit">edit</span>' +
+          '<span class="material-icons action-icon delete">delete</span>',
+        width: 100,
+        minWidth: 100
+      },
       { field: 'login', headerName: 'Login' },
       { field: 'userName', headerName: 'User Name' },
       { field: 'clientId', headerName: 'Client Id' },
@@ -65,15 +73,7 @@ export class ClientMasterComponent implements OnInit {
       { field: 'managerShare', headerName: 'Manager Share', type: 'numericColumn' },
       { field: 'currency', headerName: 'Currency' },
       { field: 'commission', headerName: 'Commission', type: 'numericColumn' },
-      { field: 'createdDate', headerName: 'Created Date' },
-      {
-        headerName: 'Actions',
-        cellRenderer: (params: ICellRendererParams) =>
-          '<span class="material-icons action-icon edit">edit</span>' +
-          '<span class="material-icons action-icon delete">delete</span>',
-        width: 100,
-        minWidth: 100
-      }
+      { field: 'createdDate', headerName: 'Created Date' }
     ],
     defaultColDef: {
       resizable: true,
@@ -113,8 +113,7 @@ export class ClientMasterComponent implements OnInit {
       brokShare: 0,
       managerShare: 0,
       currency: '',
-      commission: 0,
-      createdBy: 0
+      commission: 0
     });
   }
 
@@ -146,8 +145,7 @@ export class ClientMasterComponent implements OnInit {
         brokShare: brokShare ?? 0,
         managerShare: managerShare ?? 0,
         currency: currency ?? '',
-        commission: commission ?? 0,
-        createdBy: 0,
+        commission: commission ?? 0
       });
     }
     if (target.classList.contains('delete')) {
@@ -201,7 +199,11 @@ export class ClientMasterComponent implements OnInit {
     <div mat-dialog-content>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Login</mat-label>
-        <input matInput type="number" [(ngModel)]="data.login" />
+        <mat-select [(ngModel)]="data.login">
+          <mat-option *ngFor="let l of logins" [value]="l.login">
+            {{ l.login }} - {{ l.name }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
       <div class="triple-row">
         <mat-form-field appearance="outline">
@@ -229,25 +231,23 @@ export class ClientMasterComponent implements OnInit {
           </mat-select>
         </mat-form-field>
       </div>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Brok Share</mat-label>
-        <input matInput type="number" [(ngModel)]="data.brokShare" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Manager Share</mat-label>
-        <input matInput type="number" [(ngModel)]="data.managerShare" />
-      </mat-form-field>
+      <div class="triple-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Brok Share</mat-label>
+          <input matInput type="number" [(ngModel)]="data.brokShare" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Manager Share</mat-label>
+          <input matInput type="number" [(ngModel)]="data.managerShare" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Commission</mat-label>
+          <input matInput type="number" [(ngModel)]="data.commission" />
+        </mat-form-field>
+      </div>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Currency</mat-label>
         <input matInput [(ngModel)]="data.currency" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Commission</mat-label>
-        <input matInput type="number" [(ngModel)]="data.commission" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Created By</mat-label>
-        <input matInput type="number" [(ngModel)]="data.createdBy" />
       </mat-form-field>
     </div>
     <div mat-dialog-actions align="end">
@@ -274,6 +274,7 @@ export class ClientMasterDialogComponent implements OnInit {
   managers: MasterItem[] = [];
   brokers: MasterItem[] = [];
   exchanges: MasterItem[] = [];
+  logins: LoginOption[] = [];
 
   constructor(
     private svc: MasterService,
@@ -281,6 +282,7 @@ export class ClientMasterDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.svc.getLogins().subscribe(res => (this.logins = res));
     this.svc.getManagers().subscribe(res => (this.managers = res));
     this.svc.getBrokers().subscribe(res => (this.brokers = res));
     this.svc.getExchanges().subscribe(res => (this.exchanges = res));

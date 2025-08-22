@@ -9,7 +9,6 @@ export interface ClientMasterRequest {
   managerShare: number;
   currency: string;
   commission: number;
-  createdBy: number;
 }
 
 export interface LoginClientInfo {
