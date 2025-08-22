@@ -102,21 +102,6 @@ export class ClientMasterComponent implements OnInit {
       .subscribe(res => this.gridApi.setGridOption('rowData', res));
   }
 
-  add() {
-    this.openDialog({
-      action: 'ADD',
-      id: 0,
-      login: this.selectedLogin || 0,
-      managerId: 0,
-      brokerId: 0,
-      exId: 0,
-      brokShare: 0,
-      managerShare: 0,
-      currency: '',
-      commission: 0
-    });
-  }
-
   onCellClicked(event: CellClickedEvent<LoginClientInfo>) {
     if (event.colDef.headerName !== 'Actions' || !event.data) {
       return;
@@ -135,8 +120,9 @@ export class ClientMasterComponent implements OnInit {
         currency,
         commission,
       } = event.data;
+      const action = clientId ? 'UPDATE' as const : 'ADD' as const;
       this.openDialog({
-        action: 'UPDATE',
+        action,
         id: clientId ?? 0,
         login,
         managerId: managerId ?? 0,
