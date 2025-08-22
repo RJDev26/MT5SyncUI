@@ -65,7 +65,6 @@ export class ClientMasterComponent implements OnInit {
       },
       { field: 'login', headerName: 'Login' },
       { field: 'userName', headerName: 'User Name' },
-      { field: 'clientId', headerName: 'Client Id' },
       { field: 'managerName', headerName: 'Manager' },
       { field: 'brokerName', headerName: 'Broker' },
       { field: 'exchange', headerName: 'Exchange' },
