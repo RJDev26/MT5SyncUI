@@ -1,12 +1,16 @@
-<div class="toolbar">
+<mat-toolbar class="toolbar" color="primary">
   <div class="left">
     <mat-form-field appearance="outline">
       <mat-label>Login</mat-label>
-      <mat-select [(ngModel)]="selectedLogin" (openedChange)="loginFilter=''">
-        <mat-option>
+      <mat-select
+        [(ngModel)]="selectedLogin"
+        (openedChange)="loginFilter=''; filterLogins()"
+      >
+        <mat-option disabled>
           <input
             placeholder="Search..."
             [(ngModel)]="loginFilter"
+            (input)="filterLogins()"
             (keydown)="$event.stopPropagation()"
             class="login-search"
           />
@@ -18,7 +22,7 @@
       </mat-select>
     </mat-form-field>
     <mat-checkbox [(ngModel)]="showUpdated">Show Updated Logins</mat-checkbox>
-    <button mat-flat-button color="primary" (click)="show()">Show</button>
+    <button mat-flat-button color="accent" (click)="show()">Show</button>
   </div>
   <div class="right">
     <mat-form-field appearance="outline">
@@ -29,7 +33,7 @@
       <mat-icon>table_view</mat-icon>
     </button>
   </div>
-</div>
+</mat-toolbar>
 <div class="grid-wrapper">
   <ag-grid-angular
     class="ag-theme-alpine full-grid"

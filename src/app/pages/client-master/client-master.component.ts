@@ -7,6 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
 import {
@@ -41,6 +42,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatButtonModule,
     MatIconModule,
     MatInputModule,
+    MatToolbarModule,
     MatDialogModule,
     AgGridModule
   ],
@@ -49,6 +51,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class ClientMasterComponent implements OnInit {
   logins: LoginOption[] = [];
+  filteredLogins: LoginOption[] = [];
   selectedLogin: number | null = null;
   showUpdated = false;
   loginFilter = '';
@@ -108,7 +111,10 @@ export class ClientMasterComponent implements OnInit {
   constructor(private svc: MasterService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.svc.getLogins().subscribe(res => (this.logins = res));
+    this.svc.getLogins().subscribe(res => {
+      this.logins = res;
+      this.filteredLogins = res;
+    });
     this.svc.getCurrencies().subscribe(res => (this.currencies = res));
   }
 
@@ -186,16 +192,16 @@ export class ClientMasterComponent implements OnInit {
     this.gridApi.setGridOption('quickFilterText', value);
   }
 
-  exportCsv() {
-    this.gridApi.exportDataAsCsv({ fileName: 'client-master.csv' });
-  }
-
-  get filteredLogins(): LoginOption[] {
+  filterLogins() {
     const term = this.loginFilter.toLowerCase();
-    return this.logins.filter(
+    this.filteredLogins = this.logins.filter(
       l =>
         l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
     );
+  }
+
+  exportCsv() {
+    this.gridApi.exportDataAsCsv({ fileName: 'client-master.csv' });
   }
 
   private formatNumber(value: number | null | undefined): string {

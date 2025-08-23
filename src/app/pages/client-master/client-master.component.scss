@@ -16,11 +16,11 @@
   height: 100%;
 }
 
-.toolbar {
-  display: flex;
+
+mat-toolbar.toolbar {
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.25rem;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .left {
@@ -28,7 +28,7 @@
   align-items: center;
   gap: 1rem;
   mat-form-field {
-    width: 200px;
+    width: 240px;
   }
 }
 
