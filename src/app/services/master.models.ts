@@ -7,7 +7,7 @@ export interface ClientMasterRequest {
   exId: number;
   brokShare: number;
   managerShare: number;
-  currency: string;
+  currencyId: number;
   commission: number;
 }
 

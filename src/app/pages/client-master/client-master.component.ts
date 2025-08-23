@@ -51,6 +51,8 @@ export class ClientMasterComponent implements OnInit {
   logins: LoginOption[] = [];
   selectedLogin: number | null = null;
   showUpdated = false;
+  loginFilter = '';
+  currencies: MasterItem[] = [];
   gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
     rowHeight: 32,
@@ -68,10 +70,28 @@ export class ClientMasterComponent implements OnInit {
       { field: 'managerName', headerName: 'Manager' },
       { field: 'brokerName', headerName: 'Broker' },
       { field: 'exchange', headerName: 'Exchange' },
-      { field: 'brokShare', headerName: 'Brok Share', type: 'numericColumn' },
-      { field: 'managerShare', headerName: 'Manager Share', type: 'numericColumn' },
+      {
+        field: 'brokShare',
+        headerName: 'Brok Share',
+        type: 'numericColumn',
+        valueFormatter: params => this.formatNumber(params.value),
+        cellStyle: { textAlign: 'right' }
+      },
+      {
+        field: 'managerShare',
+        headerName: 'Manager Share',
+        type: 'numericColumn',
+        valueFormatter: params => this.formatNumber(params.value),
+        cellStyle: { textAlign: 'right' }
+      },
       { field: 'currency', headerName: 'Currency' },
-      { field: 'commission', headerName: 'Commission', type: 'numericColumn' },
+      {
+        field: 'commission',
+        headerName: 'Commission',
+        type: 'numericColumn',
+        valueFormatter: params => this.formatNumber(params.value),
+        cellStyle: { textAlign: 'right' }
+      },
       { field: 'createdDate', headerName: 'Created Date' }
     ],
     defaultColDef: {
@@ -89,6 +109,7 @@ export class ClientMasterComponent implements OnInit {
 
   ngOnInit(): void {
     this.svc.getLogins().subscribe(res => (this.logins = res));
+    this.svc.getCurrencies().subscribe(res => (this.currencies = res));
   }
 
   onGridReady(event: GridReadyEvent<LoginClientInfo>) {
@@ -120,6 +141,9 @@ export class ClientMasterComponent implements OnInit {
         commission,
       } = event.data;
       const action = clientId ? 'UPDATE' as const : 'ADD' as const;
+      const currencyId = this.currencies.find(
+        c => c.name === currency || c.code === currency
+      )?.id ?? 0;
       this.openDialog({
         action,
         id: clientId ?? 0,
@@ -129,7 +153,7 @@ export class ClientMasterComponent implements OnInit {
         exId: exId ?? 0,
         brokShare: brokShare ?? 0,
         managerShare: managerShare ?? 0,
-        currency: currency ?? '',
+        currencyId,
         commission: commission ?? 0
       });
     }
@@ -164,6 +188,18 @@ export class ClientMasterComponent implements OnInit {
 
   exportCsv() {
     this.gridApi.exportDataAsCsv({ fileName: 'client-master.csv' });
+  }
+
+  get filteredLogins(): LoginOption[] {
+    const term = this.loginFilter.toLowerCase();
+    return this.logins.filter(
+      l =>
+        l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
+    );
+  }
+
+  private formatNumber(value: number | null | undefined): string {
+    return value != null ? Number(value).toFixed(2) : '';
   }
 }
 
@@ -211,28 +247,50 @@ export class ClientMasterComponent implements OnInit {
           <mat-label>Exchange</mat-label>
           <mat-select [(ngModel)]="data.exId">
             <mat-option *ngFor="let e of exchanges" [value]="e.id">
-              {{ e.name }}
+              {{ e.id }} - {{ e.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="triple-row">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="right-align">
           <mat-label>Brok Share</mat-label>
-          <input matInput type="number" [(ngModel)]="data.brokShare" />
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            [(ngModel)]="data.brokShare"
+            (blur)="formatDecimal('brokShare')"
+          />
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="right-align">
           <mat-label>Manager Share</mat-label>
-          <input matInput type="number" [(ngModel)]="data.managerShare" />
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            [(ngModel)]="data.managerShare"
+            (blur)="formatDecimal('managerShare')"
+          />
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="right-align">
           <mat-label>Commission</mat-label>
-          <input matInput type="number" [(ngModel)]="data.commission" />
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            [(ngModel)]="data.commission"
+            (blur)="formatDecimal('commission')"
+          />
         </mat-form-field>
       </div>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Currency</mat-label>
-        <input matInput [(ngModel)]="data.currency" />
+        <mat-select [(ngModel)]="data.currencyId">
+          <mat-option *ngFor="let c of currencies" [value]="c.id">
+            {{ c.id }} - {{ c.name }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
     <div mat-dialog-actions align="end">
@@ -252,6 +310,9 @@ export class ClientMasterComponent implements OnInit {
       .w-100 {
         width: 100%;
       }
+      .right-align input {
+        text-align: right;
+      }
     `
   ]
 })
@@ -259,6 +320,7 @@ export class ClientMasterDialogComponent implements OnInit {
   managers: MasterItem[] = [];
   brokers: MasterItem[] = [];
   exchanges: MasterItem[] = [];
+  currencies: MasterItem[] = [];
   logins: LoginOption[] = [];
 
   constructor(
@@ -271,5 +333,11 @@ export class ClientMasterDialogComponent implements OnInit {
     this.svc.getManagers().subscribe(res => (this.managers = res));
     this.svc.getBrokers().subscribe(res => (this.brokers = res));
     this.svc.getExchanges().subscribe(res => (this.exchanges = res));
+    this.svc.getCurrencies().subscribe(res => (this.currencies = res));
+  }
+
+  formatDecimal(field: 'brokShare' | 'managerShare' | 'commission') {
+    const value = this.data[field];
+    this.data[field] = value != null ? +Number(value).toFixed(2) : 0;
   }
 }

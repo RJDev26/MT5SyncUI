@@ -32,6 +32,12 @@
   }
 }
 
+:host ::ng-deep .login-search {
+  width: 100%;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+
 .right {
   display: flex;
   align-items: center;

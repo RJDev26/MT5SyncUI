@@ -67,7 +67,13 @@ export class MasterService {
 
   getExchanges(): Observable<MasterItem[]> {
     return this.http.get<MasterItem[]>(
-      environment.apiBaseUrl + 'api/Master/exchange'
+      environment.apiBaseUrl + 'api/Master/exchanges'
+    );
+  }
+
+  getCurrencies(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/currencies'
     );
   }
 

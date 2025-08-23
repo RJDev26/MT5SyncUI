@@ -2,9 +2,17 @@
   <div class="left">
     <mat-form-field appearance="outline">
       <mat-label>Login</mat-label>
-      <mat-select [(ngModel)]="selectedLogin">
+      <mat-select [(ngModel)]="selectedLogin" (openedChange)="loginFilter=''">
+        <mat-option>
+          <input
+            placeholder="Search..."
+            [(ngModel)]="loginFilter"
+            (keydown)="$event.stopPropagation()"
+            class="login-search"
+          />
+        </mat-option>
         <mat-option [value]="null">-- Clear Selection --</mat-option>
-        <mat-option *ngFor="let l of logins" [value]="l.login">
+        <mat-option *ngFor="let l of filteredLogins" [value]="l.login">
           {{ l.login }} - {{ l.name }}
         </mat-option>
       </mat-select>
