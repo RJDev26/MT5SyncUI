@@ -10,7 +10,8 @@
           <input
             placeholder="Search..."
             [(ngModel)]="loginFilter"
-            (input)="filterLogins()"
+            (ngModelChange)="filterLogins()"
+            (click)="$event.stopPropagation()"
             (keydown)="$event.stopPropagation()"
             class="login-search"
           />
