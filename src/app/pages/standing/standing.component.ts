@@ -59,16 +59,14 @@ export class StandingComponent implements OnInit {
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
+    groupDisplayType: 'groupRows',
+    groupDefaultExpanded: -1,
     columnDefs: [],
     defaultColDef: {
       resizable: true,
       sortable: true,
       filter: true,
       minWidth: 100,
-    },
-    autoGroupColumnDef: {
-      headerName: 'Group',
-      minWidth: 200,
     },
     rowData: [],
   };
