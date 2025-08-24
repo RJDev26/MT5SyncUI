@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  mat-form-field {
+    width: 200px;
+  }
+
+  .group-by {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-left: 1rem;
+  }
+}
+
+.grid-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  .filter-field {
+    width: 250px;
+  }
+}
+
+:host ::ng-deep .ag-theme-alpine {
+  height: 100%;
+  width: 100%;
+}

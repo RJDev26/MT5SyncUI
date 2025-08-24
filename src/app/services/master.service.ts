@@ -77,6 +77,12 @@ export class MasterService {
     );
   }
 
+  getSymbols(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/symbols'
+    );
+  }
+
   getLoginsWithClientInfo(
     login: number | null,
     onlyWithClientRecord: boolean

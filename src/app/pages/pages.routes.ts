@@ -68,6 +68,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Jobbing Deals' }
       },
       {
+        path: 'standing',
+        loadComponent: () => import('./standing/standing.component').then(c => c.StandingComponent),
+        data: { breadcrumb: 'Standing' }
+      },
+      {
         path: 'manager-master',
         loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
         data: { breadcrumb: 'Manager Master' }
