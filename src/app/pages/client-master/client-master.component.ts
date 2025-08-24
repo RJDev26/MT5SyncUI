@@ -235,7 +235,7 @@ export class ClientMasterComponent implements OnInit {
     <div mat-dialog-content>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Login</mat-label>
-        <mat-select [(ngModel)]="data.login">
+        <mat-select [(ngModel)]="data.login" disabled>
           <mat-option *ngFor="let l of logins" [value]="l.login">
             {{ l.login }} - {{ l.name }}
           </mat-option>
@@ -244,7 +244,7 @@ export class ClientMasterComponent implements OnInit {
       <div class="triple-row">
         <mat-form-field appearance="outline">
           <mat-label>Manager</mat-label>
-          <mat-select [(ngModel)]="data.managerId">
+          <mat-select [(ngModel)]="data.managerId" required>
             <mat-option *ngFor="let m of managers" [value]="m.id">
               {{ m.name }}
             </mat-option>
@@ -301,7 +301,7 @@ export class ClientMasterComponent implements OnInit {
       </div>
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Currency</mat-label>
-        <mat-select [(ngModel)]="data.currencyId">
+        <mat-select [(ngModel)]="data.currencyId" required>
           <mat-option *ngFor="let c of currencies" [value]="c.id">
             {{ c.id }} - {{ c.name }}
           </mat-option>
@@ -310,7 +310,14 @@ export class ClientMasterComponent implements OnInit {
     </div>
     <div mat-dialog-actions align="end">
       <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-flat-button color="primary" [mat-dialog-close]="data">Save</button>
+      <button
+        mat-flat-button
+        color="primary"
+        [mat-dialog-close]="data"
+        [disabled]="!data.managerId || !data.currencyId"
+      >
+        Save
+      </button>
     </div>
   `,
   styles: [
