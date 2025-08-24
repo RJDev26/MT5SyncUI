@@ -14,7 +14,6 @@ import { AgGridModule } from 'ag-grid-angular';
 import {
   GridApi,
   GridOptions,
-  ColumnApi,
   ModuleRegistry,
   AllCommunityModule,
   ColDef,
@@ -75,8 +74,6 @@ export class StandingComponent implements OnInit {
     theme: 'legacy',
     groupDisplayType: 'groupRows',
     groupDefaultExpanded: -1,
-    groupIncludeFooter: true,
-    groupIncludeTotalFooter: true,
     columnDefs: this.baseColumnDefs,
     autoGroupColumnDef: {
       headerName: '',
@@ -94,7 +91,6 @@ export class StandingComponent implements OnInit {
   };
 
   private gridApi!: GridApi<StandingGridRow>;
-  private columnApi!: ColumnApi;
 
   constructor(private deals: DealsService, private master: MasterService) {}
 
@@ -105,7 +101,6 @@ export class StandingComponent implements OnInit {
 
   onGridReady(params: any) {
     this.gridApi = params.api;
-    this.columnApi = params.columnApi;
     this.applyGrouping();
   }
 
@@ -118,7 +113,7 @@ export class StandingComponent implements OnInit {
           ...r,
           diffQty: (r.buyQty || 0) - (r.sellQty || 0),
         }));
-        this.gridApi.setRowData(rows);
+        this.gridApi.setGridOption('rowData', rows);
         this.gridApi.refreshClientSideRowModel('group');
       });
   }
@@ -156,16 +151,19 @@ export class StandingComponent implements OnInit {
   }
 
   private applyGrouping() {
-    if (!this.gridApi || !this.columnApi) return;
+    if (!this.gridApi) return;
     const groupField =
       this.groupBy === 'date'
         ? 'tradeDate'
         : this.groupBy === 'login'
         ? 'login'
         : 'symbol';
-    this.gridApi.setColumnDefs(this.baseColumnDefs);
-    this.columnApi.setRowGroupColumns([groupField]);
-    this.columnApi.setColumnVisible(groupField, false);
+    const colDefs = this.baseColumnDefs.map(col => ({
+      ...col,
+      rowGroup: col.field === groupField,
+      hide: col.field === groupField,
+    }));
+    this.gridApi.setGridOption('columnDefs', colDefs);
     this.gridApi.refreshClientSideRowModel('group');
   }
 }
