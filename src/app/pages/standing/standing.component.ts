@@ -14,6 +14,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import {
   GridApi,
   GridOptions,
+  ColumnApi,
   ModuleRegistry,
   AllCommunityModule,
   ColDef,
@@ -57,32 +58,55 @@ export class StandingComponent implements OnInit {
   selectedSymbol: string | null = null;
   groupBy: 'date' | 'login' | 'symbol' = 'date';
 
+  baseColumnDefs: ColDef<StandingGridRow>[] = [
+    {
+      field: 'tradeDate',
+      headerName: 'Trade Date',
+      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
+    },
+    { field: 'login', headerName: 'Login' },
+    { field: 'symbol', headerName: 'Symbol' },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', aggFunc: 'sum' },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', aggFunc: 'sum' },
+    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn', aggFunc: 'sum' },
+  ];
+
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
     groupDisplayType: 'groupRows',
     groupDefaultExpanded: -1,
-    columnDefs: [],
+    groupIncludeFooter: true,
+    groupIncludeTotalFooter: true,
+    columnDefs: this.baseColumnDefs,
+    autoGroupColumnDef: {
+      headerName: '',
+      cellRendererParams: { suppressCount: true },
+      flex: 1,
+    },
     defaultColDef: {
       resizable: true,
       sortable: true,
       filter: true,
       minWidth: 100,
+      flex: 1,
     },
     rowData: [],
   };
 
   private gridApi!: GridApi<StandingGridRow>;
+  private columnApi!: ColumnApi;
 
   constructor(private deals: DealsService, private master: MasterService) {}
 
   ngOnInit(): void {
-    this.gridOptions.columnDefs = this.getColumnDefs();
     this.master.getLogins().subscribe(res => (this.logins = res));
     this.master.getSymbols().subscribe(res => (this.symbols = res));
   }
 
   onGridReady(params: any) {
     this.gridApi = params.api;
+    this.columnApi = params.columnApi;
+    this.applyGrouping();
   }
 
   onShow() {
@@ -94,15 +118,13 @@ export class StandingComponent implements OnInit {
           ...r,
           diffQty: (r.buyQty || 0) - (r.sellQty || 0),
         }));
-        this.gridApi.setGridOption('rowData', rows);
+        this.gridApi.setRowData(rows);
+        this.gridApi.refreshClientSideRowModel('group');
       });
   }
 
   onGroupChange() {
-    this.gridOptions.columnDefs = this.getColumnDefs();
-    if (this.gridApi) {
-      this.gridApi.setGridOption('columnDefs', this.gridOptions.columnDefs as ColDef[]);
-    }
+    this.applyGrouping();
   }
 
   onFilterTextBoxChanged(event: Event) {
@@ -115,9 +137,7 @@ export class StandingComponent implements OnInit {
   }
 
   exportPdf() {
-    const cols = (this.gridOptions.columnDefs || [])
-      .filter(c => !(c as ColDef).hide)
-      .map(c => (c as any).headerName);
+    const cols = this.baseColumnDefs.map(c => c.headerName as string);
     const rows: any[] = [];
     this.gridApi.forEachNode(n => {
       const data = n.data as StandingGridRow;
@@ -135,45 +155,17 @@ export class StandingComponent implements OnInit {
     doc.save('standing.pdf');
   }
 
-  private getColumnDefs(): ColDef<StandingGridRow>[] {
-    return [
-      {
-        field: 'tradeDate',
-        headerName: 'Trade Date',
-        valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
-        rowGroup: this.groupBy === 'date',
-        hide: this.groupBy === 'date',
-      },
-      {
-        field: 'login',
-        headerName: 'Login',
-        rowGroup: this.groupBy === 'login',
-        hide: this.groupBy === 'login',
-      },
-      {
-        field: 'symbol',
-        headerName: 'Symbol',
-        rowGroup: this.groupBy === 'symbol',
-        hide: this.groupBy === 'symbol',
-      },
-      {
-        field: 'buyQty',
-        headerName: 'Buy Qty',
-        type: 'numericColumn',
-        aggFunc: 'sum',
-      },
-      {
-        field: 'sellQty',
-        headerName: 'Sell Qty',
-        type: 'numericColumn',
-        aggFunc: 'sum',
-      },
-      {
-        field: 'diffQty',
-        headerName: 'Diff Qty',
-        type: 'numericColumn',
-        aggFunc: 'sum',
-      },
-    ];
+  private applyGrouping() {
+    if (!this.gridApi || !this.columnApi) return;
+    const groupField =
+      this.groupBy === 'date'
+        ? 'tradeDate'
+        : this.groupBy === 'login'
+        ? 'login'
+        : 'symbol';
+    this.gridApi.setColumnDefs(this.baseColumnDefs);
+    this.columnApi.setRowGroupColumns([groupField]);
+    this.columnApi.setColumnVisible(groupField, false);
+    this.gridApi.refreshClientSideRowModel('group');
   }
 }

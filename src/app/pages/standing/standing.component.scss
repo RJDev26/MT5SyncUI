@@ -35,6 +35,11 @@
   }
 }
 
+:host .grid-flex {
+  flex: 1;
+  width: 100%;
+}
+
 :host ::ng-deep .ag-theme-alpine {
   height: 100%;
   width: 100%;
