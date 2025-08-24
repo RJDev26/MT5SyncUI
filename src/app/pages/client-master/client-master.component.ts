@@ -185,7 +185,9 @@ export class ClientMasterComponent implements OnInit {
 
   delete(id: number) {
     if (!id) return;
-    this.svc.deleteClientMaster(id).subscribe(() => this.show());
+    if (confirm('Are you sure you want to delete this client?')) {
+      this.svc.deleteClientMaster(id).subscribe(() => this.show());
+    }
   }
 
   onFilterTextBoxChanged(event: Event) {
