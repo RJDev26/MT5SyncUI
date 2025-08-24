@@ -4,15 +4,17 @@
       <mat-label>Login</mat-label>
       <mat-select
         [(ngModel)]="selectedLogin"
-        (openedChange)="loginFilter=''; filterLogins()"
+        (openedChange)="onLoginDropdownOpen($event)"
       >
-        <mat-option disabled>
+        <mat-option>
           <input
+            #loginSearch
             placeholder="Search..."
-            [(ngModel)]="loginFilter"
-            (ngModelChange)="filterLogins()"
+            [ngModel]="loginFilter"
+            (ngModelChange)="filterLogins($event)"
             (click)="$event.stopPropagation()"
             (keydown)="$event.stopPropagation()"
+            (keyup)="$event.stopPropagation()"
             class="login-search"
           />
         </mat-option>

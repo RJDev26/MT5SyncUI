@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -56,6 +56,7 @@ export class ClientMasterComponent implements OnInit {
   showUpdated = false;
   loginFilter = '';
   currencies: MasterItem[] = [];
+  @ViewChild('loginSearch') loginSearch!: ElementRef<HTMLInputElement>;
   gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
     rowHeight: 32,
@@ -192,11 +193,19 @@ export class ClientMasterComponent implements OnInit {
     this.gridApi.setGridOption('quickFilterText', value);
   }
 
-  filterLogins() {
-    const term = this.loginFilter.toLowerCase();
+  onLoginDropdownOpen(open: boolean) {
+    if (open) {
+      this.loginFilter = '';
+      this.filteredLogins = this.logins.slice();
+      setTimeout(() => this.loginSearch?.nativeElement.focus());
+    }
+  }
+
+  filterLogins(value: string) {
+    this.loginFilter = value;
+    const term = value.toLowerCase();
     this.filteredLogins = this.logins.filter(
-      l =>
-        l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
+      l => l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
     );
   }
 
