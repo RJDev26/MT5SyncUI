@@ -32,10 +32,17 @@ mat-toolbar.toolbar {
   }
 }
 
-:host ::ng-deep .login-search {
-  width: 100%;
+:host ::ng-deep .search-option {
   padding: 4px 8px;
-  box-sizing: border-box;
+  cursor: default;
+}
+
+:host ::ng-deep .search-option.mat-mdc-option.mdc-list-item--disabled {
+  color: inherit;
+}
+
+:host ::ng-deep .login-search-field {
+  width: 100%;
 }
 
 .right {

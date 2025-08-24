@@ -6,17 +6,25 @@
         [(ngModel)]="selectedLogin"
         (openedChange)="onLoginDropdownOpen($event)"
       >
-        <mat-option>
-          <input
-            #loginSearch
-            placeholder="Search..."
-            [ngModel]="loginFilter"
-            (ngModelChange)="filterLogins($event)"
+        <mat-option class="search-option" disabled>
+          <mat-form-field
+            appearance="outline"
+            class="login-search-field"
             (click)="$event.stopPropagation()"
-            (keydown)="$event.stopPropagation()"
-            (keyup)="$event.stopPropagation()"
-            class="login-search"
-          />
+          >
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              #loginSearch
+              placeholder="Search logins"
+              autocomplete="off"
+              [ngModel]="loginFilter"
+              (ngModelChange)="filterLogins($event)"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+              (keyup)="$event.stopPropagation()"
+            />
+          </mat-form-field>
         </mat-option>
         <mat-option [value]="null">-- Clear Selection --</mat-option>
         <mat-option *ngFor="let l of filteredLogins" [value]="l.login">
