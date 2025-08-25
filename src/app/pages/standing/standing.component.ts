@@ -132,6 +132,7 @@ export class StandingComponent implements OnInit {
   onGridReady(params: any) {
     this.gridApi = params.api;
     this.updateColumnDefs();
+    this.applyGrouping();
   }
 
   onShow() {
@@ -198,7 +199,11 @@ export class StandingComponent implements OnInit {
   private applyGrouping() {
     const keyField = this.groupBy === 'date' ? 'tradeDate' : this.groupBy;
     const grouped = this.groupByKey(this.rows, keyField as any);
-    this.gridApi.setGridOption('rowData', grouped);
+    if (this.gridApi) {
+      this.gridApi.setGridOption('rowData', grouped);
+    } else {
+      this.gridOptions.rowData = grouped;
+    }
   }
 
   private groupByKey(rows: StandingGridRow[], key: 'tradeDate' | 'login' | 'symbol'): any[] {
