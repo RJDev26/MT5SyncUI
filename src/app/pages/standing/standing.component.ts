@@ -63,7 +63,8 @@ export class StandingComponent implements OnInit {
 
   groupColSpan = (params: ICellRendererParams<StandingGridRow>): number => {
     if (params.data?.isGroupHeader) {
-      return params.columnApi.getAllDisplayedColumns().length;
+      const defs = this.gridApi?.getColumnDefs();
+      return defs ? defs.length : this.columnDefs.length;
     }
     return 1;
   };
