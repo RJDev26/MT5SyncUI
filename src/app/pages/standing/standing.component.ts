@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AgGridModule } from 'ag-grid-angular';
-import { GridApi, GridOptions, ColDef, ICellRendererParams } from 'ag-grid-community';
+import { GridApi, GridOptions, ColDef, ColSpanParams } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
 import jsPDF from 'jspdf';
@@ -53,7 +53,7 @@ export class StandingComponent implements OnInit {
   groupBy: 'date' | 'login' | 'symbol' = 'date';
   private rows: StandingGridRow[] = [];
 
-  groupColSpan = (params: ICellRendererParams<StandingGridRow>): number => {
+  groupColSpan = (params: ColSpanParams<StandingGridRow, any>): number => {
     if (params.data?.isGroupHeader) {
       const defs = this.gridApi?.getColumnDefs();
       return defs ? defs.length : this.columnDefs.length;
