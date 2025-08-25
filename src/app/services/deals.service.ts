@@ -53,6 +53,14 @@ export interface JobbingDealRow {
   sellTimeString: string;
 }
 
+export interface StandingRow {
+  tradeDate: string;
+  login: number;
+  symbol: string;
+  buyQty: number;
+  sellQty: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DealsService {
   constructor(private http: HttpClient) {}
@@ -89,6 +97,24 @@ export class DealsService {
       .set('intervalMinutes', intervalMinutes);
     return this.http.get<{ rows: JobbingDealRow[]; maxTime: string | null; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/jobbing-deals',
+      { params }
+    );
+  }
+
+  getStanding(
+    date: string,
+    login?: number | null,
+    symbol?: string | null
+  ): Observable<{ rows: StandingRow[] }> {
+    let params = new HttpParams().set('date', date);
+    if (login != null) {
+      params = params.set('login', String(login));
+    }
+    if (symbol) {
+      params = params.set('symbol', symbol);
+    }
+    return this.http.get<{ rows: StandingRow[] }>(
+      environment.apiBaseUrl + 'api/Deals/standing',
       { params }
     );
   }
