@@ -59,7 +59,7 @@ export class ClientMasterComponent implements OnInit {
   @ViewChild('loginSearch') loginSearch!: ElementRef<HTMLInputElement>;
   gridOptions: GridOptions<LoginClientInfo> = {
     theme: 'legacy',
-    rowHeight: 19,
+    rowHeight: 23,
     columnDefs: [
       {
         headerName: 'Actions',
