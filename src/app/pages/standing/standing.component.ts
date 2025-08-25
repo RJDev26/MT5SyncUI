@@ -27,7 +27,15 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface StandingGridRow extends StandingRow {
   diffQty: number;
+  isTotal?: boolean;
 }
+
+const sumAgg = (params: any) =>
+  params.values.reduce(
+    (sum: number, value: number, i: number) =>
+      sum + (params.rowNodes[i].data?.isTotal ? 0 : value || 0),
+    0
+  );
 
 @Component({
   selector: 'app-standing',
@@ -56,6 +64,7 @@ export class StandingComponent implements OnInit {
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
   groupBy: 'date' | 'login' | 'symbol' = 'date';
+  private rows: StandingGridRow[] = [];
 
   baseColumnDefs: ColDef<StandingGridRow>[] = [
     {
@@ -65,9 +74,9 @@ export class StandingComponent implements OnInit {
     },
     { field: 'login', headerName: 'Login' },
     { field: 'symbol', headerName: 'Symbol' },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', aggFunc: 'sum' },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', aggFunc: 'sum' },
-    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn', aggFunc: 'sum' },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', aggFunc: sumAgg },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', aggFunc: sumAgg },
+    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn', aggFunc: sumAgg },
   ];
 
   gridOptions: GridOptions<StandingGridRow> = {
@@ -88,6 +97,12 @@ export class StandingComponent implements OnInit {
       flex: 1,
     },
     rowData: [],
+    pagination: true,
+    paginationPageSize: 25,
+    paginationPageSizeSelector: [10, 25, 50, 100],
+    rowClassRules: {
+      'group-total-row': params => !!params.data?.isTotal,
+    },
   };
 
   private gridApi!: GridApi<StandingGridRow>;
@@ -113,8 +128,8 @@ export class StandingComponent implements OnInit {
           ...r,
           diffQty: (r.buyQty || 0) - (r.sellQty || 0),
         }));
-        this.gridApi.setGridOption('rowData', rows);
-        this.gridApi.refreshClientSideRowModel('group');
+        this.rows = rows;
+        this.updateRowData();
       });
   }
 
@@ -152,18 +167,53 @@ export class StandingComponent implements OnInit {
 
   private applyGrouping() {
     if (!this.gridApi) return;
-    const groupField =
-      this.groupBy === 'date'
-        ? 'tradeDate'
-        : this.groupBy === 'login'
-        ? 'login'
-        : 'symbol';
+    const groupField = this.getGroupField();
     const colDefs = this.baseColumnDefs.map(col => ({
       ...col,
       rowGroup: col.field === groupField,
       hide: col.field === groupField,
     }));
     this.gridApi.setGridOption('columnDefs', colDefs);
+    this.updateRowData();
+  }
+
+  private getGroupField(): 'tradeDate' | 'login' | 'symbol' {
+    return this.groupBy === 'date'
+      ? 'tradeDate'
+      : this.groupBy === 'login'
+      ? 'login'
+      : 'symbol';
+  }
+
+  private updateRowData() {
+    if (!this.gridApi) return;
+    const groupField = this.getGroupField();
+    const grouped: Record<string, StandingGridRow[]> = {};
+    this.rows.forEach(r => {
+      const key = String((r as any)[groupField]);
+      (grouped[key] ||= []).push(r);
+    });
+    const withTotals: StandingGridRow[] = [];
+    Object.values(grouped).forEach(items => {
+      withTotals.push(...items);
+      const base: StandingGridRow = {
+        tradeDate: groupField === 'tradeDate' ? items[0].tradeDate : (null as any),
+        login: groupField === 'login' ? items[0].login : (null as any),
+        symbol: groupField === 'symbol' ? items[0].symbol : (null as any),
+        buyQty: 0,
+        sellQty: 0,
+        diffQty: 0,
+        isTotal: true,
+      };
+      const total = items.reduce((acc, cur) => {
+        acc.buyQty += cur.buyQty || 0;
+        acc.sellQty += cur.sellQty || 0;
+        acc.diffQty += cur.diffQty || 0;
+        return acc;
+      }, base);
+      withTotals.push(total);
+    });
+    this.gridApi.setGridOption('rowData', withTotals);
     this.gridApi.refreshClientSideRowModel('group');
   }
 }
