@@ -16,15 +16,14 @@ import {
   GridOptions,
   ColDef,
   ModuleRegistry,
-  RowGroupingModule,
-  ClientSideRowModelModule,
+  AllCommunityModule,
 } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface StandingGridRow extends StandingRow {
   diffQty: number;
@@ -117,8 +116,6 @@ export class StandingComponent implements OnInit {
     pagination: true,
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50, 100],
-    groupIncludeFooter: true,
-    groupIncludeTotalFooter: true,
     groupDefaultExpanded: -1,
   };
 
