@@ -112,7 +112,7 @@ export class StandingComponent implements OnInit {
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
-    rowHeight: 18,
+    rowHeight: 20,
     columnDefs: this.columnDefs,
     defaultColDef: {
       resizable: true,
