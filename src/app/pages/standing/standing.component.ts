@@ -11,20 +11,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AgGridModule } from 'ag-grid-angular';
-import {
-  GridApi,
-  GridOptions,
-  ModuleRegistry,
-  AllCommunityModule,
-  ColDef,
-  ICellRendererParams,
-} from 'ag-grid-community';
+import { GridApi, GridOptions, ColDef, ICellRendererParams } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface StandingGridRow extends StandingRow {
   diffQty: number;
