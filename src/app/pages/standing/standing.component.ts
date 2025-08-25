@@ -15,7 +15,6 @@ import {
   GridApi,
   GridOptions,
   ColDef,
-  ColSpanParams,
   ModuleRegistry,
   AllCommunityModule,
 } from 'ag-grid-community';
@@ -61,16 +60,14 @@ export class StandingComponent implements OnInit {
   groupBy: 'date' | 'login' | 'symbol' = 'date';
   private rows: StandingGridRow[] = [];
 
-  groupColSpan = (params: ColSpanParams<StandingGridRow, any>): number => {
-    return params.data?.isGroupHeader ? this.columnDefs.length : 1;
-  };
-
   dateColumnDefs: ColDef<StandingGridRow>[] = [
     {
       field: 'tradeDate',
       headerName: 'Date',
-      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
-      colSpan: this.groupColSpan,
+      valueFormatter: p =>
+        p.data?.isGroupHeader || p.data?.isGroupTotal
+          ? p.value
+          : new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'login', headerName: 'Login' },
     { field: 'symbol', headerName: 'Symbol' },
@@ -80,11 +77,14 @@ export class StandingComponent implements OnInit {
   ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'login', headerName: 'Login', colSpan: this.groupColSpan },
+    { field: 'login', headerName: 'Login' },
     {
       field: 'tradeDate',
       headerName: 'Date',
-      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
+      valueFormatter: p =>
+        p.data?.isGroupHeader || p.data?.isGroupTotal
+          ? p.value
+          : new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'symbol', headerName: 'Symbol' },
     { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
@@ -93,11 +93,14 @@ export class StandingComponent implements OnInit {
   ];
 
   symbolColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'symbol', headerName: 'Symbol', colSpan: this.groupColSpan },
+    { field: 'symbol', headerName: 'Symbol' },
     {
       field: 'tradeDate',
       headerName: 'Date',
-      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
+      valueFormatter: p =>
+        p.data?.isGroupHeader || p.data?.isGroupTotal
+          ? p.value
+          : new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'login', headerName: 'Login' },
     { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
@@ -109,6 +112,7 @@ export class StandingComponent implements OnInit {
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
+    rowHeight: 15,
     columnDefs: this.columnDefs,
     defaultColDef: {
       resizable: true,
