@@ -16,6 +16,8 @@ import {
   GridOptions,
   ColDef,
   ColSpanParams,
+  ModuleRegistry,
+  AllCommunityModule,
 } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
@@ -27,6 +29,8 @@ interface StandingGridRow extends StandingRow {
   isGroupHeader?: boolean;
   isGroupTotal?: boolean;
 }
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-standing',
