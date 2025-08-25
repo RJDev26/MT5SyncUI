@@ -17,6 +17,7 @@ import {
   ModuleRegistry,
   AllCommunityModule,
   ColDef,
+  ICellRendererParams,
 } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
@@ -27,15 +28,9 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface StandingGridRow extends StandingRow {
   diffQty: number;
-  isTotal?: boolean;
+  isGroupHeader?: boolean;
+  isGroupTotal?: boolean;
 }
-
-const sumAgg = (params: any) =>
-  params.values.reduce(
-    (sum: number, value: number, i: number) =>
-      sum + (params.rowNodes[i].data?.isTotal ? 0 : value || 0),
-    0
-  );
 
 @Component({
   selector: 'app-standing',
@@ -66,29 +61,58 @@ export class StandingComponent implements OnInit {
   groupBy: 'date' | 'login' | 'symbol' = 'date';
   private rows: StandingGridRow[] = [];
 
-  baseColumnDefs: ColDef<StandingGridRow>[] = [
+  groupColSpan = (params: ICellRendererParams<StandingGridRow>): number => {
+    if (params.data?.isGroupHeader) {
+      return params.columnApi.getAllDisplayedColumns().length;
+    }
+    return 1;
+  };
+
+  dateColumnDefs: ColDef<StandingGridRow>[] = [
+    {
+      field: 'tradeDate',
+      headerName: 'Trade Date',
+      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
+      colSpan: this.groupColSpan,
+    },
+    { field: 'login', headerName: 'Login' },
+    { field: 'symbol', headerName: 'Symbol' },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
+  ];
+
+  loginColumnDefs: ColDef<StandingGridRow>[] = [
+    { field: 'login', headerName: 'Login', colSpan: this.groupColSpan },
+    {
+      field: 'tradeDate',
+      headerName: 'Trade Date',
+      valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
+    },
+    { field: 'symbol', headerName: 'Symbol' },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
+  ];
+
+  symbolColumnDefs: ColDef<StandingGridRow>[] = [
+    { field: 'symbol', headerName: 'Symbol', colSpan: this.groupColSpan },
     {
       field: 'tradeDate',
       headerName: 'Trade Date',
       valueFormatter: p => new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'login', headerName: 'Login' },
-    { field: 'symbol', headerName: 'Symbol' },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', aggFunc: sumAgg },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', aggFunc: sumAgg },
-    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn', aggFunc: sumAgg },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
   ];
+
+  columnDefs: ColDef<StandingGridRow>[] = [...this.dateColumnDefs];
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
-    groupDisplayType: 'groupRows',
-    groupDefaultExpanded: -1,
-    columnDefs: this.baseColumnDefs,
-    autoGroupColumnDef: {
-      headerName: '',
-      cellRendererParams: { suppressCount: true },
-      flex: 1,
-    },
+    columnDefs: this.columnDefs,
     defaultColDef: {
       resizable: true,
       sortable: true,
@@ -101,7 +125,8 @@ export class StandingComponent implements OnInit {
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50, 100],
     rowClassRules: {
-      'group-total-row': params => !!params.data?.isTotal,
+      'group-header-row': params => !!params.data?.isGroupHeader,
+      'group-total-row': params => !!params.data?.isGroupTotal,
     },
   };
 
@@ -116,7 +141,7 @@ export class StandingComponent implements OnInit {
 
   onGridReady(params: any) {
     this.gridApi = params.api;
-    this.applyGrouping();
+    this.updateColumnDefs();
   }
 
   onShow() {
@@ -134,7 +159,8 @@ export class StandingComponent implements OnInit {
   }
 
   onGroupChange() {
-    this.applyGrouping();
+    this.updateColumnDefs();
+    this.updateRowData();
   }
 
   onFilterTextBoxChanged(event: Event) {
@@ -147,7 +173,7 @@ export class StandingComponent implements OnInit {
   }
 
   exportPdf() {
-    const cols = this.baseColumnDefs.map(c => c.headerName as string);
+    const cols = this.columnDefs.map(c => c.headerName as string);
     const rows: any[] = [];
     this.gridApi.forEachNode(n => {
       const data = n.data as StandingGridRow;
@@ -165,55 +191,58 @@ export class StandingComponent implements OnInit {
     doc.save('standing.pdf');
   }
 
-  private applyGrouping() {
-    if (!this.gridApi) return;
-    const groupField = this.getGroupField();
-    const colDefs = this.baseColumnDefs.map(col => ({
-      ...col,
-      rowGroup: col.field === groupField,
-      hide: col.field === groupField,
-    }));
-    this.gridApi.setGridOption('columnDefs', colDefs);
-    this.updateRowData();
+  private updateColumnDefs() {
+    const defs =
+      this.groupBy === 'date'
+        ? this.dateColumnDefs
+        : this.groupBy === 'login'
+        ? this.loginColumnDefs
+        : this.symbolColumnDefs;
+    this.columnDefs = defs;
+    if (this.gridApi) {
+      this.gridApi.setGridOption('columnDefs', defs);
+      setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
+    }
   }
 
-  private getGroupField(): 'tradeDate' | 'login' | 'symbol' {
-    return this.groupBy === 'date'
-      ? 'tradeDate'
-      : this.groupBy === 'login'
-      ? 'login'
-      : 'symbol';
+  private groupByKey(
+    rows: StandingGridRow[],
+    key: 'tradeDate' | 'login' | 'symbol'
+  ): StandingGridRow[] {
+    if (!Array.isArray(rows)) return [];
+    const groups: Record<string, StandingGridRow[]> = {};
+    rows.forEach(r => {
+      const val = (r as any)[key];
+      const g = String(val ?? '');
+      (groups[g] ||= []).push(r);
+    });
+    const result: StandingGridRow[] = [];
+    for (const [g, items] of Object.entries(groups)) {
+      result.push({ isGroupHeader: true, [key]: g } as any);
+      result.push(...items);
+      const total: StandingGridRow = {
+        tradeDate: key === 'tradeDate' ? (items[0].tradeDate as any) : (null as any),
+        login: key === 'login' ? (items[0].login as any) : (null as any),
+        symbol: key === 'symbol' ? (items[0].symbol as any) : (null as any),
+        buyQty: items.reduce((s, r) => s + (r.buyQty || 0), 0),
+        sellQty: items.reduce((s, r) => s + (r.sellQty || 0), 0),
+        diffQty: items.reduce((s, r) => s + (r.diffQty || 0), 0),
+        isGroupTotal: true,
+      };
+      result.push(total);
+    }
+    return result;
   }
 
   private updateRowData() {
     if (!this.gridApi) return;
-    const groupField = this.getGroupField();
-    const grouped: Record<string, StandingGridRow[]> = {};
-    this.rows.forEach(r => {
-      const key = String((r as any)[groupField]);
-      (grouped[key] ||= []).push(r);
-    });
-    const withTotals: StandingGridRow[] = [];
-    Object.values(grouped).forEach(items => {
-      withTotals.push(...items);
-      const base: StandingGridRow = {
-        tradeDate: groupField === 'tradeDate' ? items[0].tradeDate : (null as any),
-        login: groupField === 'login' ? items[0].login : (null as any),
-        symbol: groupField === 'symbol' ? items[0].symbol : (null as any),
-        buyQty: 0,
-        sellQty: 0,
-        diffQty: 0,
-        isTotal: true,
-      };
-      const total = items.reduce((acc, cur) => {
-        acc.buyQty += cur.buyQty || 0;
-        acc.sellQty += cur.sellQty || 0;
-        acc.diffQty += cur.diffQty || 0;
-        return acc;
-      }, base);
-      withTotals.push(total);
-    });
-    this.gridApi.setGridOption('rowData', withTotals);
-    this.gridApi.refreshClientSideRowModel('group');
+    const field: 'tradeDate' | 'login' | 'symbol' =
+      this.groupBy === 'date'
+        ? 'tradeDate'
+        : this.groupBy === 'login'
+        ? 'login'
+        : 'symbol';
+    const grouped = this.groupByKey(this.rows, field);
+    this.gridApi.setGridOption('rowData', grouped);
   }
 }
