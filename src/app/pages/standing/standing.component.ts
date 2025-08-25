@@ -60,16 +60,18 @@ export class StandingComponent implements OnInit {
   groupBy: 'date' | 'login' | 'symbol' = 'date';
   private rows: StandingGridRow[] = [];
 
+  groupColSpan(params: any): number {
+    return params.data?.isGroupHeader || params.data?.isGroupTotal
+      ? this.columnDefs.length
+      : 1;
+  }
+
   dateColumnDefs: ColDef<StandingGridRow>[] = [
     {
-      field: 'tradeDate',
-      headerName: 'Date',
-      valueFormatter: p =>
-        p.data?.isGroupHeader || p.data?.isGroupTotal
-          ? p.value
-          : new Date(p.value).toLocaleDateString('en-GB'),
+      field: 'login',
+      headerName: 'Login',
+      colSpan: params => this.groupColSpan(params),
     },
-    { field: 'login', headerName: 'Login' },
     { field: 'symbol', headerName: 'Symbol' },
     { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
     { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
@@ -77,7 +79,7 @@ export class StandingComponent implements OnInit {
   ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'login', headerName: 'Login' },
+    { field: 'login', headerName: 'Login', colSpan: params => this.groupColSpan(params) },
     {
       field: 'tradeDate',
       headerName: 'Date',
@@ -93,7 +95,7 @@ export class StandingComponent implements OnInit {
   ];
 
   symbolColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'symbol', headerName: 'Symbol' },
+    { field: 'symbol', headerName: 'Symbol', colSpan: params => this.groupColSpan(params) },
     {
       field: 'tradeDate',
       headerName: 'Date',
@@ -173,18 +175,12 @@ export class StandingComponent implements OnInit {
 
   exportPdf() {
     const cols = this.columnDefs.map(c => c.headerName as string);
+    const fields = this.columnDefs.map(c => c.field as string);
     const rows: any[] = [];
     this.gridApi.forEachNode(n => {
-      const data = n.data as StandingGridRow;
+      const data = n.data as any;
       if (data.isGroupHeader || data.isGroupTotal) return;
-      rows.push([
-        data.tradeDate,
-        data.login,
-        data.symbol,
-        data.buyQty,
-        data.sellQty,
-        data.diffQty,
-      ]);
+      rows.push(fields.map(f => data[f]));
     });
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
@@ -226,11 +222,19 @@ export class StandingComponent implements OnInit {
     const result: any[] = [];
     Object.entries(groups).forEach(([val, groupRows]) => {
       const header: any = { isGroupHeader: true };
-      header[key] = val;
+      if (key === 'tradeDate') {
+        header.login = val;
+      } else {
+        header[key] = val;
+      }
       result.push(header);
       groupRows.forEach(r => result.push(r));
       const total: any = { isGroupTotal: true };
-      total[key] = `Total: ${val}`;
+      if (key === 'tradeDate') {
+        total.login = `Total: ${val}`;
+      } else {
+        total[key] = `Total: ${val}`;
+      }
       total.buyQty = groupRows.reduce((s, r) => s + (r.buyQty || 0), 0);
       total.sellQty = groupRows.reduce((s, r) => s + (r.sellQty || 0), 0);
       total.diffQty = groupRows.reduce((s, r) => s + (r.diffQty || 0), 0);
