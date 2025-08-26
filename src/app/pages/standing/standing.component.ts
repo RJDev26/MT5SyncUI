@@ -61,9 +61,7 @@ export class StandingComponent implements OnInit {
   private rows: StandingGridRow[] = [];
 
   groupColSpan(params: any): number {
-    return params.data?.isGroupHeader || params.data?.isGroupTotal
-      ? this.columnDefs.length
-      : 1;
+    return params.data?.isGroupHeader ? this.columnDefs.length : 1;
   }
 
   dateColumnDefs: ColDef<StandingGridRow>[] = [
@@ -147,7 +145,7 @@ export class StandingComponent implements OnInit {
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
     // Increase row height by ~5% for better readability
-    rowHeight: 23,
+    rowHeight: 24,
     columnDefs: this.columnDefs,
     defaultColDef: {
       resizable: true,
@@ -161,6 +159,7 @@ export class StandingComponent implements OnInit {
     paginationPageSize: 25,
     paginationPageSizeSelector: [10, 25, 50, 100],
     getRowClass: params => this.getRowClass(params),
+    domLayout: 'autoHeight',
   };
 
   private gridApi!: GridApi<StandingGridRow>;
@@ -221,6 +220,9 @@ export class StandingComponent implements OnInit {
   }
 
   blankZero(params: any) {
+    if (params.data?.isGroupTotal) {
+      return params.value ?? '';
+    }
     return params.value === 0 || params.value === null || params.value === undefined
       ? ''
       : params.value;
@@ -269,7 +271,7 @@ export class StandingComponent implements OnInit {
       total[displayField] = `Total: ${val}`;
       total.buyQty = groupRows.reduce((s, r) => s + (r.buyQty || 0), 0);
       total.sellQty = groupRows.reduce((s, r) => s + (r.sellQty || 0), 0);
-      total.diffQty = groupRows.reduce((s, r) => s + (r.diffQty || 0), 0);
+      total.diffQty = total.buyQty - total.sellQty;
       result.push(total);
     });
     return result;
