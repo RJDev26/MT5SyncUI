@@ -71,17 +71,22 @@ export class StandingComponent implements OnInit {
       field: 'buyQty',
       headerName: 'Buy Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'buy-cell',
     },
     {
       field: 'sellQty',
       headerName: 'Sell Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'sell-cell',
     },
-    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
+    {
+      field: 'diffQty',
+      headerName: 'Diff Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+    },
   ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
@@ -99,17 +104,22 @@ export class StandingComponent implements OnInit {
       field: 'buyQty',
       headerName: 'Buy Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'buy-cell',
     },
     {
       field: 'sellQty',
       headerName: 'Sell Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'sell-cell',
     },
-    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
+    {
+      field: 'diffQty',
+      headerName: 'Diff Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+    },
   ];
 
   symbolColumnDefs: ColDef<StandingGridRow>[] = [
@@ -127,17 +137,22 @@ export class StandingComponent implements OnInit {
       field: 'buyQty',
       headerName: 'Buy Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'buy-cell',
     },
     {
       field: 'sellQty',
       headerName: 'Sell Qty',
       type: 'numericColumn',
-      valueFormatter: this.blankZero,
+      valueFormatter: this.formatQty,
       cellClass: 'sell-cell',
     },
-    { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
+    {
+      field: 'diffQty',
+      headerName: 'Diff Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+    },
   ];
 
   columnDefs: ColDef<StandingGridRow>[] = [...this.dateColumnDefs];
@@ -219,13 +234,15 @@ export class StandingComponent implements OnInit {
     doc.save('standing.pdf');
   }
 
-  blankZero(params: any) {
-    if (params.data?.isGroupTotal) {
-      return params.value ?? '';
+  formatQty(params: any): string {
+    if (params.value === null || params.value === undefined) {
+      return '';
     }
-    return params.value === 0 || params.value === null || params.value === undefined
-      ? ''
-      : params.value;
+    const num = Number(params.value);
+    if (!params.data?.isGroupTotal && num === 0) {
+      return '';
+    }
+    return num.toFixed(2);
   }
 
   private updateColumnDefs() {
