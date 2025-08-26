@@ -67,46 +67,78 @@ export class StandingComponent implements OnInit {
   }
 
   dateColumnDefs: ColDef<StandingGridRow>[] = [
-    {
-      field: 'login',
-      headerName: 'Login',
-      colSpan: params => this.groupColSpan(params),
-    },
+    { field: 'login', headerName: 'Login', colSpan: p => this.groupColSpan(p) },
     { field: 'symbol', headerName: 'Symbol' },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    {
+      field: 'buyQty',
+      headerName: 'Buy Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'buy-cell',
+    },
+    {
+      field: 'sellQty',
+      headerName: 'Sell Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'sell-cell',
+    },
     { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
   ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'login', headerName: 'Login', colSpan: params => this.groupColSpan(params) },
     {
       field: 'tradeDate',
       headerName: 'Date',
+      colSpan: p => this.groupColSpan(p),
       valueFormatter: p =>
         p.data?.isGroupHeader || p.data?.isGroupTotal
           ? p.value
           : new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'symbol', headerName: 'Symbol' },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    {
+      field: 'buyQty',
+      headerName: 'Buy Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'buy-cell',
+    },
+    {
+      field: 'sellQty',
+      headerName: 'Sell Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'sell-cell',
+    },
     { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
   ];
 
   symbolColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'symbol', headerName: 'Symbol', colSpan: params => this.groupColSpan(params) },
     {
       field: 'tradeDate',
       headerName: 'Date',
+      colSpan: p => this.groupColSpan(p),
       valueFormatter: p =>
         p.data?.isGroupHeader || p.data?.isGroupTotal
           ? p.value
           : new Date(p.value).toLocaleDateString('en-GB'),
     },
     { field: 'login', headerName: 'Login' },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn' },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn' },
+    {
+      field: 'buyQty',
+      headerName: 'Buy Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'buy-cell',
+    },
+    {
+      field: 'sellQty',
+      headerName: 'Sell Qty',
+      type: 'numericColumn',
+      valueFormatter: this.blankZero,
+      cellClass: 'sell-cell',
+    },
     { field: 'diffQty', headerName: 'Diff Qty', type: 'numericColumn' },
   ];
 
@@ -188,6 +220,12 @@ export class StandingComponent implements OnInit {
     doc.save('standing.pdf');
   }
 
+  blankZero(params: any) {
+    return params.value === 0 || params.value === null || params.value === undefined
+      ? ''
+      : params.value;
+  }
+
   private updateColumnDefs() {
     this.columnDefs =
       this.groupBy === 'date'
@@ -223,19 +261,12 @@ export class StandingComponent implements OnInit {
     const result: any[] = [];
     Object.entries(groups).forEach(([val, groupRows]) => {
       const header: any = { isGroupHeader: true };
-      if (key === 'tradeDate') {
-        header.login = val;
-      } else {
-        header[key] = val;
-      }
+      const displayField = key === 'tradeDate' ? 'login' : 'tradeDate';
+      header[displayField] = val;
       result.push(header);
       groupRows.forEach(r => result.push(r));
       const total: any = { isGroupTotal: true };
-      if (key === 'tradeDate') {
-        total.login = `Total: ${val}`;
-      } else {
-        total[key] = `Total: ${val}`;
-      }
+      total[displayField] = `Total: ${val}`;
       total.buyQty = groupRows.reduce((s, r) => s + (r.buyQty || 0), 0);
       total.sellQty = groupRows.reduce((s, r) => s + (r.sellQty || 0), 0);
       total.diffQty = groupRows.reduce((s, r) => s + (r.diffQty || 0), 0);
