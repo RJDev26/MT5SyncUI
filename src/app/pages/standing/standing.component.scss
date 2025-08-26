@@ -45,12 +45,13 @@
   width: 100%;
 }
 
-.group-header-row {
-  background: #e6f7ff;
+:host ::ng-deep .group-header-row {
+  background-color: #d0ebff;
   font-weight: bold;
 }
 
-.group-total-row {
+:host ::ng-deep .group-total-row {
+  background-color: #fffbe6;
   font-weight: bold;
   border-top: 2px solid #ccc;
 }
