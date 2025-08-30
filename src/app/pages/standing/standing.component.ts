@@ -24,7 +24,6 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 interface StandingGridRow extends StandingRow {
-  diffQty: number;
   isGroupHeader?: boolean;
   isGroupTotal?: boolean;
 }
@@ -81,25 +80,10 @@ export class StandingComponent implements OnInit {
       valueFormatter: this.formatQty,
       cellClass: ['sell-cell', 'ag-right-aligned-cell'],
     },
-    {
-      field: 'diffQty',
-      headerName: 'Diff Qty',
-      type: 'numericColumn',
-      valueFormatter: this.formatQty,
-    },
   ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
-    {
-      field: 'tradeDate',
-      headerName: 'Date',
-      colSpan: p => this.groupColSpan(p),
-      valueFormatter: p =>
-        p.data?.isGroupHeader || p.data?.isGroupTotal
-          ? p.value
-          : new Date(p.value).toLocaleDateString('en-GB'),
-    },
-    { field: 'symbol', headerName: 'Symbol' },
+    { field: 'symbol', headerName: 'Symbol', colSpan: p => this.groupColSpan(p) },
     {
       field: 'buyQty',
       headerName: 'Buy Qty',
@@ -113,12 +97,6 @@ export class StandingComponent implements OnInit {
       type: 'numericColumn',
       valueFormatter: this.formatQty,
       cellClass: ['sell-cell', 'ag-right-aligned-cell'],
-    },
-    {
-      field: 'diffQty',
-      headerName: 'Diff Qty',
-      type: 'numericColumn',
-      valueFormatter: this.formatQty,
     },
   ];
 
@@ -147,12 +125,6 @@ export class StandingComponent implements OnInit {
       valueFormatter: this.formatQty,
       cellClass: ['sell-cell', 'ag-right-aligned-cell'],
     },
-    {
-      field: 'diffQty',
-      headerName: 'Diff Qty',
-      type: 'numericColumn',
-      valueFormatter: this.formatQty,
-    },
   ];
 
   columnDefs: ColDef<StandingGridRow>[] = [...this.dateColumnDefs];
@@ -171,8 +143,8 @@ export class StandingComponent implements OnInit {
     },
     rowData: [],
     pagination: true,
-    paginationPageSize: 25,
-    paginationPageSizeSelector: [10, 25, 50, 100],
+    paginationPageSize: 100,
+    paginationPageSizeSelector: [100],
     getRowClass: params => this.getRowClass(params),
     domLayout: 'autoHeight',
   };
@@ -197,11 +169,7 @@ export class StandingComponent implements OnInit {
     this.deals
       .getStanding(dateStr, this.selectedLogin, this.selectedSymbol)
       .subscribe(res => {
-        const rows: StandingGridRow[] = res.rows.map(r => ({
-          ...r,
-          diffQty: (r.buyQty || 0) - (r.sellQty || 0),
-        }));
-        this.rows = rows;
+        this.rows = res.rows;
         this.applyGrouping();
       });
   }
@@ -280,15 +248,16 @@ export class StandingComponent implements OnInit {
     const result: any[] = [];
     Object.entries(groups).forEach(([val, groupRows]) => {
       const header: any = { isGroupHeader: true };
-      const displayField = key === 'tradeDate' ? 'login' : 'tradeDate';
+      const displayField =
+        key === 'tradeDate' ? 'login' : key === 'login' ? 'symbol' : 'login';
       header[displayField] = val;
       result.push(header);
       groupRows.forEach(r => result.push(r));
       const total: any = { isGroupTotal: true };
-      total[displayField] = `Total: ${val}`;
       total.buyQty = groupRows.reduce((s, r) => s + (r.buyQty || 0), 0);
       total.sellQty = groupRows.reduce((s, r) => s + (r.sellQty || 0), 0);
-      total.diffQty = total.buyQty - total.sellQty;
+      const diff = total.buyQty - total.sellQty;
+      total[displayField] = `Total: ${val} (Diff: ${diff.toFixed(2)})`;
       result.push(total);
     });
     return result;
