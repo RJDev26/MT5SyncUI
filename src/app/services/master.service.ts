@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import {
+  ClientMasterRequest,
+  LoginClientInfo,
+  LoginOption,
+} from './master.models';
 
 export interface MasterItem {
   id: number;
@@ -53,5 +58,62 @@ export class MasterService {
       .set('id', id);
     return this.http.delete(environment.apiBaseUrl + 'api/Master', { params });
   }
+
+  getLogins(): Observable<LoginOption[]> {
+    return this.http.get<LoginOption[]>(
+      environment.apiBaseUrl + 'api/Master/logins'
+    );
+  }
+
+  getExchanges(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/exchanges'
+    );
+  }
+
+  getCurrencies(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/currencies'
+    );
+  }
+
+  getSymbols(): Observable<MasterItem[]> {
+    return this.http.get<MasterItem[]>(
+      environment.apiBaseUrl + 'api/Master/symbols'
+    );
+  }
+
+  getLoginsWithClientInfo(
+    login: number | null,
+    onlyWithClientRecord: boolean
+  ): Observable<LoginClientInfo[]> {
+    let params = new HttpParams().set(
+      'onlyWithClientRecord',
+      String(onlyWithClientRecord)
+    );
+    if (login !== null) {
+      params = params.set('login', String(login));
+    }
+    return this.http.get<LoginClientInfo[]>(
+      environment.apiBaseUrl + 'api/Master/logins-with-client-info',
+      { params }
+    );
+  }
+
+  saveClientMaster(req: ClientMasterRequest): Observable<any> {
+    return this.http.post(
+      environment.apiBaseUrl + 'api/Master/client-master',
+      req
+    );
+  }
+
+  deleteClientMaster(id: number): Observable<any> {
+    const params = new HttpParams().set('id', id);
+    return this.http.delete(
+      environment.apiBaseUrl + 'api/Master/client-master',
+      { params }
+    );
+  }
 }
 
+export { ClientMasterRequest, LoginClientInfo, LoginOption } from './master.models';

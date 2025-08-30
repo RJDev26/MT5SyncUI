@@ -1,0 +1,55 @@
+<mat-toolbar class="toolbar">
+  <div class="left">
+    <mat-form-field appearance="outline">
+      <mat-label>Login</mat-label>
+      <mat-select
+        [(ngModel)]="selectedLogin"
+        (openedChange)="onLoginDropdownOpen($event)"
+      >
+        <mat-option class="search-option" disabled>
+          <mat-form-field
+            appearance="outline"
+            class="login-search-field"
+            (click)="$event.stopPropagation()"
+          >
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              #loginSearch
+              placeholder="Search logins"
+              autocomplete="off"
+              [ngModel]="loginFilter"
+              (ngModelChange)="filterLogins($event)"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+              (keyup)="$event.stopPropagation()"
+            />
+          </mat-form-field>
+        </mat-option>
+        <mat-option [value]="null">-- Clear Selection --</mat-option>
+        <mat-option *ngFor="let l of filteredLogins" [value]="l.login">
+          {{ l.login }} - {{ l.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-checkbox [(ngModel)]="showUpdated">Show Updated Logins</mat-checkbox>
+    <button mat-flat-button color="accent" (click)="show()">Show</button>
+  </div>
+  <div class="right">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput (input)="onFilterTextBoxChanged($event)" />
+    </mat-form-field>
+    <button mat-icon-button title="Export CSV" (click)="exportCsv()">
+      <mat-icon>table_view</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+<div class="grid-wrapper">
+  <ag-grid-angular
+    class="ag-theme-alpine full-grid"
+    [gridOptions]="gridOptions"
+    (gridReady)="onGridReady($event)"
+    (cellClicked)="onCellClicked($event)"
+  ></ag-grid-angular>
+</div>
