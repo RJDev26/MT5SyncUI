@@ -56,31 +56,12 @@ export class StandingComponent implements OnInit {
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
-  groupBy: 'date' | 'login' | 'symbol' = 'date';
+  groupBy: 'login' | 'symbol' = 'login';
   private rows: StandingGridRow[] = [];
 
   groupColSpan(params: any): number {
     return params.data?.isGroupHeader ? this.columnDefs.length : 1;
   }
-
-  dateColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'login', headerName: 'Login', colSpan: p => this.groupColSpan(p) },
-    { field: 'symbol', headerName: 'Symbol' },
-    {
-      field: 'buyQty',
-      headerName: 'Buy Qty',
-      type: 'numericColumn',
-      valueFormatter: this.formatQty,
-      cellClass: ['buy-cell', 'ag-right-aligned-cell'],
-    },
-    {
-      field: 'sellQty',
-      headerName: 'Sell Qty',
-      type: 'numericColumn',
-      valueFormatter: this.formatQty,
-      cellClass: ['sell-cell', 'ag-right-aligned-cell'],
-    },
-  ];
 
   loginColumnDefs: ColDef<StandingGridRow>[] = [
     { field: 'symbol', headerName: 'Symbol', colSpan: p => this.groupColSpan(p) },
@@ -101,16 +82,7 @@ export class StandingComponent implements OnInit {
   ];
 
   symbolColumnDefs: ColDef<StandingGridRow>[] = [
-    {
-      field: 'tradeDate',
-      headerName: 'Date',
-      colSpan: p => this.groupColSpan(p),
-      valueFormatter: p =>
-        p.data?.isGroupHeader || p.data?.isGroupTotal
-          ? p.value
-          : new Date(p.value).toLocaleDateString('en-GB'),
-    },
-    { field: 'login', headerName: 'Login' },
+    { field: 'login', headerName: 'Login', colSpan: p => this.groupColSpan(p) },
     {
       field: 'buyQty',
       headerName: 'Buy Qty',
@@ -127,7 +99,7 @@ export class StandingComponent implements OnInit {
     },
   ];
 
-  columnDefs: ColDef<StandingGridRow>[] = [...this.dateColumnDefs];
+  columnDefs: ColDef<StandingGridRow>[] = [...this.loginColumnDefs];
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
@@ -215,11 +187,7 @@ export class StandingComponent implements OnInit {
 
   private updateColumnDefs() {
     this.columnDefs =
-      this.groupBy === 'date'
-        ? this.dateColumnDefs
-        : this.groupBy === 'login'
-        ? this.loginColumnDefs
-        : this.symbolColumnDefs;
+      this.groupBy === 'login' ? this.loginColumnDefs : this.symbolColumnDefs;
     if (this.gridApi) {
       this.gridApi.setGridOption('columnDefs', this.columnDefs);
       setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
@@ -227,8 +195,7 @@ export class StandingComponent implements OnInit {
   }
 
   private applyGrouping() {
-    const keyField = this.groupBy === 'date' ? 'tradeDate' : this.groupBy;
-    const grouped = this.groupByKey(this.rows, keyField as any);
+    const grouped = this.groupByKey(this.rows, this.groupBy);
     if (this.gridApi) {
       this.gridApi.setGridOption('rowData', grouped);
     } else {
@@ -236,20 +203,17 @@ export class StandingComponent implements OnInit {
     }
   }
 
-  private groupByKey(rows: StandingGridRow[], key: 'tradeDate' | 'login' | 'symbol'): any[] {
+  private groupByKey(rows: StandingGridRow[], key: 'login' | 'symbol'): any[] {
     const groups: Record<string, StandingGridRow[]> = {};
     rows.forEach(r => {
-      const val = key === 'tradeDate'
-        ? new Date(r.tradeDate).toLocaleDateString('en-GB')
-        : String((r as any)[key] ?? '');
+      const val = String((r as any)[key] ?? '');
       groups[val] = groups[val] || [];
       groups[val].push(r);
     });
     const result: any[] = [];
     Object.entries(groups).forEach(([val, groupRows]) => {
       const header: any = { isGroupHeader: true };
-      const displayField =
-        key === 'tradeDate' ? 'login' : key === 'login' ? 'symbol' : 'login';
+      const displayField = key === 'login' ? 'symbol' : 'login';
       header[displayField] = val;
       result.push(header);
       groupRows.forEach(r => result.push(r));
