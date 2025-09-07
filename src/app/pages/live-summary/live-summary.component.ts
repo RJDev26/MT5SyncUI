@@ -119,7 +119,22 @@ export class LiveSummaryComponent implements OnInit {
     this.deals
       .getLiveSummary(from, to, this.managerId ?? undefined)
       .subscribe(res => {
-        let rows = res.rows;
+        let rows = res.rows.map(r => ({
+          ...r,
+          openQty: Number(r.openQty),
+          openRate: Number(r.openRate),
+          openAmt: Number(r.openAmt),
+          buyQty: Number(r.buyQty),
+          buyAmt: Number(r.buyAmt),
+          sellQty: Number(r.sellQty),
+          sellAmt: Number(r.sellAmt),
+          commission: Number(r.commission),
+          closeQty: Number(r.closeQty),
+          closeRate: Number(r.closeRate),
+          closeAmt: Number(r.closeAmt),
+          grossMTM: Number(r.grossMTM),
+          netAmt: Number(r.netAmt),
+        }));
         if (this.groupMode === 'symbol') {
           rows = this.groupBySymbol(rows);
           this.gridApi.setGridOption('columnDefs', this.symbolColumnDefs);
@@ -166,17 +181,17 @@ export class LiveSummaryComponent implements OnInit {
         netAmt: 0,
       };
       list.forEach(r => {
-        agg.openQty += r.openQty;
-        agg.openAmt += r.openAmt;
-        agg.buyQty += r.buyQty;
-        agg.buyAmt += r.buyAmt;
-        agg.sellQty += r.sellQty;
-        agg.sellAmt += r.sellAmt;
-        agg.commission += r.commission;
-        agg.closeQty += r.closeQty;
-        agg.closeAmt += r.closeAmt;
-        agg.grossMTM += r.grossMTM;
-        agg.netAmt += r.netAmt;
+        agg.openQty += Number(r.openQty);
+        agg.openAmt += Number(r.openAmt);
+        agg.buyQty += Number(r.buyQty);
+        agg.buyAmt += Number(r.buyAmt);
+        agg.sellQty += Number(r.sellQty);
+        agg.sellAmt += Number(r.sellAmt);
+        agg.commission += Number(r.commission);
+        agg.closeQty += Number(r.closeQty);
+        agg.closeAmt += Number(r.closeAmt);
+        agg.grossMTM += Number(r.grossMTM);
+        agg.netAmt += Number(r.netAmt);
       });
       agg.openRate = agg.openQty ? agg.openAmt / agg.openQty : 0;
       agg.closeRate = agg.closeQty ? agg.closeAmt / agg.closeQty : 0;
@@ -186,7 +201,7 @@ export class LiveSummaryComponent implements OnInit {
   }
 
   formatNumber(value: any): string {
-    const num = parseFloat(value);
+    const num = Number(value);
     return isNaN(num) ? '0.00' : num.toFixed(2);
   }
 }
