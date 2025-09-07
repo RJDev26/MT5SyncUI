@@ -61,6 +61,24 @@ export interface StandingRow {
   sellQty: number;
 }
 
+export interface LiveSummaryRow {
+  login?: number;
+  symbol: string;
+  openQty: number;
+  openRate: number;
+  openAmt: number;
+  buyQty: number;
+  buyAmt: number;
+  sellQty: number;
+  sellAmt: number;
+  commission: number;
+  closeQty: number;
+  closeRate: number;
+  closeAmt: number;
+  grossMTM: number;
+  netAmt: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DealsService {
   constructor(private http: HttpClient) {}
@@ -115,6 +133,21 @@ export class DealsService {
     }
     return this.http.get<{ rows: StandingRow[] }>(
       environment.apiBaseUrl + 'api/Deals/standing',
+      { params }
+    );
+  }
+
+  getLiveSummary(
+    from: string,
+    to: string,
+    managerId?: number
+  ): Observable<{ rows: LiveSummaryRow[]; rowCount: number }> {
+    let params = new HttpParams().set('from', from).set('to', to);
+    if (managerId != null) {
+      params = params.set('managerId', String(managerId));
+    }
+    return this.http.get<{ rows: LiveSummaryRow[]; rowCount: number }>(
+      environment.apiBaseUrl + 'api/Deals/live-summary',
       { params }
     );
   }

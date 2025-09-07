@@ -73,6 +73,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Standing' }
       },
       {
+        path: 'live-summary',
+        loadComponent: () => import('./live-summary/live-summary.component').then(c => c.LiveSummaryComponent),
+        data: { breadcrumb: 'Live Summary' }
+      },
+      {
         path: 'manager-master',
         loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
         data: { breadcrumb: 'Manager Master' }
