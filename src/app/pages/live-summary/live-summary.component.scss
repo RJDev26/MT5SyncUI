@@ -43,3 +43,11 @@
   width: 100%;
   height: 100%;
 }
+
+:host ::ng-deep .positive {
+  color: #008000;
+}
+
+:host ::ng-deep .negative {
+  color: #ff0000;
+}

@@ -26,6 +26,7 @@ import autoTable from 'jspdf-autotable';
 interface StandingGridRow extends StandingRow {
   isGroupHeader?: boolean;
   isGroupTotal?: boolean;
+  netQty?: number;
 }
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -78,6 +79,13 @@ export class StandingComponent implements OnInit {
       type: 'numericColumn',
       valueFormatter: this.formatQty,
       cellClass: ['sell-cell', 'ag-right-aligned-cell'],
+    },
+    {
+      field: 'netQty',
+      headerName: 'Net Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: ['ag-right-aligned-cell'],
     },
   ];
 
@@ -141,7 +149,10 @@ export class StandingComponent implements OnInit {
     this.deals
       .getStanding(dateStr, this.selectedLogin, this.selectedSymbol)
       .subscribe(res => {
-        this.rows = res.rows;
+        this.rows = res.rows.map(r => ({
+          ...r,
+          netQty: (r.buyQty || 0) - (r.sellQty || 0),
+        }));
         this.applyGrouping();
       });
   }
@@ -221,7 +232,11 @@ export class StandingComponent implements OnInit {
       total.buyQty = groupRows.reduce((s, r) => s + (r.buyQty || 0), 0);
       total.sellQty = groupRows.reduce((s, r) => s + (r.sellQty || 0), 0);
       const diff = total.buyQty - total.sellQty;
-      total[displayField] = `Total: ${val} (Diff: ${diff.toFixed(2)})`;
+      total.netQty = diff;
+      total[displayField] =
+        key === 'login'
+          ? `Total: ${val}`
+          : `Total: ${val} (Diff: ${diff.toFixed(2)})`;
       result.push(total);
     });
     return result;

@@ -63,43 +63,46 @@ export class LiveSummaryComponent implements OnInit {
     },
     columnDefs: [],
     rowData: [],
+    pagination: true,
+    paginationPageSize: 100,
+    paginationPageSizeSelector: [50, 100, 200],
   };
 
   private gridApi!: GridApi<LiveSummaryRow>;
 
   symbolColumnDefs: ColDef[] = [
     { field: 'symbol', headerName: 'Symbol' },
-    { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'grossMTM', headerName: 'Gross MTM', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'netAmt', headerName: 'Net Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
+    { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'grossMTM', headerName: 'Gross MTM', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'netAmt', headerName: 'Net Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
   ];
 
   loginColumnDefs: ColDef[] = [
     { field: 'login', headerName: 'Login' },
     { field: 'symbol', headerName: 'Symbol' },
-    { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'grossMTM', headerName: 'Gross MTM', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
-    { field: 'netAmt', headerName: 'Net Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellStyle: { textAlign: 'right' } },
+    { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'grossMTM', headerName: 'Gross MTM', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'netAmt', headerName: 'Net Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
   ];
 
   constructor(private deals: DealsService, private master: MasterService) {}
@@ -203,6 +206,11 @@ export class LiveSummaryComponent implements OnInit {
   formatNumber(value: any): string {
     const num = Number(value);
     return isNaN(num) ? '0.00' : num.toFixed(2);
+  }
+
+  numericCellClass(params: any): string[] {
+    const val = Number(params.value);
+    return ['ag-right-aligned-cell', val < 0 ? 'negative' : val > 0 ? 'positive' : ''];
   }
 }
 
