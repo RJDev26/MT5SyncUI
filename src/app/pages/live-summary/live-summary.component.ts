@@ -119,33 +119,42 @@ export class LiveSummaryComponent implements OnInit {
   show() {
     const from = format(this.fromDate, 'yyyy-MM-dd');
     const to = format(this.toDate, 'yyyy-MM-dd');
+    this.gridApi.setGridOption('loading', true);
     this.deals
       .getLiveSummary(from, to, this.managerId ?? undefined)
-      .subscribe(res => {
-        let rows = res.rows.map(r => ({
-          ...r,
-          openQty: Number(r.openQty),
-          openRate: Number(r.openRate),
-          openAmt: Number(r.openAmt),
-          buyQty: Number(r.buyQty),
-          buyAmt: Number(r.buyAmt),
-          sellQty: Number(r.sellQty),
-          sellAmt: Number(r.sellAmt),
-          commission: Number(r.commission),
-          closeQty: Number(r.closeQty),
-          closeRate: Number(r.closeRate),
-          closeAmt: Number(r.closeAmt),
-          grossMTM: Number(r.grossMTM),
-          netAmt: Number(r.netAmt),
-        }));
-        if (this.groupMode === 'symbol') {
-          rows = this.groupBySymbol(rows);
-          this.gridApi.setGridOption('columnDefs', this.symbolColumnDefs);
-        } else {
-          this.gridApi.setGridOption('columnDefs', this.loginColumnDefs);
-        }
-        this.gridApi.setGridOption('rowData', rows);
-        this.gridApi.sizeColumnsToFit();
+      .subscribe({
+        next: res => {
+          let rows = res.rows.map(r => ({
+            ...r,
+            openQty: Number(r.openQty),
+            openRate: Number(r.openRate),
+            openAmt: Number(r.openAmt),
+            buyQty: Number(r.buyQty),
+            buyAmt: Number(r.buyAmt),
+            sellQty: Number(r.sellQty),
+            sellAmt: Number(r.sellAmt),
+            commission: Number(r.commission),
+            closeQty: Number(r.closeQty),
+            closeRate: Number(r.closeRate),
+            closeAmt: Number(r.closeAmt),
+            grossMTM: Number(r.grossMTM),
+            netAmt: Number(r.netAmt),
+          }));
+          if (this.groupMode === 'symbol') {
+            rows = this.groupBySymbol(rows);
+            this.gridApi.setGridOption('columnDefs', this.symbolColumnDefs);
+          } else {
+            this.gridApi.setGridOption('columnDefs', this.loginColumnDefs);
+          }
+          this.gridApi.setGridOption('rowData', rows);
+          this.gridApi.sizeColumnsToFit();
+        },
+        error: () => {
+          this.gridApi.setGridOption('loading', false);
+        },
+        complete: () => {
+          this.gridApi.setGridOption('loading', false);
+        },
       });
   }
 
