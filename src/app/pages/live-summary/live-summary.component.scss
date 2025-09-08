@@ -32,6 +32,11 @@
     align-items: center;
     gap: 0.5rem;
     margin-left: auto;
+
+    button.mat-icon-button {
+      background-color: #000;
+      color: #fff;
+    }
   }
 }
 
