@@ -4,11 +4,12 @@ export interface ClientMasterRequest {
   login: number;
   managerId: number;
   brokerId: number;
-  exId: number;
+  exIds: number[];
   brokShare: number;
   managerShare: number;
   currencyId: number;
   commission: number;
+  reverseStanding?: string;
 }
 
 export interface LoginClientInfo {

@@ -69,11 +69,11 @@ export class ClientMasterComponent implements OnInit {
         width: 100,
         minWidth: 100
       },
-      { field: 'login', headerName: 'Login' },
-      { field: 'userName', headerName: 'User Name' },
-      { field: 'managerName', headerName: 'Manager' },
-      { field: 'brokerName', headerName: 'Broker' },
-      { field: 'exchange', headerName: 'Exchange' },
+      { field: 'login', headerName: 'Login', flex: 1 },
+      { field: 'userName', headerName: 'User Name', flex: 1 },
+      { field: 'managerName', headerName: 'Manager', flex: 1 },
+      { field: 'brokerName', headerName: 'Broker', flex: 1 },
+      { field: 'exchange', headerName: 'Exchange', flex: 1 },
       {
         field: 'brokShare',
         headerName: 'Brok Share',
@@ -88,7 +88,7 @@ export class ClientMasterComponent implements OnInit {
         valueFormatter: params => this.formatNumber(params.value),
         cellStyle: { textAlign: 'right' }
       },
-      { field: 'currency', headerName: 'Currency' },
+      { field: 'currency', headerName: 'Currency', flex: 1 },
       {
         field: 'commission',
         headerName: 'Commission',
@@ -96,13 +96,13 @@ export class ClientMasterComponent implements OnInit {
         valueFormatter: params => this.formatNumber(params.value),
         cellStyle: { textAlign: 'right' }
       },
-      { field: 'createdDate', headerName: 'Created Date' }
+      { field: 'createdDate', headerName: 'Created Date', flex: 1 }
     ],
     defaultColDef: {
       resizable: true,
       sortable: true,
       filter: true,
-      minWidth: 100
+      minWidth: 80,
     },
     rowData: [] as LoginClientInfo[]
   };
@@ -161,11 +161,12 @@ export class ClientMasterComponent implements OnInit {
         login,
         managerId: managerId ?? 0,
         brokerId: brokerId ?? 0,
-        exId: exId ?? 0,
+        exIds: exId != null ? [exId] : [],
         brokShare: brokShare ?? 0,
         managerShare: managerShare ?? 0,
         currencyId,
-        commission: commission ?? 0
+        commission: commission ?? 0,
+        reverseStanding: ''
       });
     }
     if (target.classList.contains('delete')) {
@@ -271,7 +272,7 @@ export class ClientMasterComponent implements OnInit {
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Exchange</mat-label>
-          <mat-select [(ngModel)]="data.exId">
+          <mat-select [(ngModel)]="data.exIds" multiple>
             <mat-option *ngFor="let e of exchanges" [value]="e.id">
               {{ e.id }} - {{ e.name }}
             </mat-option>
@@ -317,6 +318,10 @@ export class ClientMasterComponent implements OnInit {
             {{ c.id }} - {{ c.name }}
           </mat-option>
         </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Reverse Standing</mat-label>
+        <input matInput [(ngModel)]="data.reverseStanding" />
       </mat-form-field>
     </div>
     <div mat-dialog-actions align="end">

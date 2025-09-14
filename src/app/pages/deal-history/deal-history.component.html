@@ -14,9 +14,32 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Login</mat-label>
-      <mat-select [(ngModel)]="login">
-        <mat-option [value]="null">All</mat-option>
-        <mat-option *ngFor="let l of logins" [value]="l.login">
+      <mat-select
+        [(ngModel)]="login"
+        (openedChange)="onLoginDropdownOpen($event)"
+      >
+        <mat-option class="search-option" disabled>
+          <mat-form-field
+            appearance="outline"
+            class="login-search-field"
+            (click)="$event.stopPropagation()"
+          >
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              #loginSearch
+              placeholder="Search logins"
+              autocomplete="off"
+              [ngModel]="loginFilter"
+              (ngModelChange)="filterLogins($event)"
+              (click)="$event.stopPropagation()"
+              (keydown)="$event.stopPropagation()"
+              (keyup)="$event.stopPropagation()"
+            />
+          </mat-form-field>
+        </mat-option>
+        <mat-option [value]="null">-- Clear Selection --</mat-option>
+        <mat-option *ngFor="let l of filteredLogins" [value]="l.login">
           {{ l.login }} - {{ l.name }}
         </mat-option>
       </mat-select>

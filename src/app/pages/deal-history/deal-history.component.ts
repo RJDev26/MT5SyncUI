@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -48,6 +48,9 @@ export class DealHistoryComponent implements OnInit {
   toDate = new Date();
   login: number | null = null;
   logins: LoginOption[] = [];
+  filteredLogins: LoginOption[] = [];
+  loginFilter = '';
+  @ViewChild('loginSearch') loginSearch!: ElementRef<HTMLInputElement>;
   rowCount = 0;
 
   gridOptions: GridOptions<DealHistoryRow> = {
@@ -61,7 +64,11 @@ export class DealHistoryComponent implements OnInit {
     },
     columnDefs: [
       { field: 'login', headerName: 'Login' },
-      { field: 'time', headerName: 'Time' },
+      {
+        field: 'time',
+        headerName: 'Time',
+        valueFormatter: p => (p.value ? format(new Date(p.value), 'yyyy-MM-dd HH:mm:ss') : '')
+      },
       { field: 'deal', headerName: 'Deal', type: 'numericColumn', cellClass: 'ag-right-aligned-cell' },
       { field: 'symbol', headerName: 'Symbol' },
       { field: 'contype', headerName: 'Con Type' },
@@ -85,7 +92,10 @@ export class DealHistoryComponent implements OnInit {
   constructor(private deals: DealsService, private master: MasterService) {}
 
   ngOnInit(): void {
-    this.master.getLogins().subscribe(res => (this.logins = res));
+    this.master.getLogins().subscribe(res => {
+      this.logins = res;
+      this.filteredLogins = res;
+    });
   }
 
   onGridReady(event: GridReadyEvent<DealHistoryRow>) {
@@ -114,6 +124,23 @@ export class DealHistoryComponent implements OnInit {
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  onLoginDropdownOpen(open: boolean) {
+    if (open) {
+      this.loginFilter = '';
+      this.filteredLogins = this.logins.slice();
+      setTimeout(() => this.loginSearch?.nativeElement.focus());
+    }
+  }
+
+  filterLogins(value: string) {
+    this.loginFilter = value;
+    const term = value.toLowerCase();
+    this.filteredLogins = this.logins.filter(
+      l =>
+        l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
+    );
   }
 
   exportCsv() {
