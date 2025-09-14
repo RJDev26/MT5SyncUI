@@ -59,7 +59,7 @@ export class StandingComponent implements OnInit {
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
-  groupBy: 'summary' | 'login' | 'symbol' = 'login';
+  groupBy: 'summary' | 'login' | 'symbol' = 'summary';
   private rows: StandingGridRow[] = [];
 
   groupColSpan(params: any): number {
@@ -134,7 +134,7 @@ export class StandingComponent implements OnInit {
     },
   ];
 
-  columnDefs: ColDef<StandingGridRow>[] = [...this.loginColumnDefs];
+  columnDefs: ColDef<StandingGridRow>[] = [...this.summaryColumnDefs];
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
