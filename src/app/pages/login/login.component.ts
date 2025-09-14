@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Settings, SettingsService } from '@services/settings.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
@@ -30,15 +30,13 @@ import { AuthenticationService } from '@services/authentication.service';
   export class LoginComponent {
     public form: FormGroup;
     public settings: Settings;
-    private returnUrl: any;
     public hide = true;
-  constructor(public settingsService: SettingsService, public fb: FormBuilder, public router: Router, private authService: AuthenticationService, private route: ActivatedRoute){
-    this.settings = this.settingsService.settings; 
+  constructor(public settingsService: SettingsService, public fb: FormBuilder, public router: Router, private authService: AuthenticationService){
+    this.settings = this.settingsService.settings;
     this.form = this.fb.group({
-      'name': [null, Validators.compose([Validators.required])],
-      'password': [null, Validators.compose([Validators.required, Validators.minLength(6)])] 
+      'userName': [null, Validators.compose([Validators.required])],
+      'password': [null, Validators.compose([Validators.required, Validators.minLength(6)])]
     });
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   public onSubmit(values: Object): void {
@@ -53,7 +51,7 @@ import { AuthenticationService } from '@services/authentication.service';
             localStorage.setItem("userData", JSON.stringify(res));
             this.authService.sendAuthStateChangeNotification(res.isAuthSuccessful);
             this.authService.saveUserData(res);
-            this.router.navigate([this.returnUrl]);
+            this.router.navigate(['/deals-live']);
           },
           error: (err: any) => {
             console.log('err', err);
