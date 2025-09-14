@@ -15,12 +15,12 @@
                         <!-- <span class="box-content-header">member login</span>   -->
                         <label>User Name</label>
                         <mat-form-field class="w-100" appearance="outline">
-                            <input matInput placeholder="Name" formControlName="name">
+                            <input matInput placeholder="User Name" formControlName="userName">
                             <mat-error>
-                                @if (form.controls.name.errors?.required) {
-                                    Name is required
+                                @if (form.controls.userName.errors?.required) {
+                                    User Name is required
                                 }
-                            </mat-error> 
+                            </mat-error>
                         </mat-form-field>
                         <label class="mt-2">Password</label>
                         <mat-form-field class="w-100" appearance="outline">
