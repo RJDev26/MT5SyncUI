@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  mat-form-field {
+    width: 200px;
+  }
+
+  .group-by {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-left: 1rem;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .filter-field {
+    width: 250px;
+  }
+}
+
+:host .grid-flex {
+  width: 100%;
+}
+
+:host ::ng-deep .ag-theme-alpine {
+  width: 100%;
+  height: auto;
+}
+
+:host ::ng-deep .group-header-row {
+  background-color: #d0ebff;
+  font-weight: bold;
+}
+
+:host ::ng-deep .group-total-row {
+  background-color: #fffbe6;
+  font-weight: bold;
+  border-top: 2px solid #ccc;
+}
+
+:host ::ng-deep .buy-cell {
+  color: #1976d2;
+}
+
+:host ::ng-deep .sell-cell {
+  color: #d32f2f;
+}
+

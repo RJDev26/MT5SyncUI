@@ -8,7 +8,8 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./dashboard/dashboard.component').then(c => c.DashboardComponent),
+        loadComponent: () =>
+          import('./dashboard/dashboard.component').then(c => c.DashboardComponent),
         data: { breadcrumb: 'Dashboard' }
       },
       {
@@ -67,6 +68,16 @@ export const routes: Routes = [
         data: { breadcrumb: 'Jobbing Deals' }
       },
       {
+        path: 'standing',
+        loadComponent: () => import('./standing/standing.component').then(c => c.StandingComponent),
+        data: { breadcrumb: 'Standing' }
+      },
+      {
+        path: 'live-summary',
+        loadComponent: () => import('./live-summary/live-summary.component').then(c => c.LiveSummaryComponent),
+        data: { breadcrumb: 'Live Summary' }
+      },
+      {
         path: 'manager-master',
         loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
         data: { breadcrumb: 'Manager Master' }
@@ -75,6 +86,18 @@ export const routes: Routes = [
         path: 'broker-master',
         loadComponent: () => import('./broker-master/broker-master.component').then(c => c.BrokerMasterComponent),
         data: { breadcrumb: 'Broker Master' }
+      },
+
+      {
+        path: 'client-master',
+        loadComponent: () => import('./client-master/client-master.component').then(c => c.ClientMasterComponent),
+        data: { breadcrumb: 'Client Master' }
+      },
+
+      {
+        path: 'deal-history',
+        loadComponent: () => import('./deal-history/deal-history.component').then(c => c.DealHistoryComponent),
+        data: { breadcrumb: 'Deal History' }
       },
 
 

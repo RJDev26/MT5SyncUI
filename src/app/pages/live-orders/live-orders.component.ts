@@ -77,7 +77,7 @@ export class LiveOrdersComponent implements OnDestroy {
       },
     },
     // Match row height with the deals-live grid for visual consistency
-    rowHeight: 26,
+    rowHeight: 34,
     rowSelection: 'single',
     animateRows: true,
     getRowId: p => String(p.data.order),
