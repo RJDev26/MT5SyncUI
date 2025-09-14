@@ -186,7 +186,7 @@ export class StandingComponent implements OnInit {
 
   onGroupChange() {
     this.updateColumnDefs();
-    this.onShow();
+    this.applyGrouping();
   }
 
   onFilterTextBoxChanged(event: Event) {
