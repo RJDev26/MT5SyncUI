@@ -1,4 +1,4 @@
-<mat-toolbar class="toolbar">
+<div class="toolbar">
   <div class="left">
     <mat-form-field appearance="outline">
       <mat-label>From</mat-label>
@@ -12,7 +12,7 @@
       <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
       <mat-datepicker #toPicker></mat-datepicker>
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" class="drop-down">
       <mat-label>Login</mat-label>
       <mat-select
         [(ngModel)]="login"
@@ -44,7 +44,7 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <button mat-flat-button color="primary" (click)="show()">Show</button>
+    <button mat-raised-button color="primary" (click)="show()">Show</button>
   </div>
   <div class="right">
     <span>Rows: {{ rowCount }}</span>
@@ -56,7 +56,7 @@
       <mat-icon>table_view</mat-icon>
     </button>
   </div>
-</mat-toolbar>
+</div>
 <div class="grid-wrapper">
   <ag-grid-angular
     class="ag-theme-alpine full-grid"

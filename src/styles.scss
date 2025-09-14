@@ -52,7 +52,7 @@ html, body {
     color: #dc3545;
 }
 #main-content {
-    padding: 1rem;
+    padding: 0.75rem 1rem 1rem 1rem;
 }
 .filter-control {
     gap: 1rem;
@@ -112,6 +112,22 @@ html, body {
         }
     }
 }
+
+.sidenav-content-inner {
+    .client-master, .drop-down {
+        .mat-mdc-text-field-wrapper {
+            .mat-mdc-form-field-flex {
+                .mat-mdc-floating-label {
+                    top: 0.75rem;
+                    &.mdc-floating-label--float-above {
+                        top: 1.875rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 .bill-summary {
     .w-100 {
@@ -219,4 +235,25 @@ input:-webkit-autofill:focus {
 
 .mdc-text-field--no-label:not(.mdc-text-field--textarea) .mat-mdc-form-field-input-control.mdc-text-field__input, .mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
     color: #000;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    .mat-mdc-form-field-bottom-align {
+        &::before {
+            display: none;
+        }
+    }
+    .mat-mdc-form-field-hint-wrapper, .mat-mdc-form-field-error-wrapper {
+        position: relative;
+        padding: 0;
+    }
+    .mat-mdc-form-field-has-icon-prefix {
+        .mat-mdc-text-field-wrapper {
+            --mat-mdc-form-field-label-offset-x: 0;
+        }
+    }
 }

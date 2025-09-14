@@ -30,7 +30,6 @@
   .right {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     margin-left: auto;
   }
 
@@ -55,4 +54,8 @@
 
 :host ::ng-deep .negative {
   color: #ff0000;
+}
+
+.mat-mdc-raised-button {
+  height: 2.75rem;
 }

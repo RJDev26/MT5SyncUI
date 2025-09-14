@@ -27,8 +27,8 @@
   </mat-form-field>
 
   <mat-radio-group [(ngModel)]="groupBy" (change)="onGroupChange()" class="group-by">
-    <mat-radio-button value="login">Group By Login</mat-radio-button>
-    <mat-radio-button value="symbol">Group By Symbol</mat-radio-button>
+    <mat-radio-button color="primary" value="login">Group By Login</mat-radio-button>
+    <mat-radio-button color="primary" value="symbol">Group By Symbol</mat-radio-button>
   </mat-radio-group>
 
   <button mat-raised-button color="primary" (click)="onShow()">Show</button>

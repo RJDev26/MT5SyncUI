@@ -1,4 +1,4 @@
-<mat-toolbar class="toolbar">
+<div class="toolbar">
   <div class="left">
     <mat-form-field appearance="outline">
       <mat-label>From</mat-label>
@@ -19,10 +19,10 @@
       </mat-select>
     </mat-form-field>
     <mat-radio-group [(ngModel)]="groupMode" class="mode-group">
-      <mat-radio-button value="symbol">Symbol wise</mat-radio-button>
-      <mat-radio-button value="login">Login wise</mat-radio-button>
+      <mat-radio-button color="primary" value="symbol">Symbol wise</mat-radio-button>
+      <mat-radio-button color="primary" value="login">Login wise</mat-radio-button>
     </mat-radio-group>
-    <button mat-flat-button color="primary" (click)="show()">Show</button>
+    <button mat-raised-button color="primary" (click)="show()">Show</button>
   </div>
   <div class="right">
     <mat-form-field appearance="outline">
@@ -33,7 +33,7 @@
       <mat-icon>table_view</mat-icon>
     </button>
   </div>
-</mat-toolbar>
+</div>
 <div class="grid-wrapper">
   <ag-grid-angular
     class="ag-theme-alpine full-grid"

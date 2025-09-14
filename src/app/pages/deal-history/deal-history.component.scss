@@ -8,16 +8,18 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
 
   .left,
   .right {
+    gap: 0.5rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 
     mat-form-field {
       width: 150px;
+      &.drop-down {
+        width: 200px;
+      }
     }
 
     button.mat-icon-button {
@@ -53,3 +55,6 @@
   width: 100%;
 }
 
+.mat-mdc-raised-button {
+  height: 2.75rem;
+}
