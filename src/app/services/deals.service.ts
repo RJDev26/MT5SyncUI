@@ -159,7 +159,7 @@ export class DealsService {
     from: string,
     to: string,
     managerId?: number,
-    option?: 'symbol' | 'login' | 'detail'
+    option?: 'SymbolWise' | 'LoginWise' | 'Detail'
   ): Observable<{ rows: LiveSummaryRow[]; rowCount: number }> {
     let params = new HttpParams().set('from', from).set('to', to);
     if (managerId != null) {

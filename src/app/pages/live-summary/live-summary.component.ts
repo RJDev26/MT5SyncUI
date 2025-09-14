@@ -49,7 +49,7 @@ export class LiveSummaryComponent implements OnInit {
   fromDate = new Date();
   toDate = new Date();
   managerId: number | null = null;
-  groupMode: 'symbol' | 'login' | 'detail' = 'symbol';
+  groupMode: 'SymbolWise' | 'LoginWise' | 'Detail' = 'SymbolWise';
   managers: MasterItem[] = [];
 
   gridOptions: GridOptions<LiveSummaryRow> = {
@@ -146,9 +146,9 @@ export class LiveSummaryComponent implements OnInit {
             grossMTM: Number(r.grossMTM),
             netAmt: Number(r.netAmt),
           }));
-          if (this.groupMode === 'symbol') {
+          if (this.groupMode === 'SymbolWise') {
             this.gridApi.setGridOption('columnDefs', this.symbolColumnDefs);
-          } else if (this.groupMode === 'login') {
+          } else if (this.groupMode === 'LoginWise') {
             this.gridApi.setGridOption('columnDefs', this.loginColumnDefs);
           } else {
             this.gridApi.setGridOption('columnDefs', this.detailColumnDefs);
