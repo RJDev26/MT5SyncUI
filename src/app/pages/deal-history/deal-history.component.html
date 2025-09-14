@@ -1,0 +1,44 @@
+<mat-toolbar class="toolbar">
+  <div class="left">
+    <mat-form-field appearance="outline">
+      <mat-label>From</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate" />
+      <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>To</mat-label>
+      <input matInput [matDatepicker]="toPicker" [(ngModel)]="toDate" />
+      <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Login</mat-label>
+      <mat-select [(ngModel)]="login">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option *ngFor="let l of logins" [value]="l.login">
+          {{ l.login }} - {{ l.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="show()">Show</button>
+  </div>
+  <div class="right">
+    <span>Rows: {{ rowCount }}</span>
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input matInput (input)="onFilterTextBoxChanged($event)" />
+    </mat-form-field>
+    <button mat-icon-button title="Export CSV" (click)="exportCsv()">
+      <mat-icon>table_view</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+<div class="grid-wrapper">
+  <ag-grid-angular
+    class="ag-theme-alpine full-grid"
+    [gridOptions]="gridOptions"
+    (gridReady)="onGridReady($event)"
+  ></ag-grid-angular>
+</div>
+

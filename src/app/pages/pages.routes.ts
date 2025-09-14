@@ -94,7 +94,13 @@ export const routes: Routes = [
         data: { breadcrumb: 'Client Master' }
       },
 
-      
+      {
+        path: 'deal-history',
+        loadComponent: () => import('./deal-history/deal-history.component').then(c => c.DealHistoryComponent),
+        data: { breadcrumb: 'Deal History' }
+      },
+
+
     ]
   }
 ];

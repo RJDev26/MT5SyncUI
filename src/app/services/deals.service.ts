@@ -79,6 +79,22 @@ export interface LiveSummaryRow {
   netAmt: number;
 }
 
+export interface DealHistoryRow {
+  login: number;
+  time: string;
+  deal: number;
+  symbol: string;
+  contype: string;
+  entry: number;
+  qty: number;
+  price: number;
+  volume: number;
+  volumeExt: number;
+  profit: number;
+  commission: number;
+  comment: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DealsService {
   constructor(private http: HttpClient) {}
@@ -148,6 +164,21 @@ export class DealsService {
     }
     return this.http.get<{ rows: LiveSummaryRow[]; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/live-summary',
+      { params }
+    );
+  }
+
+  getDealHistory(
+    from: string,
+    to: string,
+    login?: number
+  ): Observable<{ rows: DealHistoryRow[]; rowCount: number }> {
+    let params = new HttpParams().set('from', from).set('to', to);
+    if (login != null) {
+      params = params.set('login', String(login));
+    }
+    return this.http.get<{ rows: DealHistoryRow[]; rowCount: number }>(
+      environment.apiBaseUrl + 'api/Deals/deal-history',
       { params }
     );
   }
