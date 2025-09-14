@@ -71,10 +71,8 @@ export interface LiveSummaryRow {
   openRate: number;
   openAmt: number;
   buyQty: number;
-  buyAmt: number;
   sellQty: number;
   sellAmt: number;
-  commission: number;
   closeQty: number;
   closeRate: number;
   closeAmt: number;
