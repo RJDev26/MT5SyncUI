@@ -1,0 +1,58 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  mat-form-field {
+    width: 150px;
+  }
+
+  .mode-group {
+    display: flex;
+    flex-direction: row;
+    margin: 0 0.5rem;
+  }
+
+  .left {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  button.mat-icon-button {
+    background-color: #000;
+    color: #fff;
+  }
+}
+
+.grid-wrapper {
+  flex: 1 1 auto;
+}
+
+:host ::ng-deep .full-grid {
+  width: 100%;
+  height: 100%;
+}
+
+:host ::ng-deep .positive {
+  color: #008000;
+}
+
+:host ::ng-deep .negative {
+  color: #ff0000;
+}

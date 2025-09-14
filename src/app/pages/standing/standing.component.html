@@ -1,0 +1,54 @@
+<div class="toolbar">
+  <mat-form-field appearance="outline">
+    <mat-label>As on Date</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Login</mat-label>
+    <mat-select [(ngModel)]="selectedLogin">
+      <mat-option [value]="null">All</mat-option>
+      <mat-option *ngFor="let l of logins" [value]="l.login">
+        {{ l.login }} - {{ l.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Symbol</mat-label>
+    <mat-select [(ngModel)]="selectedSymbol">
+      <mat-option [value]="null">All</mat-option>
+      <mat-option *ngFor="let s of symbols" [value]="s.name">
+        {{ s.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-radio-group [(ngModel)]="groupBy" (change)="onGroupChange()" class="group-by">
+    <mat-radio-button value="login">Group By Login</mat-radio-button>
+    <mat-radio-button value="symbol">Group By Symbol</mat-radio-button>
+  </mat-radio-group>
+
+  <button mat-raised-button color="primary" (click)="onShow()">Show</button>
+
+  <span class="spacer"></span>
+
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Search</mat-label>
+    <input matInput type="text" (input)="onFilterTextBoxChanged($event)" />
+  </mat-form-field>
+  <button mat-icon-button (click)="exportCsv()" matTooltip="Export CSV">
+    <mat-icon>download</mat-icon>
+  </button>
+  <button mat-icon-button (click)="exportPdf()" matTooltip="Export PDF">
+    <mat-icon>picture_as_pdf</mat-icon>
+  </button>
+</div>
+
+<ag-grid-angular
+  class="ag-theme-alpine grid-flex"
+  [gridOptions]="gridOptions"
+  (gridReady)="onGridReady($event)"
+></ag-grid-angular>
