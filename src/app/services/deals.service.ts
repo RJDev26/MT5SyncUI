@@ -66,7 +66,7 @@ export interface StandingRow {
 
 export interface LiveSummaryRow {
   login?: number;
-  symbol: string;
+  symbol?: string;
   openQty: number;
   openRate: number;
   openAmt: number;
@@ -158,11 +158,15 @@ export class DealsService {
   getLiveSummary(
     from: string,
     to: string,
-    managerId?: number
+    managerId?: number,
+    option?: 'symbol' | 'login' | 'detail'
   ): Observable<{ rows: LiveSummaryRow[]; rowCount: number }> {
     let params = new HttpParams().set('from', from).set('to', to);
     if (managerId != null) {
       params = params.set('managerId', String(managerId));
+    }
+    if (option) {
+      params = params.set('option', option);
     }
     return this.http.get<{ rows: LiveSummaryRow[]; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/live-summary',
