@@ -116,21 +116,30 @@ export class StandingComponent implements OnInit {
       headerName: 'Net Qty',
       type: 'numericColumn',
       valueFormatter: this.formatQty,
-      cellClass: ['ag-right-aligned-cell'],
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
     },
     {
       field: 'brokerShare',
       headerName: 'Broker Share',
       type: 'numericColumn',
       valueFormatter: this.formatQty,
-      cellClass: ['ag-right-aligned-cell'],
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
     },
     {
       field: 'managerShare',
       headerName: 'Manager Share',
       type: 'numericColumn',
       valueFormatter: this.formatQty,
-      cellClass: ['ag-right-aligned-cell'],
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
     },
   ];
 
@@ -221,6 +230,13 @@ export class StandingComponent implements OnInit {
       return '';
     }
     return num.toFixed(2);
+  }
+
+  signClass(value?: number): string {
+    if (value == null) {
+      return '';
+    }
+    return value < 0 ? 'negative-cell' : 'positive-cell';
   }
 
   private updateColumnDefs() {

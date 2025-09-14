@@ -59,6 +59,14 @@
   color: #d32f2f;
 }
 
+:host ::ng-deep .positive-cell {
+  color: #2e7d32;
+}
+
+:host ::ng-deep .negative-cell {
+  color: #d32f2f;
+}
+
 .mat-mdc-raised-button {
   height: 2.75rem;
 }
