@@ -27,6 +27,8 @@ interface StandingGridRow extends StandingRow {
   isGroupHeader?: boolean;
   isGroupTotal?: boolean;
   netQty?: number;
+  brokerShare?: number;
+  managerShare?: number;
 }
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -57,7 +59,7 @@ export class StandingComponent implements OnInit {
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
-  groupBy: 'login' | 'symbol' = 'login';
+  groupBy: 'summary' | 'login' | 'symbol' = 'login';
   private rows: StandingGridRow[] = [];
 
   groupColSpan(params: any): number {
@@ -107,6 +109,31 @@ export class StandingComponent implements OnInit {
     },
   ];
 
+  summaryColumnDefs: ColDef<StandingGridRow>[] = [
+    { field: 'symbol', headerName: 'Symbol' },
+    {
+      field: 'netQty',
+      headerName: 'Net Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: ['ag-right-aligned-cell'],
+    },
+    {
+      field: 'brokerShare',
+      headerName: 'Broker Share',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: ['ag-right-aligned-cell'],
+    },
+    {
+      field: 'managerShare',
+      headerName: 'Manager Share',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: ['ag-right-aligned-cell'],
+    },
+  ];
+
   columnDefs: ColDef<StandingGridRow>[] = [...this.loginColumnDefs];
 
   gridOptions: GridOptions<StandingGridRow> = {
@@ -147,11 +174,11 @@ export class StandingComponent implements OnInit {
   onShow() {
     const dateStr = this.selectedDate.toISOString().split('T')[0].replace(/-/g, '/');
     this.deals
-      .getStanding(dateStr, this.selectedLogin, this.selectedSymbol)
+      .getStanding(dateStr, this.selectedLogin, this.selectedSymbol, this.groupBy)
       .subscribe(res => {
         this.rows = res.rows.map(r => ({
           ...r,
-          netQty: (r.buyQty || 0) - (r.sellQty || 0),
+          netQty: (r.netQty ?? (r.buyQty || 0) - (r.sellQty || 0)),
         }));
         this.applyGrouping();
       });
@@ -159,7 +186,7 @@ export class StandingComponent implements OnInit {
 
   onGroupChange() {
     this.updateColumnDefs();
-    this.applyGrouping();
+    this.onShow();
   }
 
   onFilterTextBoxChanged(event: Event) {
@@ -197,8 +224,12 @@ export class StandingComponent implements OnInit {
   }
 
   private updateColumnDefs() {
-    this.columnDefs =
-      this.groupBy === 'login' ? this.loginColumnDefs : this.symbolColumnDefs;
+    if (this.groupBy === 'summary') {
+      this.columnDefs = this.summaryColumnDefs;
+    } else {
+      this.columnDefs =
+        this.groupBy === 'login' ? this.loginColumnDefs : this.symbolColumnDefs;
+    }
     if (this.gridApi) {
       this.gridApi.setGridOption('columnDefs', this.columnDefs);
       setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
@@ -206,6 +237,14 @@ export class StandingComponent implements OnInit {
   }
 
   private applyGrouping() {
+    if (this.groupBy === 'summary') {
+      if (this.gridApi) {
+        this.gridApi.setGridOption('rowData', this.rows);
+      } else {
+        this.gridOptions.rowData = this.rows;
+      }
+      return;
+    }
     const grouped = this.groupByKey(this.rows, this.groupBy);
     if (this.gridApi) {
       this.gridApi.setGridOption('rowData', grouped);
