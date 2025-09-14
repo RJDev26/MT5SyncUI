@@ -53,6 +53,48 @@ export interface JobbingDealRow {
   sellTimeString: string;
 }
 
+export interface StandingRow {
+  tradeDate: string;
+  login: number;
+  symbol: string;
+  buyQty: number;
+  sellQty: number;
+}
+
+export interface LiveSummaryRow {
+  login?: number;
+  symbol: string;
+  openQty: number;
+  openRate: number;
+  openAmt: number;
+  buyQty: number;
+  buyAmt: number;
+  sellQty: number;
+  sellAmt: number;
+  commission: number;
+  closeQty: number;
+  closeRate: number;
+  closeAmt: number;
+  grossMTM: number;
+  netAmt: number;
+}
+
+export interface DealHistoryRow {
+  login: number;
+  time: string;
+  deal: number;
+  symbol: string;
+  contype: string;
+  entry: number;
+  qty: number;
+  price: number;
+  volume: number;
+  volumeExt: number;
+  profit: number;
+  commission: number;
+  comment: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DealsService {
   constructor(private http: HttpClient) {}
@@ -89,6 +131,54 @@ export class DealsService {
       .set('intervalMinutes', intervalMinutes);
     return this.http.get<{ rows: JobbingDealRow[]; maxTime: string | null; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/jobbing-deals',
+      { params }
+    );
+  }
+
+  getStanding(
+    date: string,
+    login?: number | null,
+    symbol?: string | null
+  ): Observable<{ rows: StandingRow[] }> {
+    let params = new HttpParams().set('date', date);
+    if (login != null) {
+      params = params.set('login', String(login));
+    }
+    if (symbol) {
+      params = params.set('symbol', symbol);
+    }
+    return this.http.get<{ rows: StandingRow[] }>(
+      environment.apiBaseUrl + 'api/Deals/standing',
+      { params }
+    );
+  }
+
+  getLiveSummary(
+    from: string,
+    to: string,
+    managerId?: number
+  ): Observable<{ rows: LiveSummaryRow[]; rowCount: number }> {
+    let params = new HttpParams().set('from', from).set('to', to);
+    if (managerId != null) {
+      params = params.set('managerId', String(managerId));
+    }
+    return this.http.get<{ rows: LiveSummaryRow[]; rowCount: number }>(
+      environment.apiBaseUrl + 'api/Deals/live-summary',
+      { params }
+    );
+  }
+
+  getDealHistory(
+    from: string,
+    to: string,
+    login?: number
+  ): Observable<{ rows: DealHistoryRow[]; rowCount: number }> {
+    let params = new HttpParams().set('from', from).set('to', to);
+    if (login != null) {
+      params = params.set('login', String(login));
+    }
+    return this.http.get<{ rows: DealHistoryRow[]; rowCount: number }>(
+      environment.apiBaseUrl + 'api/Deals/deal-history',
       { params }
     );
   }
