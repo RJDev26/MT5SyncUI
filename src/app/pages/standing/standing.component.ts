@@ -27,6 +27,8 @@ interface StandingGridRow extends StandingRow {
   isGroupHeader?: boolean;
   isGroupTotal?: boolean;
   netQty?: number;
+  brokerShare?: number;
+  managerShare?: number;
 }
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -57,7 +59,7 @@ export class StandingComponent implements OnInit {
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
-  groupBy: 'login' | 'symbol' = 'login';
+  groupBy: 'summary' | 'login' | 'symbol' = 'summary';
   private rows: StandingGridRow[] = [];
 
   groupColSpan(params: any): number {
@@ -107,7 +109,41 @@ export class StandingComponent implements OnInit {
     },
   ];
 
-  columnDefs: ColDef<StandingGridRow>[] = [...this.loginColumnDefs];
+  summaryColumnDefs: ColDef<StandingGridRow>[] = [
+    { field: 'symbol', headerName: 'Symbol' },
+    {
+      field: 'netQty',
+      headerName: 'Net Qty',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
+    },
+    {
+      field: 'brokerShare',
+      headerName: 'Broker Share',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
+    },
+    {
+      field: 'managerShare',
+      headerName: 'Manager Share',
+      type: 'numericColumn',
+      valueFormatter: this.formatQty,
+      cellClass: params => [
+        'ag-right-aligned-cell',
+        this.signClass(params.value as number | undefined),
+      ],
+    },
+  ];
+
+  columnDefs: ColDef<StandingGridRow>[] = [...this.summaryColumnDefs];
 
   gridOptions: GridOptions<StandingGridRow> = {
     theme: 'legacy',
@@ -147,11 +183,11 @@ export class StandingComponent implements OnInit {
   onShow() {
     const dateStr = this.selectedDate.toISOString().split('T')[0].replace(/-/g, '/');
     this.deals
-      .getStanding(dateStr, this.selectedLogin, this.selectedSymbol)
+      .getStanding(dateStr, this.selectedLogin, this.selectedSymbol, this.groupBy)
       .subscribe(res => {
         this.rows = res.rows.map(r => ({
           ...r,
-          netQty: (r.buyQty || 0) - (r.sellQty || 0),
+          netQty: (r.netQty ?? (r.buyQty || 0) - (r.sellQty || 0)),
         }));
         this.applyGrouping();
       });
@@ -196,9 +232,20 @@ export class StandingComponent implements OnInit {
     return num.toFixed(2);
   }
 
+  signClass(value?: number): string {
+    if (value == null) {
+      return '';
+    }
+    return value < 0 ? 'negative-cell' : 'positive-cell';
+  }
+
   private updateColumnDefs() {
-    this.columnDefs =
-      this.groupBy === 'login' ? this.loginColumnDefs : this.symbolColumnDefs;
+    if (this.groupBy === 'summary') {
+      this.columnDefs = this.summaryColumnDefs;
+    } else {
+      this.columnDefs =
+        this.groupBy === 'login' ? this.loginColumnDefs : this.symbolColumnDefs;
+    }
     if (this.gridApi) {
       this.gridApi.setGridOption('columnDefs', this.columnDefs);
       setTimeout(() => this.gridApi.sizeColumnsToFit(), 0);
@@ -206,6 +253,14 @@ export class StandingComponent implements OnInit {
   }
 
   private applyGrouping() {
+    if (this.groupBy === 'summary') {
+      if (this.gridApi) {
+        this.gridApi.setGridOption('rowData', this.rows);
+      } else {
+        this.gridOptions.rowData = this.rows;
+      }
+      return;
+    }
     const grouped = this.groupByKey(this.rows, this.groupBy);
     if (this.gridApi) {
       this.gridApi.setGridOption('rowData', grouped);

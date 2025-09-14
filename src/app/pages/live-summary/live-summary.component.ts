@@ -74,12 +74,9 @@ export class LiveSummaryComponent implements OnInit {
     { field: 'symbol', headerName: 'Symbol' },
     { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
-    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
-    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
-    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
     { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
     { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
@@ -92,12 +89,9 @@ export class LiveSummaryComponent implements OnInit {
     { field: 'symbol', headerName: 'Symbol' },
     { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
-    { field: 'openAmt', headerName: 'Open Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
-    { field: 'buyAmt', headerName: 'Buy Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
-    { field: 'commission', headerName: 'Commission', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
     { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
     { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
@@ -130,10 +124,8 @@ export class LiveSummaryComponent implements OnInit {
             openRate: Number(r.openRate),
             openAmt: Number(r.openAmt),
             buyQty: Number(r.buyQty),
-            buyAmt: Number(r.buyAmt),
             sellQty: Number(r.sellQty),
             sellAmt: Number(r.sellAmt),
-            commission: Number(r.commission),
             closeQty: Number(r.closeQty),
             closeRate: Number(r.closeRate),
             closeAmt: Number(r.closeAmt),
@@ -182,10 +174,8 @@ export class LiveSummaryComponent implements OnInit {
         openRate: 0,
         openAmt: 0,
         buyQty: 0,
-        buyAmt: 0,
         sellQty: 0,
         sellAmt: 0,
-        commission: 0,
         closeQty: 0,
         closeRate: 0,
         closeAmt: 0,
@@ -196,10 +186,8 @@ export class LiveSummaryComponent implements OnInit {
         agg.openQty += Number(r.openQty);
         agg.openAmt += Number(r.openAmt);
         agg.buyQty += Number(r.buyQty);
-        agg.buyAmt += Number(r.buyAmt);
         agg.sellQty += Number(r.sellQty);
         agg.sellAmt += Number(r.sellAmt);
-        agg.commission += Number(r.commission);
         agg.closeQty += Number(r.closeQty);
         agg.closeAmt += Number(r.closeAmt);
         agg.grossMTM += Number(r.grossMTM);

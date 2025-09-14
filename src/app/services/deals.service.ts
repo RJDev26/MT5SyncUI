@@ -59,6 +59,9 @@ export interface StandingRow {
   symbol: string;
   buyQty: number;
   sellQty: number;
+  netQty?: number;
+  brokerShare?: number;
+  managerShare?: number;
 }
 
 export interface LiveSummaryRow {
@@ -68,10 +71,8 @@ export interface LiveSummaryRow {
   openRate: number;
   openAmt: number;
   buyQty: number;
-  buyAmt: number;
   sellQty: number;
   sellAmt: number;
-  commission: number;
   closeQty: number;
   closeRate: number;
   closeAmt: number;
@@ -135,7 +136,8 @@ export class DealsService {
   getStanding(
     date: string,
     login?: number | null,
-    symbol?: string | null
+    symbol?: string | null,
+    option?: 'summary' | 'login' | 'symbol'
   ): Observable<{ rows: StandingRow[] }> {
     let params = new HttpParams().set('date', date);
     if (login != null) {
@@ -143,6 +145,9 @@ export class DealsService {
     }
     if (symbol) {
       params = params.set('symbol', symbol);
+    }
+    if (option) {
+      params = params.set('option', option);
     }
     return this.http.get<{ rows: StandingRow[] }>(
       environment.apiBaseUrl + 'api/Deals/standing',
