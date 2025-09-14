@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -121,12 +121,16 @@ export class ClientMasterComponent implements OnInit {
 
   onGridReady(event: GridReadyEvent<LoginClientInfo>) {
     this.gridApi = event.api;
+    this.gridApi.sizeColumnsToFit();
   }
 
   show() {
     this.svc
       .getLoginsWithClientInfo(this.selectedLogin, this.showUpdated)
-      .subscribe(res => this.gridApi.setGridOption('rowData', res));
+      .subscribe(res => {
+        this.gridApi.setGridOption('rowData', res);
+        this.gridApi.sizeColumnsToFit();
+      });
   }
 
   onCellClicked(event: CellClickedEvent<LoginClientInfo>) {
@@ -209,6 +213,11 @@ export class ClientMasterComponent implements OnInit {
     this.filteredLogins = this.logins.filter(
       l => l.login.toString().includes(term) || l.name.toLowerCase().includes(term)
     );
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.gridApi?.sizeColumnsToFit();
   }
 
   exportCsv() {
