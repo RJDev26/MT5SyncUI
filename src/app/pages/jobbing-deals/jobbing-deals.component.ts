@@ -142,7 +142,11 @@ export class JobbingDealsComponent implements OnDestroy {
 
   exportCsv() {
     const dateStr = new Date().toISOString().split('T')[0];
-    this.gridApi.exportDataAsCsv({ fileName: `live-jobbing-${dateStr}.csv` });
+    this.gridApi.exportDataAsCsv({
+      fileName: `live-jobbing-${dateStr}.csv`,
+      processCellCallback: params =>
+        this.formatExportValue(params.column?.getColId() ?? '', params.value),
+    });
   }
 
   exportPdf() {
@@ -152,7 +156,11 @@ export class JobbingDealsComponent implements OnDestroy {
     this.gridApi.forEachNode(n => {
       const row = n.data as Record<string, unknown> | undefined;
       if (row) {
-        rows.push((this.gridOptions.columnDefs || []).map(c => row[(c as any).field]));
+        rows.push(
+          (this.gridOptions.columnDefs || []).map(c =>
+            this.formatExportValue((c as any).field, row[(c as any).field])
+          )
+        );
       }
     });
     const doc = new jsPDF();
@@ -162,5 +170,24 @@ export class JobbingDealsComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.refreshSub?.unsubscribe();
+  }
+
+  private formatExportValue(
+    field: string,
+    value: unknown
+  ): string | number | boolean | null | undefined {
+    if ((field === 'buyTime' || field === 'sellTime') && typeof value === 'string') {
+      return this.formatTime(value);
+    }
+    if (
+      typeof value === 'string' ||
+      typeof value === 'number' ||
+      typeof value === 'boolean' ||
+      value === null ||
+      value === undefined
+    ) {
+      return value;
+    }
+    return String(value ?? '');
   }
 }
