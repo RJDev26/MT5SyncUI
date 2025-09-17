@@ -172,21 +172,18 @@ export class JobbingDealsComponent implements OnDestroy {
     this.refreshSub?.unsubscribe();
   }
 
-  private formatExportValue(
-    field: string,
-    value: unknown
-  ): string | number | boolean | null | undefined {
+  private formatExportValue(field: string, value: unknown): string {
     if ((field === 'buyTime' || field === 'sellTime') && typeof value === 'string') {
       return this.formatTime(value);
     }
-    if (
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean' ||
-      value === null ||
-      value === undefined
-    ) {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'string') {
       return value;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
     }
     return String(value ?? '');
   }
