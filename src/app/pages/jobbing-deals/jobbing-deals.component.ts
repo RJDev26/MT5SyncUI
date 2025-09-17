@@ -145,7 +145,11 @@ export class JobbingDealsComponent implements OnDestroy {
     this.gridApi.exportDataAsCsv({
       fileName: `live-jobbing-${dateStr}.csv`,
       processCellCallback: params =>
-        this.formatExportValue(params.column?.getColId() ?? '', params.value),
+        this.formatExportValue(
+          params.column?.getColId() ?? '',
+          params.value,
+          true
+        ),
     });
   }
 
@@ -158,7 +162,11 @@ export class JobbingDealsComponent implements OnDestroy {
       if (row) {
         rows.push(
           (this.gridOptions.columnDefs || []).map(c =>
-            this.formatExportValue((c as any).field, row[(c as any).field])
+            this.formatExportValue(
+              (c as any).field,
+              row[(c as any).field],
+              false
+            )
           )
         );
       }
@@ -172,9 +180,13 @@ export class JobbingDealsComponent implements OnDestroy {
     this.refreshSub?.unsubscribe();
   }
 
-  private formatExportValue(field: string, value: unknown): string {
+  private formatExportValue(
+    field: string,
+    value: unknown,
+    ensureText = false
+  ): string {
     if ((field === 'buyTime' || field === 'sellTime') && typeof value === 'string') {
-      return this.formatTime(value);
+      return this.formatTimeForExport(value, ensureText);
     }
     if (value === null || value === undefined) {
       return '';
@@ -186,5 +198,13 @@ export class JobbingDealsComponent implements OnDestroy {
       return String(value);
     }
     return String(value ?? '');
+  }
+
+  private formatTimeForExport(value: string, ensureText: boolean): string {
+    const formatted = this.formatTime(value);
+    if (!formatted) {
+      return '';
+    }
+    return ensureText ? `\u200E${formatted}` : formatted;
   }
 }
