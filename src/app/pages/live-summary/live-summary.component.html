@@ -19,8 +19,9 @@
       </mat-select>
     </mat-form-field>
     <mat-radio-group [(ngModel)]="groupMode" class="mode-group">
-      <mat-radio-button color="primary" value="symbol">Symbol wise</mat-radio-button>
-      <mat-radio-button color="primary" value="login">Login wise</mat-radio-button>
+      <mat-radio-button color="primary" value="SymbolWise">Symbol wise</mat-radio-button>
+      <mat-radio-button color="primary" value="LoginWise">Login wise</mat-radio-button>
+      <mat-radio-button color="primary" value="Detail">Detail</mat-radio-button>
     </mat-radio-group>
     <button mat-raised-button color="primary" (click)="show()">Show</button>
   </div>

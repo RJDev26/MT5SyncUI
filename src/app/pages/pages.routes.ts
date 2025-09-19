@@ -65,7 +65,7 @@ export const routes: Routes = [
       {
         path: 'jobbing-deals',
         loadComponent: () => import('./jobbing-deals/jobbing-deals.component').then(c => c.JobbingDealsComponent),
-        data: { breadcrumb: 'Jobbing Deals' }
+        data: { breadcrumb: 'Live Jobbing' }
       },
       {
         path: 'standing',

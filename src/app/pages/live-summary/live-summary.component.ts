@@ -49,7 +49,7 @@ export class LiveSummaryComponent implements OnInit {
   fromDate = new Date();
   toDate = new Date();
   managerId: number | null = null;
-  groupMode: 'symbol' | 'login' = 'symbol';
+  groupMode: 'SymbolWise' | 'LoginWise' | 'Detail' = 'SymbolWise';
   managers: MasterItem[] = [];
 
   gridOptions: GridOptions<LiveSummaryRow> = {
@@ -86,6 +86,20 @@ export class LiveSummaryComponent implements OnInit {
 
   loginColumnDefs: ColDef[] = [
     { field: 'login', headerName: 'Login' },
+    { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'buyQty', headerName: 'Buy Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellQty', headerName: 'Sell Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'sellAmt', headerName: 'Sell Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'closeQty', headerName: 'Close Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'closeRate', headerName: 'Close Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
+    { field: 'closeAmt', headerName: 'Close Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'grossMTM', headerName: 'Gross MTM', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+    { field: 'netAmt', headerName: 'Net Amt', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
+  ];
+
+  detailColumnDefs: ColDef[] = [
+    { field: 'login', headerName: 'Login' },
     { field: 'symbol', headerName: 'Symbol' },
     { field: 'openQty', headerName: 'Open Qty', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: p => this.numericCellClass(p) },
     { field: 'openRate', headerName: 'Open Rate', type: 'numericColumn', valueFormatter: p => this.formatNumber(p.value), cellClass: 'ag-right-aligned-cell' },
@@ -115,10 +129,10 @@ export class LiveSummaryComponent implements OnInit {
     const to = format(this.toDate, 'yyyy-MM-dd');
     this.gridApi.setGridOption('loading', true);
     this.deals
-      .getLiveSummary(from, to, this.managerId ?? undefined)
+      .getLiveSummary(from, to, this.managerId ?? undefined, this.groupMode)
       .subscribe({
         next: res => {
-          let rows = res.rows.map(r => ({
+          const rows = res.rows.map(r => ({
             ...r,
             openQty: Number(r.openQty),
             openRate: Number(r.openRate),
@@ -132,11 +146,12 @@ export class LiveSummaryComponent implements OnInit {
             grossMTM: Number(r.grossMTM),
             netAmt: Number(r.netAmt),
           }));
-          if (this.groupMode === 'symbol') {
-            rows = this.groupBySymbol(rows);
+          if (this.groupMode === 'SymbolWise') {
             this.gridApi.setGridOption('columnDefs', this.symbolColumnDefs);
-          } else {
+          } else if (this.groupMode === 'LoginWise') {
             this.gridApi.setGridOption('columnDefs', this.loginColumnDefs);
+          } else {
+            this.gridApi.setGridOption('columnDefs', this.detailColumnDefs);
           }
           this.gridApi.setGridOption('rowData', rows);
           this.gridApi.sizeColumnsToFit();
@@ -157,47 +172,6 @@ export class LiveSummaryComponent implements OnInit {
 
   exportCsv() {
     this.gridApi.exportDataAsCsv({ fileName: 'LiveSummary' });
-  }
-
-  private groupBySymbol(rows: LiveSummaryRow[]): LiveSummaryRow[] {
-    const groups: Record<string, LiveSummaryRow[]> = {};
-    rows.forEach(r => {
-      const key = r.symbol;
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(r);
-    });
-    const result: LiveSummaryRow[] = [];
-    for (const [symbol, list] of Object.entries(groups)) {
-      const agg: LiveSummaryRow = {
-        symbol,
-        openQty: 0,
-        openRate: 0,
-        openAmt: 0,
-        buyQty: 0,
-        sellQty: 0,
-        sellAmt: 0,
-        closeQty: 0,
-        closeRate: 0,
-        closeAmt: 0,
-        grossMTM: 0,
-        netAmt: 0,
-      };
-      list.forEach(r => {
-        agg.openQty += Number(r.openQty);
-        agg.openAmt += Number(r.openAmt);
-        agg.buyQty += Number(r.buyQty);
-        agg.sellQty += Number(r.sellQty);
-        agg.sellAmt += Number(r.sellAmt);
-        agg.closeQty += Number(r.closeQty);
-        agg.closeAmt += Number(r.closeAmt);
-        agg.grossMTM += Number(r.grossMTM);
-        agg.netAmt += Number(r.netAmt);
-      });
-      agg.openRate = agg.openQty ? agg.openAmt / agg.openQty : 0;
-      agg.closeRate = agg.closeQty ? agg.closeAmt / agg.closeQty : 0;
-      result.push(agg);
-    }
-    return result;
   }
 
   formatNumber(value: any): string {
