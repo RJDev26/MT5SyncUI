@@ -207,15 +207,17 @@ export class CrossTradeComponent {
     }
 
     const columnDefs = this.flattenColumnDefs(
-      ((api.getColumnDefs() ?? []) as CrossTradeColumnDef[])
+      ((api.getColumnDefs() ?? []) as AnyColumnDef[])
     );
-    const headers = columnDefs.map(col => col.headerName ?? col.field ?? '');
+    const headers = columnDefs.map(col =>
+      col.headerName ?? (typeof col.field === 'string' ? col.field : '')
+    );
 
     const rows: string[][] = [];
     api.forEachNode(node => {
       const data: string[] = [];
       columnDefs.forEach(col => {
-        const field = col.field;
+        const field = typeof col.field === 'string' ? col.field : '';
         if (!field) {
           data.push('');
           return;
@@ -287,33 +289,25 @@ export class CrossTradeComponent {
     return String(value);
   }
 
-  private flattenColumnDefs(
-    columnDefs: CrossTradeColumnDef[]
-  ): ColDef<CrossTradeRow>[] {
-    const leaves: ColDef<CrossTradeRow>[] = [];
+  private flattenColumnDefs(columnDefs: AnyColumnDef[]): ColDef<any>[] {
+    const leaves: ColDef<any>[] = [];
 
     columnDefs.forEach(col => {
       if (this.isGroupColumnDef(col)) {
         leaves.push(
-          ...this.flattenColumnDefs(
-            (col.children ?? []) as CrossTradeColumnDef[]
-          )
+          ...this.flattenColumnDefs((col.children ?? []) as AnyColumnDef[])
         );
       } else {
-        leaves.push(col as ColDef<CrossTradeRow>);
+        leaves.push(col as ColDef<any>);
       }
     });
 
     return leaves;
   }
 
-  private isGroupColumnDef(
-    col: CrossTradeColumnDef
-  ): col is ColGroupDef<CrossTradeRow> {
-    return Array.isArray((col as ColGroupDef<CrossTradeRow>).children);
+  private isGroupColumnDef(col: AnyColumnDef): col is ColGroupDef<any> {
+    return Array.isArray((col as ColGroupDef<any>).children);
   }
 }
 
-type CrossTradeRow = CrossTradeSummaryRow | CrossTradeDetailRow;
-
-type CrossTradeColumnDef = ColDef<CrossTradeRow> | ColGroupDef<CrossTradeRow>;
+type AnyColumnDef = ColDef<any> | ColGroupDef<any>;
