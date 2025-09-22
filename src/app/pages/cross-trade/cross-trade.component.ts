@@ -134,13 +134,13 @@ export class CrossTradeComponent {
 
   onSummaryGridReady(event: GridReadyEvent<CrossTradeSummaryRow>) {
     this.summaryGridApi = event.api;
-    this.summaryGridApi.setGridOption('rowData', this.summaryRows);
+    this.summaryGridApi.setRowData(this.summaryRows);
     this.applyQuickFilter(this.searchText);
   }
 
   onDetailGridReady(event: GridReadyEvent<CrossTradeDetailRow>) {
     this.detailGridApi = event.api;
-    this.detailGridApi.setGridOption('rowData', this.detailRows);
+    this.detailGridApi.setRowData(this.detailRows);
     this.applyQuickFilter(this.searchText);
   }
 
@@ -157,16 +157,16 @@ export class CrossTradeComponent {
         this.detailRows = res.details ?? [];
 
         if (this.summaryGridApi) {
-          this.summaryGridApi.setGridOption('rowData', this.summaryRows);
+          this.summaryGridApi.setRowData(this.summaryRows);
           this.summaryGridApi.hideOverlay();
-          this.summaryGridApi.setGridOption('quickFilterText', this.searchText);
+          this.summaryGridApi.setQuickFilter(this.searchText);
           setTimeout(() => this.summaryGridApi?.sizeColumnsToFit());
         }
 
         if (this.detailGridApi) {
-          this.detailGridApi.setGridOption('rowData', this.detailRows);
+          this.detailGridApi.setRowData(this.detailRows);
           this.detailGridApi.hideOverlay();
-          this.detailGridApi.setGridOption('quickFilterText', this.searchText);
+          this.detailGridApi.setQuickFilter(this.searchText);
           setTimeout(() => this.detailGridApi?.sizeColumnsToFit());
         }
       },
@@ -241,8 +241,8 @@ export class CrossTradeComponent {
   }
 
   private applyQuickFilter(value: string) {
-    this.summaryGridApi?.setGridOption('quickFilterText', value);
-    this.detailGridApi?.setGridOption('quickFilterText', value);
+    this.summaryGridApi?.setQuickFilter(value);
+    this.detailGridApi?.setQuickFilter(value);
   }
 
   private formatDate(date: Date): string {
