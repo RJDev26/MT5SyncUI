@@ -78,6 +78,11 @@ export const routes: Routes = [
         data: { breadcrumb: 'Live Summary' }
       },
       {
+        path: 'cross-trade',
+        loadComponent: () => import('./cross-trade/cross-trade.component').then(c => c.CrossTradeComponent),
+        data: { breadcrumb: 'Cross Trade' }
+      },
+      {
         path: 'manager-master',
         loadComponent: () => import('./manager-master/manager-master.component').then(c => c.ManagerMasterComponent),
         data: { breadcrumb: 'Manager Master' }
