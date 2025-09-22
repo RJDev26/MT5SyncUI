@@ -15,6 +15,8 @@ import {
   GridReadyEvent,
   ModuleRegistry,
   AllCommunityModule,
+  ColDef,
+  ColGroupDef,
 } from 'ag-grid-community';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -204,19 +206,21 @@ export class CrossTradeComponent {
       return;
     }
 
-    const columnDefs = api.getColumnDefs() ?? [];
-    const headers = columnDefs.map(col =>
-      typeof col === 'object' ? col.headerName || (col as any).field || '' : ''
+    const columnDefs = this.flattenColumnDefs(
+      ((api.getColumnDefs() ?? []) as CrossTradeColumnDef[])
     );
+    const headers = columnDefs.map(col => col.headerName ?? col.field ?? '');
 
     const rows: string[][] = [];
     api.forEachNode(node => {
       const data: string[] = [];
       columnDefs.forEach(col => {
-        if (typeof col === 'object') {
-          const field = (col.field ?? '') as string;
-          data.push(this.formatExportValue(field, (node.data as any)?.[field]));
+        const field = col.field;
+        if (!field) {
+          data.push('');
+          return;
         }
+        data.push(this.formatExportValue(field, (node.data as any)?.[field]));
       });
       rows.push(data);
     });
@@ -282,4 +286,34 @@ export class CrossTradeComponent {
     }
     return String(value);
   }
+
+  private flattenColumnDefs(
+    columnDefs: CrossTradeColumnDef[]
+  ): ColDef<CrossTradeRow>[] {
+    const leaves: ColDef<CrossTradeRow>[] = [];
+
+    columnDefs.forEach(col => {
+      if (this.isGroupColumnDef(col)) {
+        leaves.push(
+          ...this.flattenColumnDefs(
+            (col.children ?? []) as CrossTradeColumnDef[]
+          )
+        );
+      } else {
+        leaves.push(col as ColDef<CrossTradeRow>);
+      }
+    });
+
+    return leaves;
+  }
+
+  private isGroupColumnDef(
+    col: CrossTradeColumnDef
+  ): col is ColGroupDef<CrossTradeRow> {
+    return Array.isArray((col as ColGroupDef<CrossTradeRow>).children);
+  }
 }
+
+type CrossTradeRow = CrossTradeSummaryRow | CrossTradeDetailRow;
+
+type CrossTradeColumnDef = ColDef<CrossTradeRow> | ColGroupDef<CrossTradeRow>;
