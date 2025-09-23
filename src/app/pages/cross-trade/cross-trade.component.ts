@@ -244,7 +244,7 @@ export class CrossTradeComponent implements OnInit {
     if (!this.summaryGridApi) {
       return;
     }
-    this.summaryGridApi.setRowData(this.summaryRows);
+    this.setRowData(this.summaryGridApi, this.summaryRows);
     this.setQuickFilter(this.summaryGridApi, this.searchText);
     if (this.summaryRows.length) {
       this.summaryGridApi.hideOverlay();
@@ -258,7 +258,7 @@ export class CrossTradeComponent implements OnInit {
     if (!this.detailGridApi) {
       return;
     }
-    this.detailGridApi.setRowData(this.detailRows);
+    this.setRowData(this.detailGridApi, this.detailRows);
     this.setQuickFilter(this.detailGridApi, this.searchText);
     if (this.detailRows.length) {
       this.detailGridApi.hideOverlay();
@@ -344,10 +344,27 @@ export class CrossTradeComponent implements OnInit {
       quickFilterApi.setGridOption('quickFilterText', value);
     }
   }
+
+  private setRowData<T>(api: GridApi<T> | undefined, rows: T[]) {
+    if (!api) {
+      return;
+    }
+
+    const rowDataApi = api as RowDataCapableApi<T>;
+    if (typeof rowDataApi.setRowData === 'function') {
+      rowDataApi.setRowData(rows);
+    } else if (typeof rowDataApi.setGridOption === 'function') {
+      rowDataApi.setGridOption('rowData', rows);
+    }
+  }
 }
 
 type AnyColumnDef = ColDef<any> | ColGroupDef<any>;
 type QuickFilterCapableApi = GridApi<any> & {
   setQuickFilter?: (quickFilter: string) => void;
+  setGridOption?: (key: string, value: any) => void;
+};
+type RowDataCapableApi<T> = GridApi<T> & {
+  setRowData?: (rowData: T[]) => void;
   setGridOption?: (key: string, value: any) => void;
 };
