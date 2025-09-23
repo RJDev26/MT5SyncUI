@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,7 +47,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   templateUrl: './cross-trade.component.html',
   styleUrls: ['./cross-trade.component.scss'],
 })
-export class CrossTradeComponent {
+export class CrossTradeComponent implements OnInit {
   fromDate = new Date();
   toDate = new Date();
   searchText = '';
@@ -132,19 +132,29 @@ export class CrossTradeComponent {
 
   constructor(private deals: DealsService) {}
 
+  ngOnInit(): void {
+    this.show();
+  }
+
   onSummaryGridReady(event: GridReadyEvent<CrossTradeSummaryRow>) {
     this.summaryGridApi = event.api;
-    this.summaryGridApi.setRowData(this.summaryRows);
-    this.applyQuickFilter(this.searchText);
+    this.refreshSummaryGrid();
   }
 
   onDetailGridReady(event: GridReadyEvent<CrossTradeDetailRow>) {
     this.detailGridApi = event.api;
-    this.detailGridApi.setRowData(this.detailRows);
-    this.applyQuickFilter(this.searchText);
+    this.refreshDetailGrid();
   }
 
   show() {
+    if (!this.fromDate || !this.toDate) {
+      this.summaryRows = [];
+      this.detailRows = [];
+      this.refreshSummaryGrid();
+      this.refreshDetailGrid();
+      return;
+    }
+
     const from = this.formatDate(this.fromDate);
     const to = this.formatDate(this.toDate);
 
@@ -156,25 +166,10 @@ export class CrossTradeComponent {
         this.summaryRows = res.rows ?? [];
         this.detailRows = res.details ?? [];
 
-        if (this.summaryGridApi) {
-          this.summaryGridApi.setRowData(this.summaryRows);
-          this.summaryGridApi.hideOverlay();
-          this.summaryGridApi.setQuickFilter(this.searchText);
-          setTimeout(() => this.summaryGridApi?.sizeColumnsToFit());
-        }
-
-        if (this.detailGridApi) {
-          this.detailGridApi.setRowData(this.detailRows);
-          this.detailGridApi.hideOverlay();
-          this.detailGridApi.setQuickFilter(this.searchText);
-          setTimeout(() => this.detailGridApi?.sizeColumnsToFit());
-        }
+        this.refreshSummaryGrid();
+        this.refreshDetailGrid();
       },
       error: () => {
-        this.summaryGridApi?.hideOverlay();
-        this.detailGridApi?.hideOverlay();
-      },
-      complete: () => {
         this.summaryGridApi?.hideOverlay();
         this.detailGridApi?.hideOverlay();
       },
@@ -243,6 +238,34 @@ export class CrossTradeComponent {
   private applyQuickFilter(value: string) {
     this.summaryGridApi?.setQuickFilter(value);
     this.detailGridApi?.setQuickFilter(value);
+  }
+
+  private refreshSummaryGrid() {
+    if (!this.summaryGridApi) {
+      return;
+    }
+    this.summaryGridApi.setRowData(this.summaryRows);
+    this.summaryGridApi.setQuickFilter(this.searchText);
+    if (this.summaryRows.length) {
+      this.summaryGridApi.hideOverlay();
+      setTimeout(() => this.summaryGridApi?.sizeColumnsToFit());
+    } else {
+      this.summaryGridApi.showNoRowsOverlay();
+    }
+  }
+
+  private refreshDetailGrid() {
+    if (!this.detailGridApi) {
+      return;
+    }
+    this.detailGridApi.setRowData(this.detailRows);
+    this.detailGridApi.setQuickFilter(this.searchText);
+    if (this.detailRows.length) {
+      this.detailGridApi.hideOverlay();
+      setTimeout(() => this.detailGridApi?.sizeColumnsToFit());
+    } else {
+      this.detailGridApi.showNoRowsOverlay();
+    }
   }
 
   private formatDate(date: Date): string {
