@@ -236,8 +236,8 @@ export class CrossTradeComponent implements OnInit {
   }
 
   private applyQuickFilter(value: string) {
-    this.summaryGridApi?.setQuickFilter(value);
-    this.detailGridApi?.setQuickFilter(value);
+    this.setQuickFilter(this.summaryGridApi, value);
+    this.setQuickFilter(this.detailGridApi, value);
   }
 
   private refreshSummaryGrid() {
@@ -245,7 +245,7 @@ export class CrossTradeComponent implements OnInit {
       return;
     }
     this.summaryGridApi.setRowData(this.summaryRows);
-    this.summaryGridApi.setQuickFilter(this.searchText);
+    this.setQuickFilter(this.summaryGridApi, this.searchText);
     if (this.summaryRows.length) {
       this.summaryGridApi.hideOverlay();
       setTimeout(() => this.summaryGridApi?.sizeColumnsToFit());
@@ -259,7 +259,7 @@ export class CrossTradeComponent implements OnInit {
       return;
     }
     this.detailGridApi.setRowData(this.detailRows);
-    this.detailGridApi.setQuickFilter(this.searchText);
+    this.setQuickFilter(this.detailGridApi, this.searchText);
     if (this.detailRows.length) {
       this.detailGridApi.hideOverlay();
       setTimeout(() => this.detailGridApi?.sizeColumnsToFit());
@@ -331,6 +331,23 @@ export class CrossTradeComponent implements OnInit {
   private isGroupColumnDef(col: AnyColumnDef): col is ColGroupDef<any> {
     return Array.isArray((col as ColGroupDef<any>).children);
   }
+
+  private setQuickFilter<T>(api: GridApi<T> | undefined, value: string) {
+    if (!api) {
+      return;
+    }
+
+    const quickFilterApi = api as QuickFilterCapableApi;
+    if (typeof quickFilterApi.setQuickFilter === 'function') {
+      quickFilterApi.setQuickFilter(value);
+    } else if (typeof quickFilterApi.setGridOption === 'function') {
+      quickFilterApi.setGridOption('quickFilterText', value);
+    }
+  }
 }
 
 type AnyColumnDef = ColDef<any> | ColGroupDef<any>;
+type QuickFilterCapableApi = GridApi<any> & {
+  setQuickFilter?: (quickFilter: string) => void;
+  setGridOption?: (key: string, value: any) => void;
+};
