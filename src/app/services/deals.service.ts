@@ -66,7 +66,7 @@ export interface StandingRow {
 
 export interface LiveSummaryRow {
   login?: number;
-  symbol: string;
+  symbol?: string;
   openQty: number;
   openRate: number;
   openAmt: number;
@@ -78,6 +78,37 @@ export interface LiveSummaryRow {
   closeAmt: number;
   grossMTM: number;
   netAmt: number;
+}
+
+export interface CrossTradeSummaryRow {
+  symbol: string;
+  lastIP: string;
+  login1: number;
+  login2: number;
+  firstTradeTime: string;
+  lastTradeTime: string;
+  deals: number;
+  bDeals: number;
+  sDeals: number;
+}
+
+export interface CrossTradeDetailRow {
+  symbol: string;
+  lastIP: string;
+  login1: number;
+  login2: number;
+  rowSide: string;
+  login: number;
+  time: string;
+  deal: number;
+  conType: string;
+  qty: number;
+  price: number;
+  volume: number;
+  volumeext: number;
+  profit: number;
+  commission: number;
+  comment: string;
 }
 
 export interface DealHistoryRow {
@@ -158,11 +189,15 @@ export class DealsService {
   getLiveSummary(
     from: string,
     to: string,
-    managerId?: number
+    managerId?: number,
+    option?: 'SymbolWise' | 'LoginWise' | 'Detail'
   ): Observable<{ rows: LiveSummaryRow[]; rowCount: number }> {
     let params = new HttpParams().set('from', from).set('to', to);
     if (managerId != null) {
       params = params.set('managerId', String(managerId));
+    }
+    if (option) {
+      params = params.set('option', option);
     }
     return this.http.get<{ rows: LiveSummaryRow[]; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/live-summary',
@@ -181,6 +216,17 @@ export class DealsService {
     }
     return this.http.get<{ rows: DealHistoryRow[]; rowCount: number }>(
       environment.apiBaseUrl + 'api/Deals/deal-history',
+      { params }
+    );
+  }
+
+  getCrossTradePairs(
+    from: string,
+    to: string
+  ): Observable<{ rows: CrossTradeSummaryRow[]; details: CrossTradeDetailRow[] }> {
+    const params = new HttpParams().set('from', from).set('to', to);
+    return this.http.get<{ rows: CrossTradeSummaryRow[]; details: CrossTradeDetailRow[] }>(
+      environment.apiBaseUrl + 'api/Deals/cross-trade-pairs',
       { params }
     );
   }
