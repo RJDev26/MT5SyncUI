@@ -184,6 +184,7 @@ export class CrossTradeComponent implements OnInit {
   onTabChange(index: number) {
     this.activeTab = index === 0 ? 'summary' : 'detail';
     this.applyQuickFilter(this.searchText);
+    setTimeout(() => this.getActiveGridApi()?.sizeColumnsToFit());
   }
 
   exportCsv() {
