@@ -101,8 +101,8 @@ export class CrossTradeComponent implements OnInit {
       flex: 1,
     },
     columnDefs: [
-      { field: 'symbol', headerName: 'Symbol' },
-      { field: 'lastIP', headerName: 'Last IP' },
+      { field: 'symbol', headerName: 'Symbol', flex: 1.2 },
+      { field: 'lastIP', headerName: 'Last IP', flex: 1.2 },
       { field: 'login1', headerName: 'Login 1', type: 'numericColumn' },
       { field: 'login2', headerName: 'Login 2', type: 'numericColumn' },
       { field: 'rowSide', headerName: 'Side' },
@@ -125,6 +125,16 @@ export class CrossTradeComponent implements OnInit {
     rowData: [],
     animateRows: true,
     suppressCellFocus: true,
+    getRowStyle: params => {
+      const conType = params.data?.conType;
+      if (conType === 'S') {
+        return { backgroundColor: '#fee2e2' };
+      }
+      if (conType === 'B') {
+        return { backgroundColor: '#dcfce7' };
+      }
+      return undefined;
+    },
   };
 
   private summaryGridApi?: GridApi<CrossTradeSummaryRow>;
