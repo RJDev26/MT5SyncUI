@@ -65,7 +65,7 @@ export const routes: Routes = [
       {
         path: 'jobbing-deals',
         loadComponent: () => import('./jobbing-deals/jobbing-deals.component').then(c => c.JobbingDealsComponent),
-        data: { breadcrumb: 'Jobbing Deals' }
+        data: { breadcrumb: 'Live Jobbing' }
       },
       {
         path: 'standing',
@@ -76,6 +76,11 @@ export const routes: Routes = [
         path: 'live-summary',
         loadComponent: () => import('./live-summary/live-summary.component').then(c => c.LiveSummaryComponent),
         data: { breadcrumb: 'Live Summary' }
+      },
+      {
+        path: 'cross-trade',
+        loadComponent: () => import('./cross-trade/cross-trade.component').then(c => c.CrossTradeComponent),
+        data: { breadcrumb: 'Cross Trade' }
       },
       {
         path: 'manager-master',

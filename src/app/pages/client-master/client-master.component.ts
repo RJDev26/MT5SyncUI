@@ -327,7 +327,7 @@ export class ClientMasterComponent implements OnInit {
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Reverse Standing</mat-label>
+        <mat-label>Reverse Commission</mat-label>
         <input matInput [(ngModel)]="data.reverseStanding" />
       </mat-form-field>
     </div>
