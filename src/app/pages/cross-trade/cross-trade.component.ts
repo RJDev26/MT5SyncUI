@@ -167,13 +167,13 @@ export class CrossTradeComponent implements OnInit {
     rowData: [],
     animateRows: true,
     suppressCellFocus: true,
-    getRowStyle: params => {
+    getRowClass: params => {
       const conType = params.data?.conType;
       if (conType === 'S') {
-        return { backgroundColor: '#fee2e2' };
+        return 'cross-trade-detail-sell-row';
       }
       if (conType === 'B') {
-        return { backgroundColor: '#dcfce7' };
+        return 'cross-trade-detail-buy-row';
       }
       return undefined;
     },

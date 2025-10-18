@@ -87,3 +87,11 @@
   --ag-header-foreground-color: #1f2937;
   --ag-row-hover-color: #e2e8f0;
 }
+
+:host ::ng-deep .cross-trade-detail-sell-row .ag-cell {
+  background-color: #fee2e2 !important;
+}
+
+:host ::ng-deep .cross-trade-detail-buy-row .ag-cell {
+  background-color: #dcfce7 !important;
+}
