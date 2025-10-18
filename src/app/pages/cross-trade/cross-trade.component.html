@@ -29,6 +29,18 @@
 </div>
 
 <mat-tab-group class="grid-tabs" (selectedIndexChange)="onTabChange($event)">
+  <mat-tab label="Diff IP">
+    <div class="tab-content">
+      <div class="grid-wrapper">
+        <ag-grid-angular
+          class="ag-theme-alpine full-grid"
+          [gridOptions]="diffIpGridOptions"
+          [rowData]="diffIpRows"
+          (gridReady)="onDiffIpGridReady($event)"
+        ></ag-grid-angular>
+      </div>
+    </div>
+  </mat-tab>
   <mat-tab label="Summary">
     <div class="tab-content">
       <div class="grid-wrapper">

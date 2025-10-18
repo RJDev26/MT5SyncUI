@@ -112,6 +112,23 @@ export interface CrossTradeDetailRow {
   comment: string;
 }
 
+export interface CrossTradeDiffIpRow {
+  symbol: string;
+  login1: number;
+  iP1: string;
+  login2: number;
+  iP2: string;
+  buyDeal: number;
+  sellDeal: number;
+  qty: number;
+  buyTime: string;
+  sellTime: string;
+  diffSec: number;
+  buyProfit: number;
+  sellProfit: number;
+  totalProfit: number;
+}
+
 export interface DealHistoryRow {
   login: number;
   time: string;
@@ -227,6 +244,20 @@ export class DealsService {
   ): Observable<{ rows: CrossTradeSummaryRow[]; details: CrossTradeDetailRow[] }> {
     const params = new HttpParams().set('from', from).set('to', to);
     return this.http.get<{ rows: CrossTradeSummaryRow[]; details: CrossTradeDetailRow[] }>(
+      environment.apiBaseUrl + 'api/Deals/cross-trade-pairs',
+      { params }
+    );
+  }
+
+  getCrossTradeDiffIpPairs(
+    from: string,
+    to: string
+  ): Observable<{ rows: CrossTradeDiffIpRow[] }> {
+    const params = new HttpParams()
+      .set('from', from)
+      .set('to', to)
+      .set('type', 'DiffIP');
+    return this.http.get<{ rows: CrossTradeDiffIpRow[] }>(
       environment.apiBaseUrl + 'api/Deals/cross-trade-pairs',
       { params }
     );

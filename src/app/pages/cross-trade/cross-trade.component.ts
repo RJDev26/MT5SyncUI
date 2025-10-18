@@ -22,9 +22,11 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import {
   CrossTradeDetailRow,
+  CrossTradeDiffIpRow,
   CrossTradeSummaryRow,
   DealsService,
 } from '@services/deals.service';
+import { forkJoin } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -51,10 +53,50 @@ export class CrossTradeComponent implements OnInit {
   fromDate = new Date();
   toDate = new Date();
   searchText = '';
-  activeTab: 'summary' | 'detail' = 'summary';
+  activeTab: 'diff' | 'summary' | 'detail' = 'diff';
 
+  diffIpRows: CrossTradeDiffIpRow[] = [];
   summaryRows: CrossTradeSummaryRow[] = [];
   detailRows: CrossTradeDetailRow[] = [];
+
+  diffIpGridOptions: GridOptions<CrossTradeDiffIpRow> = {
+    theme: 'legacy',
+    rowHeight: 32,
+    defaultColDef: {
+      resizable: true,
+      sortable: true,
+      filter: true,
+      minWidth: 110,
+      flex: 1,
+    },
+    columnDefs: [
+      { field: 'symbol', headerName: 'Symbol' },
+      { field: 'login1', headerName: 'Login 1', type: 'numericColumn' },
+      { field: 'iP1', headerName: 'IP 1' },
+      { field: 'login2', headerName: 'Login 2', type: 'numericColumn' },
+      { field: 'iP2', headerName: 'IP 2' },
+      { field: 'buyDeal', headerName: 'Buy Deal', type: 'numericColumn' },
+      { field: 'sellDeal', headerName: 'Sell Deal', type: 'numericColumn' },
+      { field: 'qty', headerName: 'Qty', type: 'numericColumn' },
+      {
+        field: 'buyTime',
+        headerName: 'Buy Time',
+        valueFormatter: params => this.formatDateTime(params.value),
+      },
+      {
+        field: 'sellTime',
+        headerName: 'Sell Time',
+        valueFormatter: params => this.formatDateTime(params.value),
+      },
+      { field: 'diffSec', headerName: 'Diff (Sec)', type: 'numericColumn' },
+      { field: 'buyProfit', headerName: 'Buy Profit', type: 'numericColumn' },
+      { field: 'sellProfit', headerName: 'Sell Profit', type: 'numericColumn' },
+      { field: 'totalProfit', headerName: 'Total Profit', type: 'numericColumn' },
+    ],
+    rowData: [],
+    animateRows: true,
+    suppressCellFocus: true,
+  };
 
   summaryGridOptions: GridOptions<CrossTradeSummaryRow> = {
     theme: 'legacy',
@@ -137,6 +179,7 @@ export class CrossTradeComponent implements OnInit {
     },
   };
 
+  private diffIpGridApi?: GridApi<CrossTradeDiffIpRow>;
   private summaryGridApi?: GridApi<CrossTradeSummaryRow>;
   private detailGridApi?: GridApi<CrossTradeDetailRow>;
 
@@ -144,6 +187,11 @@ export class CrossTradeComponent implements OnInit {
 
   ngOnInit(): void {
     this.show();
+  }
+
+  onDiffIpGridReady(event: GridReadyEvent<CrossTradeDiffIpRow>) {
+    this.diffIpGridApi = event.api;
+    this.refreshDiffIpGrid();
   }
 
   onSummaryGridReady(event: GridReadyEvent<CrossTradeSummaryRow>) {
@@ -158,8 +206,10 @@ export class CrossTradeComponent implements OnInit {
 
   show() {
     if (!this.fromDate || !this.toDate) {
+      this.diffIpRows = [];
       this.summaryRows = [];
       this.detailRows = [];
+      this.refreshDiffIpGrid();
       this.refreshSummaryGrid();
       this.refreshDetailGrid();
       return;
@@ -168,18 +218,25 @@ export class CrossTradeComponent implements OnInit {
     const from = this.formatDate(this.fromDate);
     const to = this.formatDate(this.toDate);
 
+    this.diffIpGridApi?.showLoadingOverlay();
     this.summaryGridApi?.showLoadingOverlay();
     this.detailGridApi?.showLoadingOverlay();
 
-    this.deals.getCrossTradePairs(from, to).subscribe({
-      next: res => {
-        this.summaryRows = res.rows ?? [];
-        this.detailRows = res.details ?? [];
+    forkJoin({
+      diffIp: this.deals.getCrossTradeDiffIpPairs(from, to),
+      summary: this.deals.getCrossTradePairs(from, to),
+    }).subscribe({
+      next: result => {
+        this.diffIpRows = result.diffIp.rows ?? [];
+        this.summaryRows = result.summary.rows ?? [];
+        this.detailRows = result.summary.details ?? [];
 
+        this.refreshDiffIpGrid();
         this.refreshSummaryGrid();
         this.refreshDetailGrid();
       },
       error: () => {
+        this.diffIpGridApi?.hideOverlay();
         this.summaryGridApi?.hideOverlay();
         this.detailGridApi?.hideOverlay();
       },
@@ -192,7 +249,13 @@ export class CrossTradeComponent implements OnInit {
   }
 
   onTabChange(index: number) {
-    this.activeTab = index === 0 ? 'summary' : 'detail';
+    if (index === 0) {
+      this.activeTab = 'diff';
+    } else if (index === 1) {
+      this.activeTab = 'summary';
+    } else {
+      this.activeTab = 'detail';
+    }
     this.applyQuickFilter(this.searchText);
     setTimeout(() => this.getActiveGridApi()?.sizeColumnsToFit());
   }
@@ -202,7 +265,12 @@ export class CrossTradeComponent implements OnInit {
     if (!api) {
       return;
     }
-    const suffix = this.activeTab === 'summary' ? 'summary' : 'detail';
+    const suffix =
+      this.activeTab === 'diff'
+        ? 'diff-ip'
+        : this.activeTab === 'summary'
+          ? 'summary'
+          : 'detail';
     api.exportDataAsCsv({ fileName: `cross-trade-${suffix}.csv` });
   }
 
@@ -235,20 +303,47 @@ export class CrossTradeComponent implements OnInit {
 
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [headers], body: rows });
-    const suffix = this.activeTab === 'summary' ? 'summary' : 'detail';
+    const suffix =
+      this.activeTab === 'diff'
+        ? 'diff-ip'
+        : this.activeTab === 'summary'
+          ? 'summary'
+          : 'detail';
     doc.save(`cross-trade-${suffix}.pdf`);
   }
 
   private getActiveGridApi():
+    | GridApi<CrossTradeDiffIpRow>
     | GridApi<CrossTradeSummaryRow>
     | GridApi<CrossTradeDetailRow>
     | undefined {
-    return this.activeTab === 'summary' ? this.summaryGridApi : this.detailGridApi;
+    if (this.activeTab === 'diff') {
+      return this.diffIpGridApi;
+    }
+    if (this.activeTab === 'summary') {
+      return this.summaryGridApi;
+    }
+    return this.detailGridApi;
   }
 
   private applyQuickFilter(value: string) {
+    this.setQuickFilter(this.diffIpGridApi, value);
     this.setQuickFilter(this.summaryGridApi, value);
     this.setQuickFilter(this.detailGridApi, value);
+  }
+
+  private refreshDiffIpGrid() {
+    if (!this.diffIpGridApi) {
+      return;
+    }
+    this.setRowData(this.diffIpGridApi, this.diffIpRows);
+    this.setQuickFilter(this.diffIpGridApi, this.searchText);
+    if (this.diffIpRows.length) {
+      this.diffIpGridApi.hideOverlay();
+      setTimeout(() => this.diffIpGridApi?.sizeColumnsToFit());
+    } else {
+      this.diffIpGridApi.showNoRowsOverlay();
+    }
   }
 
   private refreshSummaryGrid() {
