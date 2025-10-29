@@ -65,7 +65,12 @@ export class DealHistoryComponent implements OnInit {
       minWidth: 100,
     },
     columnDefs: [
-      { field: 'login', headerName: 'Login' },
+      {
+        field: 'login',
+        headerName: 'Login',
+        valueFormatter: params =>
+          params.node.rowPinned ? 'Totals' : params.value ?? '',
+      },
       {
         field: 'time',
         headerName: 'Time',
@@ -191,7 +196,7 @@ export class DealHistoryComponent implements OnInit {
       price: undefined as unknown as number,
       profit: profitTotal,
       commission: commissionTotal,
-      comment: 'Totals',
+      comment: '',
       __isTotalRow: true,
     };
 
