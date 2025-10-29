@@ -68,8 +68,13 @@ export class DealHistoryComponent implements OnInit {
       {
         field: 'login',
         headerName: 'Login',
-        valueFormatter: params =>
-          params.node.rowPinned ? 'Totals' : params.value ?? '',
+        valueFormatter: params => {
+          if (params.node?.rowPinned) {
+            return 'Totals';
+          }
+
+          return params.value ?? '';
+        },
       },
       {
         field: 'time',
