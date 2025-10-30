@@ -314,7 +314,10 @@ export class StandingComponent implements OnInit {
           netQty: r.netQty ?? (r.buyQty || 0) - (r.sellQty || 0),
         }));
         this.dialog.open(StandingSymbolDetailDialogComponent, {
-          width: '720px',
+          width: '90vw',
+          maxWidth: '90vw',
+          height: '80vh',
+          maxHeight: '80vh',
           data: {
             symbol,
             rows: dialogRows,
