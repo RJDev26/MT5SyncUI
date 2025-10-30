@@ -168,7 +168,7 @@ export class ClientMasterComponent implements OnInit {
         login,
         managerId: managerId ?? 0,
         brokerId: brokerId ?? 0,
-        exIds: exId != null ? [exId] : [],
+        exIds: exId != null ? [String(exId)] : [],
         brokShare: brokShare ?? 0,
         managerShare: managerShare ?? 0,
         currencyId,
@@ -185,8 +185,14 @@ export class ClientMasterComponent implements OnInit {
   }
 
   openDialog(data: ClientMasterRequest) {
+    const normalized: ClientMasterRequest = {
+      ...data,
+      exIds: (data.exIds ?? []).map(id => id != null ? String(id) : '').filter(
+        (id): id is string => id !== ''
+      ),
+    };
     const ref = this.dialog.open(ClientMasterDialogComponent, {
-      data: { ...data }
+      data: normalized
     });
     ref.afterClosed().subscribe(result => {
       if (result) {
@@ -280,7 +286,7 @@ export class ClientMasterComponent implements OnInit {
         <mat-form-field appearance="outline">
           <mat-label>Exchange</mat-label>
           <mat-select [(ngModel)]="data.exIds" multiple>
-            <mat-option *ngFor="let e of exchanges" [value]="e.id">
+            <mat-option *ngFor="let e of exchanges" [value]="e.id.toString()">
               {{ e.id }} - {{ e.name }}
             </mat-option>
           </mat-select>
@@ -327,7 +333,7 @@ export class ClientMasterComponent implements OnInit {
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Reverse Standing</mat-label>
+        <mat-label>Reverse Commission</mat-label>
         <input matInput [(ngModel)]="data.reverseStanding" />
       </mat-form-field>
     </div>

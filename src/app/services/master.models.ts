@@ -4,7 +4,7 @@ export interface ClientMasterRequest {
   login: number;
   managerId: number;
   brokerId: number;
-  exIds: number[];
+  exIds: string[];
   brokShare: number;
   managerShare: number;
   currencyId: number;
@@ -20,7 +20,7 @@ export interface LoginClientInfo {
   managerName: string;
   brokerId: number | null;
   brokerName: string;
-  exId: number | null;
+  exId: string | null;
   exchange: string;
   brokShare: number | null;
   managerShare: number | null;

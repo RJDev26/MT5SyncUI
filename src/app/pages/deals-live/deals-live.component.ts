@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DealsService } from '@services/deals.service';
@@ -32,8 +30,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
     AgGridModule,
@@ -105,7 +101,7 @@ export class DealsLiveComponent implements OnDestroy {
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
-  selectedDate: Date = new Date();
+  private readonly today = new Date();
   constructor(private svc: DealsService) {}
 
   ngOnDestroy(): void {
@@ -127,11 +123,6 @@ export class DealsLiveComponent implements OnDestroy {
     }
   }
 
-  onDateChange() {
-    this.lastMaxTime = undefined;
-    this.gridApi.setGridOption('rowData', []);
-    this.fetchDeals().subscribe();
-  }
 
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
@@ -139,7 +130,7 @@ export class DealsLiveComponent implements OnDestroy {
   }
 
   exportCsv() {
-    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    const dateStr = this.today.toISOString().split('T')[0];
     this.gridApi.exportDataAsCsv({ fileName: `Deal-${dateStr}.csv` });
   }
 
@@ -149,14 +140,14 @@ export class DealsLiveComponent implements OnDestroy {
     this.gridApi.forEachNode(n => rows.push((this.gridOptions.columnDefs || []).map(c => n.data[(c as any).field])));
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
-    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    const dateStr = this.today.toISOString().split('T')[0];
     doc.save(`Deal-${dateStr}.pdf`);
   }
 
   private fetchDeals() {
     return this.svc
       .getLiveDeals({
-        date: this.selectedDate.toLocaleDateString('en-US'),
+        date: this.today.toLocaleDateString('en-US'),
         sinceTime: this.lastMaxTime ?? 'NULL',
         pageSize: this.lastMaxTime ? 1000 : 500,
         asc: false,

@@ -6,8 +6,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -32,8 +30,6 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
     AgGridModule,
@@ -85,8 +81,6 @@ export class JobbingDealsComponent implements OnDestroy {
   };
 
   intervalMinutes = 5;
-  fromDate: Date = new Date();
-  toDate: Date = new Date();
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
@@ -108,13 +102,10 @@ export class JobbingDealsComponent implements OnDestroy {
     }
   }
 
-  onDateChange() {
-    this.loadData();
-  }
-
   loadData() {
-    const from = this.formatDate(this.fromDate);
-    const to = this.formatDate(this.toDate);
+    const today = new Date();
+    const from = this.formatDate(today);
+    const to = this.formatDate(today);
     this.svc
       .getJobbingDeals(from, to, this.intervalMinutes)
       .subscribe(res => {
@@ -151,7 +142,15 @@ export class JobbingDealsComponent implements OnDestroy {
 
   exportCsv() {
     const dateStr = new Date().toISOString().split('T')[0];
-    this.gridApi.exportDataAsCsv({ fileName: `jobbing-deals-${dateStr}.csv` });
+    this.gridApi.exportDataAsCsv({
+      fileName: `live-jobbing-${dateStr}.csv`,
+      processCellCallback: params =>
+        this.formatExportValue(
+          params.column?.getColId() ?? '',
+          params.value,
+          true
+        ),
+    });
   }
 
   exportPdf() {
@@ -161,15 +160,51 @@ export class JobbingDealsComponent implements OnDestroy {
     this.gridApi.forEachNode(n => {
       const row = n.data as Record<string, unknown> | undefined;
       if (row) {
-        rows.push((this.gridOptions.columnDefs || []).map(c => row[(c as any).field]));
+        rows.push(
+          (this.gridOptions.columnDefs || []).map(c =>
+            this.formatExportValue(
+              (c as any).field,
+              row[(c as any).field],
+              false
+            )
+          )
+        );
       }
     });
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
-    doc.save(`jobbing-deals-${dateStr}.pdf`);
+    doc.save(`live-jobbing-${dateStr}.pdf`);
   }
 
   ngOnDestroy() {
     this.refreshSub?.unsubscribe();
+  }
+
+  private formatExportValue(
+    field: string,
+    value: unknown,
+    ensureText = false
+  ): string {
+    if ((field === 'buyTime' || field === 'sellTime') && typeof value === 'string') {
+      return this.formatTimeForExport(value, ensureText);
+    }
+    if (value === null || value === undefined) {
+      return '';
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    return String(value ?? '');
+  }
+
+  private formatTimeForExport(value: string, ensureText: boolean): string {
+    const formatted = this.formatTime(value);
+    if (!formatted) {
+      return '';
+    }
+    return ensureText ? `\u200E${formatted}` : formatted;
   }
 }
