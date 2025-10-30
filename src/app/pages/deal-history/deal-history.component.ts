@@ -24,6 +24,8 @@ import { format } from 'date-fns';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
+type DealHistoryGridRow = DealHistoryRow & { __isTotalRow?: boolean };
+
 @Component({
   selector: 'app-deal-history',
   standalone: true,
@@ -53,7 +55,7 @@ export class DealHistoryComponent implements OnInit {
   @ViewChild('loginSearch') loginSearch!: ElementRef<HTMLInputElement>;
   rowCount = 0;
 
-  gridOptions: GridOptions<DealHistoryRow> = {
+  gridOptions: GridOptions<DealHistoryGridRow> = {
     theme: 'legacy',
     rowHeight: 25,
     defaultColDef: {
@@ -63,7 +65,17 @@ export class DealHistoryComponent implements OnInit {
       minWidth: 100,
     },
     columnDefs: [
-      { field: 'login', headerName: 'Login' },
+      {
+        field: 'login',
+        headerName: 'Login',
+        valueFormatter: params => {
+          if (params.node?.rowPinned) {
+            return 'Totals';
+          }
+
+          return params.value ?? '';
+        },
+      },
       {
         field: 'time',
         headerName: 'Time',
@@ -82,9 +94,11 @@ export class DealHistoryComponent implements OnInit {
     pagination: true,
     paginationPageSize: 100,
     paginationPageSizeSelector: [50, 100, 200],
+    pinnedBottomRowData: [],
+    onFilterChanged: () => this.updatePinnedRowTotals(),
   };
 
-  private gridApi!: GridApi<DealHistoryRow>;
+  private gridApi!: GridApi<DealHistoryGridRow>;
 
   constructor(private deals: DealsService, private master: MasterService) {}
 
@@ -106,8 +120,9 @@ export class DealHistoryComponent implements OnInit {
     this.deals.getDealHistory(from, to, this.login ?? undefined).subscribe({
       next: res => {
         this.rowCount = res.rowCount;
-        this.gridApi.setGridOption('rowData', res.rows);
+        this.gridApi.setGridOption('rowData', res.rows as DealHistoryGridRow[]);
         this.gridApi.sizeColumnsToFit();
+        this.updatePinnedRowTotals();
       },
       error: () => {
         this.gridApi.setGridOption('loading', false);
@@ -152,6 +167,45 @@ export class DealHistoryComponent implements OnInit {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
+  }
+
+  private updatePinnedRowTotals() {
+    if (!this.gridApi) {
+      return;
+    }
+
+    let profitTotal = 0;
+    let commissionTotal = 0;
+
+    this.gridApi.forEachNodeAfterFilter(node => {
+      if (!node.data || node.rowPinned) {
+        return;
+      }
+      profitTotal += Number(node.data.profit) || 0;
+      commissionTotal += Number(node.data.commission) || 0;
+    });
+
+    const displayedRowCount = this.gridApi.getDisplayedRowCount();
+    if (displayedRowCount === 0) {
+      this.gridApi.setGridOption('pinnedBottomRowData', []);
+      return;
+    }
+
+    const pinnedRow: DealHistoryGridRow = {
+      login: undefined as unknown as number,
+      time: '',
+      deal: undefined as unknown as number,
+      symbol: '',
+      contype: '',
+      qty: undefined as unknown as number,
+      price: undefined as unknown as number,
+      profit: profitTotal,
+      commission: commissionTotal,
+      comment: '',
+      __isTotalRow: true,
+    };
+
+    this.gridApi.setGridOption('pinnedBottomRowData', [pinnedRow]);
   }
 }
 
