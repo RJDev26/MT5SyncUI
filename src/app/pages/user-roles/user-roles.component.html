@@ -1,0 +1,26 @@
+<div class="user-roles-page">
+  <div class="user-roles-header">
+    <h2>User Roles</h2>
+    <button mat-flat-button color="primary" (click)="openCreateDialog()">
+      Add User
+    </button>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <div class="grid-wrapper ag-theme-alpine">
+    <ag-grid-angular
+      class="user-roles-grid"
+      [rowData]="rowData"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [overlayNoRowsTemplate]="overlayNoRowsTemplate"
+      [rowHeight]="48"
+      [domLayout]="'normal'"
+      [suppressCellFocus]="true"
+      (gridReady)="onGridReady($event)"
+      (firstDataRendered)="onFirstDataRendered($event)"
+    >
+    </ag-grid-angular>
+  </div>
+</div>
