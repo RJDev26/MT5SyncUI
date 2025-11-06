@@ -6,11 +6,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AgGridModule } from 'ag-grid-angular';
 import {
+  AllCommunityModule,
   ColDef,
   FirstDataRenderedEvent,
   GridApi,
   GridReadyEvent,
   ICellRendererParams,
+  ModuleRegistry,
   ValueFormatterParams,
 } from 'ag-grid-community';
 import { finalize } from 'rxjs/operators';
@@ -31,6 +33,8 @@ import {
   UserRoleResetPasswordDialogResult,
 } from './user-role-reset-password-dialog.component';
 
+ModuleRegistry.registerModules([AllCommunityModule]);
+
 @Component({
   selector: 'app-user-roles',
   standalone: true,
@@ -43,7 +47,7 @@ import {
     MatSnackBarModule,
   ],
   templateUrl: './user-roles.component.html',
-  styleUrl: './user-roles.component.scss',
+  styleUrls: ['./user-roles.component.scss'],
 })
 export class UserRolesComponent implements OnInit {
   private readonly actionsCellRenderer = (
