@@ -98,8 +98,8 @@ export class UserRolesComponent implements OnInit {
     {
       headerName: 'Actions',
       colId: 'actions',
-      minWidth: 220,
-      maxWidth: 260,
+      minWidth: 140,
+      maxWidth: 180,
       sortable: false,
       filter: false,
       cellRenderer: this.actionsCellRenderer,
@@ -202,30 +202,43 @@ export class UserRolesComponent implements OnInit {
       return container;
     }
 
-    const editButton = document.createElement('button');
-    editButton.type = 'button';
-    editButton.classList.add('link-button');
-    editButton.textContent = 'Edit';
-    editButton.title = 'Edit user';
-    editButton.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      this.openEditDialog(user);
+    const editButton = this.createIconButton({
+      icon: 'edit',
+      title: 'Edit user',
+      onClick: () => this.openEditDialog(user),
+    });
+    const resetButton = this.createIconButton({
+      icon: 'lock_reset',
+      title: 'Reset user password',
+      onClick: () => this.openResetPasswordDialog(user),
+      tone: 'warn',
     });
 
-    const resetLink = document.createElement('button');
-    resetLink.type = 'button';
-    resetLink.classList.add('link-button', 'reset-link');
-    resetLink.textContent = 'Reset Password';
-    resetLink.title = 'Reset user password';
-    resetLink.addEventListener('click', event => {
-      event.preventDefault();
-      event.stopPropagation();
-      this.openResetPasswordDialog(user);
-    });
-
-    container.append(editButton, resetLink);
+    container.append(editButton, resetButton);
     return container;
+  }
+
+  private createIconButton(config: {
+    icon: string;
+    title: string;
+    onClick: () => void;
+    tone?: 'primary' | 'warn';
+  }): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.classList.add('icon-button');
+    if (config.tone === 'warn') {
+      button.classList.add('warn');
+    }
+    button.title = config.title;
+    button.setAttribute('aria-label', config.title);
+    button.innerHTML = `<span class="material-icons">${config.icon}</span>`;
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopPropagation();
+      config.onClick();
+    });
+    return button;
   }
 
   private openEditDialog(user: UserRole): void {

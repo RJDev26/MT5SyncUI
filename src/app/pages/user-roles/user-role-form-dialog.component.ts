@@ -6,6 +6,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { CreateUserRoleRequest, UpdateUserRoleRequest, UserRole } from '@services/user-roles.service';
 
 export interface UserRoleFormDialogData {
@@ -45,7 +46,11 @@ export type UserRoleFormDialogResult =
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Role</mat-label>
-          <input matInput formControlName="role" required />
+          <mat-select formControlName="role" required>
+            <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+              {{ option.label }}
+            </mat-option>
+          </mat-select>
           <mat-error *ngIf="form.controls.role.hasError('required')">
             Role is required
           </mat-error>
@@ -103,9 +108,15 @@ export type UserRoleFormDialogResult =
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatSelectModule,
   ],
 })
 export class UserRoleFormDialogComponent {
+  readonly roleOptions = [
+    { label: 'Admin', value: 'Admin' },
+    { label: 'User', value: 'User' },
+  ];
+
   readonly form = this.fb.group({
     userName: this.fb.control('', { validators: [Validators.required] }),
     email: this.fb.control('', { validators: [Validators.required, Validators.email] }),
