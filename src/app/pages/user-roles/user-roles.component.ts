@@ -5,7 +5,14 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AgGridModule } from 'ag-grid-angular';
-import { ColDef, FirstDataRenderedEvent, GridApi, GridReadyEvent } from 'ag-grid-community';
+import {
+  ColDef,
+  FirstDataRenderedEvent,
+  GridApi,
+  GridReadyEvent,
+  ICellRendererParams,
+  ValueFormatterParams,
+} from 'ag-grid-community';
 import { finalize } from 'rxjs/operators';
 import {
   CreateUserRoleRequest,
@@ -54,7 +61,8 @@ export class UserRolesComponent implements OnInit {
       headerName: 'User ID',
       field: 'userId',
       minWidth: 120,
-      valueFormatter: params => (params.value != null ? params.value : ''),
+      valueFormatter: (params: ValueFormatterParams<UserRole, number | null>) =>
+        params.value != null ? params.value : '',
     },
     {
       headerName: 'Role',
@@ -65,13 +73,14 @@ export class UserRolesComponent implements OnInit {
       headerName: 'Email Confirmed',
       field: 'emailConfirmed',
       minWidth: 150,
-      valueFormatter: params => (params.value ? 'Yes' : 'No'),
+      valueFormatter: (params: ValueFormatterParams<UserRole, boolean | null>) =>
+        params.value ? 'Yes' : 'No',
     },
     {
       headerName: 'Head',
       field: 'head',
       minWidth: 150,
-      valueFormatter: params => params.value ?? '',
+      valueFormatter: (params: ValueFormatterParams<UserRole, string | null>) => params.value ?? '',
     },
     {
       headerName: 'Status',
@@ -85,7 +94,7 @@ export class UserRolesComponent implements OnInit {
       maxWidth: 260,
       sortable: false,
       filter: false,
-      cellRenderer: params => this.buildActionsCell(params.data),
+      cellRenderer: (params: ICellRendererParams<UserRole>) => this.buildActionsCell(params.data),
     },
   ];
 

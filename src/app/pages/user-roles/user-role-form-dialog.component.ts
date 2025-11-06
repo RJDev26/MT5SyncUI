@@ -107,13 +107,13 @@ export type UserRoleFormDialogResult =
 })
 export class UserRoleFormDialogComponent {
   readonly form = this.fb.group({
-    userName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    role: ['', Validators.required],
-    isActive: [true],
-    password: this.data.mode === 'create'
-      ? this.fb.control('', [Validators.required, Validators.minLength(6)])
-      : this.fb.control({ value: '', disabled: true }),
+    userName: this.fb.control('', { validators: [Validators.required] }),
+    email: this.fb.control('', { validators: [Validators.required, Validators.email] }),
+    role: this.fb.control('', { validators: [Validators.required] }),
+    isActive: this.fb.control(true),
+    password: this.fb.control('', {
+      validators: this.data.mode === 'create' ? [Validators.required, Validators.minLength(6)] : [],
+    }),
   });
 
   constructor(
@@ -131,7 +131,7 @@ export class UserRoleFormDialogComponent {
     }
 
     if (data.mode === 'edit') {
-      this.form.removeControl('password');
+      this.form.controls.password.disable();
     }
   }
 
