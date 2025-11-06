@@ -62,7 +62,7 @@ export class UserRolesComponent implements OnInit {
       field: 'userId',
       minWidth: 120,
       valueFormatter: (params: ValueFormatterParams<UserRole, number | null>) =>
-        params.value != null ? params.value : '',
+        params.value != null ? `${params.value}` : '',
     },
     {
       headerName: 'Role',
@@ -74,7 +74,7 @@ export class UserRolesComponent implements OnInit {
       field: 'emailConfirmed',
       minWidth: 150,
       valueFormatter: (params: ValueFormatterParams<UserRole, boolean | null>) =>
-        params.value ? 'Yes' : 'No',
+        params.value === true ? 'Yes' : 'No',
     },
     {
       headerName: 'Head',
@@ -94,7 +94,7 @@ export class UserRolesComponent implements OnInit {
       maxWidth: 260,
       sortable: false,
       filter: false,
-      cellRenderer: (params: ICellRendererParams<UserRole>) => this.buildActionsCell(params.data),
+      cellRenderer: this.actionsCellRenderer,
     },
   ];
 
@@ -110,6 +110,9 @@ export class UserRolesComponent implements OnInit {
   loading = false;
   private gridApi?: GridApi<UserRole>;
   overlayNoRowsTemplate = '<span class="no-rows">No users found.</span>';
+  private readonly actionsCellRenderer = (
+    params: ICellRendererParams<UserRole, unknown>
+  ): HTMLElement => this.buildActionsCell(params.data);
 
   constructor(
     private readonly userRolesService: UserRolesService,
