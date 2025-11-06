@@ -46,6 +46,10 @@ import {
   styleUrl: './user-roles.component.scss',
 })
 export class UserRolesComponent implements OnInit {
+  private readonly actionsCellRenderer = (
+    params: ICellRendererParams<UserRole, unknown>
+  ): HTMLElement => this.buildActionsCell(params.data);
+
   columnDefs: ColDef<UserRole>[] = [
     {
       headerName: 'User Name',
@@ -110,10 +114,6 @@ export class UserRolesComponent implements OnInit {
   loading = false;
   private gridApi?: GridApi<UserRole>;
   overlayNoRowsTemplate = '<span class="no-rows">No users found.</span>';
-  private readonly actionsCellRenderer = (
-    params: ICellRendererParams<UserRole, unknown>
-  ): HTMLElement => this.buildActionsCell(params.data);
-
   constructor(
     private readonly userRolesService: UserRolesService,
     private readonly dialog: MatDialog,
