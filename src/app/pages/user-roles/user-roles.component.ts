@@ -85,8 +85,8 @@ export class UserRolesComponent implements OnInit {
         params.value === true ? 'Yes' : 'No',
     },
     {
-      headerName: 'Head',
-      field: 'head',
+      headerName: 'Manager',
+      field: 'manager',
       minWidth: 150,
       valueFormatter: (params: ValueFormatterParams<UserRole, string | null>) => params.value ?? '',
     },

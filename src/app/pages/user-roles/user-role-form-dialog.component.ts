@@ -88,11 +88,11 @@ export type UserRoleFormDialogResult =
           </mat-dialog-content>
         </mat-tab>
 
-        <mat-tab *ngIf="data.mode === 'edit'" label="User Head Access">
-          <mat-dialog-content class="head-access">
+        <mat-tab *ngIf="data.mode === 'edit'" label="User Manager Access">
+          <mat-dialog-content class="manager-access">
             <div class="grid-wrapper">
               <div class="grid-container">
-                <div class="grid-title">Select Head</div>
+                <div class="grid-title">Select Manager</div>
                 <ag-grid-angular
                   style="width: 100%; height: 320px;"
                   class="ag-theme-material"
@@ -128,7 +128,7 @@ export type UserRoleFormDialogResult =
               </div>
 
               <div class="grid-container">
-                <div class="grid-title">Added Head list</div>
+                <div class="grid-title">Assigned Managers</div>
                 <ag-grid-angular
                   style="width: 100%; height: 320px;"
                   class="ag-theme-material"
@@ -171,7 +171,7 @@ export type UserRoleFormDialogResult =
         padding-top: 8px;
       }
 
-      .head-access {
+      .manager-access {
         min-height: 360px;
         padding: 8px 0 0;
       }
@@ -233,7 +233,7 @@ export class UserRoleFormDialogComponent implements OnInit {
       width: 60,
       maxWidth: 70,
     },
-    { headerName: 'Head Name', field: 'name', flex: 1 },
+    { headerName: 'Manager Name', field: 'name', flex: 1 },
   ];
 
   readonly assignedColumns: ColDef<Manager>[] = [
@@ -244,7 +244,7 @@ export class UserRoleFormDialogComponent implements OnInit {
       width: 60,
       maxWidth: 70,
     },
-    { headerName: 'Selected Head', field: 'name', flex: 1 },
+    { headerName: 'Selected Manager', field: 'name', flex: 1 },
   ];
 
   managerRows: Manager[] = [];

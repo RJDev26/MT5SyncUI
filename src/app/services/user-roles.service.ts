@@ -10,7 +10,8 @@ export interface UserRole {
   userId: number;
   emailConfirmed: boolean;
   role: string;
-  head: string | null;
+  manager: string | null;
+  head?: string | null;
   id: string;
   status: string;
 }
@@ -48,7 +49,9 @@ export class UserRolesService {
   constructor(private http: HttpClient) {}
 
   getUserRoles(): Observable<UserRole[]> {
-    return this.http.get<UserRole[]>(this.baseUrl);
+    return this.http
+      .get<UserRole[]>(this.baseUrl)
+      .pipe(map(list => this.normalizeUserRoles(list)));
   }
 
   createUserRole(payload: CreateUserRoleRequest): Observable<UserRole> {
@@ -95,6 +98,17 @@ export class UserRolesService {
     return list.map(item => ({
       id: (item as any).managerId ?? item.id,
       name: (item as any).managerName ?? item.name,
+    }));
+  }
+
+  private normalizeUserRoles(list: UserRole[] | null | undefined): UserRole[] {
+    if (!list) {
+      return [];
+    }
+
+    return list.map(user => ({
+      ...user,
+      manager: (user as any).manager ?? (user as any).head ?? null,
     }));
   }
 }
