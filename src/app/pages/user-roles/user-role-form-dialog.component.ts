@@ -230,7 +230,6 @@ export class UserRoleFormDialogComponent implements OnInit {
       headerCheckboxSelection: true,
       width: 60,
       maxWidth: 70,
-      suppressMenu: true,
     },
     { headerName: 'Head Name', field: 'name', flex: 1 },
   ];
@@ -242,7 +241,6 @@ export class UserRoleFormDialogComponent implements OnInit {
       headerCheckboxSelection: true,
       width: 60,
       maxWidth: 70,
-      suppressMenu: true,
     },
     { headerName: 'Selected Head', field: 'name', flex: 1 },
   ];
