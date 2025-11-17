@@ -14,6 +14,11 @@ export interface UserRole {
   status: string;
 }
 
+export interface Manager {
+  id: number;
+  name: string;
+}
+
 export interface CreateUserRoleRequest {
   userName: string;
   email: string;
@@ -53,5 +58,9 @@ export class UserRolesService {
 
   resetPassword(id: string, payload: ResetPasswordRequest): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/reset-password`, payload);
+  }
+
+  getManagers(): Observable<Manager[]> {
+    return this.http.get<Manager[]>(`${environment.apiBaseUrl}api/Master/managers`);
   }
 }

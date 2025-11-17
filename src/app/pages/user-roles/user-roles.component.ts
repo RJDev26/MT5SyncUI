@@ -247,7 +247,7 @@ export class UserRolesComponent implements OnInit {
       UserRoleFormDialogData,
       UserRoleFormDialogResult
     >(UserRoleFormDialogComponent, {
-      width: '420px',
+      width: '960px',
       data: {
         mode: 'edit',
         user,

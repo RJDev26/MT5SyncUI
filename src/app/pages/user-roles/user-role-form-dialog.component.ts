@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -7,7 +7,18 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { CreateUserRoleRequest, UpdateUserRoleRequest, UserRole } from '@services/user-roles.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { AgGridModule } from 'ag-grid-angular';
+import { AllCommunityModule, ColDef, GridApi, ModuleRegistry } from 'ag-grid-community';
+import {
+  CreateUserRoleRequest,
+  Manager,
+  UpdateUserRoleRequest,
+  UserRole,
+  UserRolesService,
+} from '@services/user-roles.service';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 export interface UserRoleFormDialogData {
   mode: 'create' | 'edit';
@@ -24,53 +35,112 @@ export type UserRoleFormDialogResult =
   template: `
     <h2 mat-dialog-title>{{ data.mode === 'create' ? 'Add User' : 'Edit User' }}</h2>
     <form class="user-role-form" [formGroup]="form" (ngSubmit)="submit()">
-      <mat-dialog-content>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>User Name</mat-label>
-          <input matInput formControlName="userName" required />
-          <mat-error *ngIf="form.controls.userName.hasError('required')">
-            User name is required
-          </mat-error>
-        </mat-form-field>
+      <mat-tab-group>
+        <mat-tab label="User Details">
+          <mat-dialog-content>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>User Name</mat-label>
+              <input matInput formControlName="userName" required />
+              <mat-error *ngIf="form.controls.userName.hasError('required')">
+                User name is required
+              </mat-error>
+            </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" required />
-          <mat-error *ngIf="form.controls.email.hasError('required')">
-            Email is required
-          </mat-error>
-          <mat-error *ngIf="form.controls.email.hasError('email')">
-            Enter a valid email address
-          </mat-error>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" required />
+              <mat-error *ngIf="form.controls.email.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="form.controls.email.hasError('email')">
+                Enter a valid email address
+              </mat-error>
+            </mat-form-field>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Role</mat-label>
-          <mat-select formControlName="role" required>
-            <mat-option *ngFor="let option of roleOptions" [value]="option.value">
-              {{ option.label }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.controls.role.hasError('required')">
-            Role is required
-          </mat-error>
-        </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Role</mat-label>
+              <mat-select formControlName="role" required>
+                <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.controls.role.hasError('required')">
+                Role is required
+              </mat-error>
+            </mat-form-field>
 
-        <ng-container *ngIf="data.mode === 'create'">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" required />
-            <mat-error *ngIf="form.controls.password?.hasError('required')">
-              Password is required
-            </mat-error>
-            <mat-error *ngIf="form.controls.password?.hasError('minlength')">
-              Password must be at least 6 characters
-            </mat-error>
-          </mat-form-field>
-        </ng-container>
+            <ng-container *ngIf="data.mode === 'create'">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password" required />
+                <mat-error *ngIf="form.controls.password?.hasError('required')">
+                  Password is required
+                </mat-error>
+                <mat-error *ngIf="form.controls.password?.hasError('minlength')">
+                  Password must be at least 6 characters
+                </mat-error>
+              </mat-form-field>
+            </ng-container>
 
-        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
-      </mat-dialog-content>
+            <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+          </mat-dialog-content>
+        </mat-tab>
+
+        <mat-tab *ngIf="data.mode === 'edit'" label="User Head Access">
+          <mat-dialog-content class="head-access">
+            <div class="grid-wrapper">
+              <div class="grid-container">
+                <div class="grid-title">Select Head</div>
+                <ag-grid-angular
+                  style="width: 100%; height: 320px;"
+                  class="ag-theme-material"
+                  [rowData]="managerRows"
+                  [columnDefs]="managerColumns"
+                  [rowSelection]="'multiple'"
+                  [overlayNoRowsTemplate]="noManagersTemplate"
+                  (gridReady)="onManagersGridReady($event)"
+                ></ag-grid-angular>
+              </div>
+
+              <div class="grid-actions">
+                <button
+                  mat-mini-fab
+                  color="primary"
+                  type="button"
+                  aria-label="Add selected"
+                  (click)="addSelectedManagers()"
+                  [disabled]="!managerGridApi"
+                >
+                  <span class="material-icons">chevron_right</span>
+                </button>
+                <button
+                  mat-mini-fab
+                  color="warn"
+                  type="button"
+                  aria-label="Remove selected"
+                  (click)="removeSelectedManagers()"
+                  [disabled]="!assignedGridApi"
+                >
+                  <span class="material-icons">chevron_left</span>
+                </button>
+              </div>
+
+              <div class="grid-container">
+                <div class="grid-title">Added Head list</div>
+                <ag-grid-angular
+                  style="width: 100%; height: 320px;"
+                  class="ag-theme-material"
+                  [rowData]="assignedManagerRows"
+                  [columnDefs]="assignedColumns"
+                  [rowSelection]="'multiple'"
+                  [overlayNoRowsTemplate]="noManagersTemplate"
+                  (gridReady)="onAssignedGridReady($event)"
+                ></ag-grid-angular>
+              </div>
+            </div>
+          </mat-dialog-content>
+        </mat-tab>
+      </mat-tab-group>
 
       <mat-dialog-actions align="end">
         <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
@@ -85,7 +155,7 @@ export type UserRoleFormDialogResult =
       .user-role-form {
         display: flex;
         flex-direction: column;
-        min-width: 320px;
+        min-width: 600px;
       }
 
       .full-width {
@@ -98,6 +168,40 @@ export type UserRoleFormDialogResult =
         gap: 16px;
         padding-top: 8px;
       }
+
+      .head-access {
+        min-height: 360px;
+        padding: 8px 0 0;
+      }
+
+      .grid-wrapper {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .grid-container {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 8px;
+        background: #fafafa;
+      }
+
+      .grid-title {
+        font-weight: 600;
+        padding: 4px 0 8px;
+      }
+
+      .grid-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+      }
     `,
   ],
   imports: [
@@ -109,13 +213,46 @@ export type UserRoleFormDialogResult =
     MatButtonModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatTabsModule,
+    AgGridModule,
   ],
 })
-export class UserRoleFormDialogComponent {
+export class UserRoleFormDialogComponent implements OnInit {
   readonly roleOptions = [
     { label: 'Admin', value: 'Admin' },
     { label: 'User', value: 'User' },
   ];
+
+  readonly managerColumns: ColDef<Manager>[] = [
+    {
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      width: 60,
+      maxWidth: 70,
+      suppressMenu: true,
+    },
+    { headerName: 'Head Name', field: 'name', flex: 1 },
+  ];
+
+  readonly assignedColumns: ColDef<Manager>[] = [
+    {
+      headerName: '',
+      checkboxSelection: true,
+      headerCheckboxSelection: true,
+      width: 60,
+      maxWidth: 70,
+      suppressMenu: true,
+    },
+    { headerName: 'Selected Head', field: 'name', flex: 1 },
+  ];
+
+  managerRows: Manager[] = [];
+  assignedManagerRows: Manager[] = [];
+
+  managerGridApi?: GridApi<Manager>;
+  assignedGridApi?: GridApi<Manager>;
+  noManagersTemplate = '<span class="no-rows">No records found.</span>';
 
   readonly form = this.fb.group({
     userName: this.fb.control('', { validators: [Validators.required] }),
@@ -129,6 +266,7 @@ export class UserRoleFormDialogComponent {
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly userRolesService: UserRolesService,
     public readonly dialogRef: MatDialogRef<UserRoleFormDialogComponent, UserRoleFormDialogResult>,
     @Inject(MAT_DIALOG_DATA) public readonly data: UserRoleFormDialogData
   ) {
@@ -143,6 +281,12 @@ export class UserRoleFormDialogComponent {
 
     if (data.mode === 'edit') {
       this.form.controls.password.disable();
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.data.mode === 'edit') {
+      this.loadManagers();
     }
   }
 
@@ -173,5 +317,49 @@ export class UserRoleFormDialogComponent {
       };
       this.dialogRef.close({ mode: 'edit', id: this.data.user.id, payload });
     }
+  }
+
+  onManagersGridReady(event: { api: GridApi<Manager> }): void {
+    this.managerGridApi = event.api;
+  }
+
+  onAssignedGridReady(event: { api: GridApi<Manager> }): void {
+    this.assignedGridApi = event.api;
+  }
+
+  addSelectedManagers(): void {
+    if (!this.managerGridApi) {
+      return;
+    }
+    const selection = this.managerGridApi.getSelectedRows();
+    if (!selection.length) {
+      return;
+    }
+
+    const existingIds = new Set(this.assignedManagerRows.map(m => m.id));
+    const toAdd = selection.filter(manager => !existingIds.has(manager.id));
+
+    this.assignedManagerRows = [...this.assignedManagerRows, ...toAdd];
+    this.managerRows = this.managerRows.filter(m => !toAdd.some(add => add.id === m.id));
+  }
+
+  removeSelectedManagers(): void {
+    if (!this.assignedGridApi) {
+      return;
+    }
+    const selection = this.assignedGridApi.getSelectedRows();
+    if (!selection.length) {
+      return;
+    }
+
+    const selectionIds = new Set(selection.map(m => m.id));
+    this.assignedManagerRows = this.assignedManagerRows.filter(m => !selectionIds.has(m.id));
+    this.managerRows = [...this.managerRows, ...selection];
+  }
+
+  private loadManagers(): void {
+    this.userRolesService.getManagers().subscribe(managers => {
+      this.managerRows = managers ?? [];
+    });
   }
 }
