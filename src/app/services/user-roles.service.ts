@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface UserRole {
@@ -18,6 +19,8 @@ export interface Manager {
   id: number;
   name: string;
 }
+
+export type ManagerMappingAction = 'INSERT' | 'DELETE';
 
 export interface CreateUserRoleRequest {
   userName: string;
@@ -61,6 +64,37 @@ export class UserRolesService {
   }
 
   getManagers(): Observable<Manager[]> {
-    return this.http.get<Manager[]>(`${environment.apiBaseUrl}api/Master/managers`);
+    return this.http
+      .get<Manager[]>(`${environment.apiBaseUrl}api/Master/managers`)
+      .pipe(map(list => this.normalizeManagerList(list)));
+  }
+
+  getUserManagers(userId: number): Observable<Manager[]> {
+    return this.http
+      .get<Manager[]>(`${this.baseUrl}/${userId}/managers`)
+      .pipe(map(list => this.normalizeManagerList(list)));
+  }
+
+  updateManagerMapping(
+    userId: number,
+    managerIds: number[],
+    action: ManagerMappingAction
+  ): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${userId}/manager-mapping`, {
+      userId,
+      managerIds: managerIds.join(','),
+      action,
+    });
+  }
+
+  private normalizeManagerList(list: Manager[] | null | undefined): Manager[] {
+    if (!list) {
+      return [];
+    }
+
+    return list.map(item => ({
+      id: (item as any).managerId ?? item.id,
+      name: (item as any).managerName ?? item.name,
+    }));
   }
 }

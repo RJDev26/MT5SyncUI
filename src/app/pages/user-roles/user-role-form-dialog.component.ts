@@ -10,9 +10,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AgGridModule } from 'ag-grid-angular';
 import { AllCommunityModule, ColDef, GridApi, ModuleRegistry } from 'ag-grid-community';
+import { forkJoin } from 'rxjs';
 import {
   CreateUserRoleRequest,
   Manager,
+  ManagerMappingAction,
   UpdateUserRoleRequest,
   UserRole,
   UserRolesService,
@@ -326,7 +328,7 @@ export class UserRoleFormDialogComponent implements OnInit {
   }
 
   addSelectedManagers(): void {
-    if (!this.managerGridApi) {
+    if (!this.managerGridApi || !this.data.user) {
       return;
     }
     const selection = this.managerGridApi.getSelectedRows();
@@ -334,15 +336,11 @@ export class UserRoleFormDialogComponent implements OnInit {
       return;
     }
 
-    const existingIds = new Set(this.assignedManagerRows.map(m => m.id));
-    const toAdd = selection.filter(manager => !existingIds.has(manager.id));
-
-    this.assignedManagerRows = [...this.assignedManagerRows, ...toAdd];
-    this.managerRows = this.managerRows.filter(m => !toAdd.some(add => add.id === m.id));
+    this.persistManagerMapping(selection, 'INSERT');
   }
 
   removeSelectedManagers(): void {
-    if (!this.assignedGridApi) {
+    if (!this.assignedGridApi || !this.data.user) {
       return;
     }
     const selection = this.assignedGridApi.getSelectedRows();
@@ -350,14 +348,46 @@ export class UserRoleFormDialogComponent implements OnInit {
       return;
     }
 
-    const selectionIds = new Set(selection.map(m => m.id));
-    this.assignedManagerRows = this.assignedManagerRows.filter(m => !selectionIds.has(m.id));
-    this.managerRows = [...this.managerRows, ...selection];
+    this.persistManagerMapping(selection, 'DELETE');
   }
 
   private loadManagers(): void {
-    this.userRolesService.getManagers().subscribe(managers => {
-      this.managerRows = managers ?? [];
+    if (!this.data.user) {
+      return;
+    }
+
+    forkJoin({
+      allManagers: this.userRolesService.getManagers(),
+      assigned: this.userRolesService.getUserManagers(this.data.user.userId),
+    }).subscribe(({ allManagers, assigned }) => {
+      const assignedIds = new Set(assigned.map(m => m.id));
+      this.assignedManagerRows = assigned;
+      this.managerRows = allManagers.filter(m => !assignedIds.has(m.id));
     });
+  }
+
+  private persistManagerMapping(selection: Manager[], action: ManagerMappingAction): void {
+    if (!this.data.user) {
+      return;
+    }
+
+    const managerIds = selection.map(m => m.id);
+
+    this.userRolesService
+      .updateManagerMapping(this.data.user.userId, managerIds, action)
+      .subscribe(() => {
+        if (action === 'INSERT') {
+          const existingIds = new Set(this.assignedManagerRows.map(m => m.id));
+          const toAdd = selection.filter(manager => !existingIds.has(manager.id));
+          this.assignedManagerRows = [...this.assignedManagerRows, ...toAdd];
+          this.managerRows = this.managerRows.filter(m => !toAdd.some(add => add.id === m.id));
+          this.managerGridApi?.deselectAll();
+        } else {
+          const selectionIds = new Set(selection.map(m => m.id));
+          this.assignedManagerRows = this.assignedManagerRows.filter(m => !selectionIds.has(m.id));
+          this.managerRows = [...this.managerRows, ...selection];
+          this.assignedGridApi?.deselectAll();
+        }
+      });
   }
 }
