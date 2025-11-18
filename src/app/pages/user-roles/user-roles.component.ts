@@ -140,7 +140,7 @@ export class UserRolesComponent implements OnInit {
     const dialogRef = this.dialog.open<UserRoleFormDialogComponent, UserRoleFormDialogData, UserRoleFormDialogResult>(
       UserRoleFormDialogComponent,
       {
-        width: '420px',
+        width: '720px',
         data: {
           mode: 'create',
         },

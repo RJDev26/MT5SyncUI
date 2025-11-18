@@ -19,6 +19,7 @@ import {
   UserRole,
   UserRolesService,
 } from '@services/user-roles.service';
+import { LoginOption, MasterService } from '@services/master.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -58,6 +59,29 @@ export type UserRoleFormDialogResult =
                 Enter a valid email address
               </mat-error>
             </mat-form-field>
+
+            <div class="login-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Login Digits</mat-label>
+                <mat-select
+                  formControlName="loginDigit"
+                  (selectionChange)="applyLoginDigitFilter()"
+                >
+                  <mat-option value="all">All</mat-option>
+                  <mat-option value="4">4 Digit</mat-option>
+                  <mat-option value="6">6 Digit</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Login</mat-label>
+                <mat-select formControlName="login" placeholder="Select login">
+                  <mat-option *ngFor="let option of filteredLogins" [value]="option.login">
+                    {{ option.login }} - {{ option.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Role</mat-label>
@@ -164,6 +188,17 @@ export type UserRoleFormDialogResult =
         width: 100%;
       }
 
+      .login-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .half-width {
+        flex: 1;
+        min-width: 220px;
+      }
+
       mat-dialog-content {
         display: flex;
         flex-direction: column;
@@ -249,12 +284,16 @@ export class UserRoleFormDialogComponent implements OnInit {
 
   managerRows: Manager[] = [];
   assignedManagerRows: Manager[] = [];
+  logins: LoginOption[] = [];
+  filteredLogins: LoginOption[] = [];
 
   managerGridApi?: GridApi<Manager>;
   assignedGridApi?: GridApi<Manager>;
   noManagersTemplate = '<span class="no-rows">No records found.</span>';
 
   readonly form = this.fb.group({
+    loginDigit: this.fb.control<'all' | '4' | '6'>('all'),
+    login: this.fb.control<number | null>(null),
     userName: this.fb.control('', { validators: [Validators.required] }),
     email: this.fb.control('', { validators: [Validators.required, Validators.email] }),
     role: this.fb.control('', { validators: [Validators.required] }),
@@ -266,12 +305,14 @@ export class UserRoleFormDialogComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly masterService: MasterService,
     private readonly userRolesService: UserRolesService,
     public readonly dialogRef: MatDialogRef<UserRoleFormDialogComponent, UserRoleFormDialogResult>,
     @Inject(MAT_DIALOG_DATA) public readonly data: UserRoleFormDialogData
   ) {
     if (data.user) {
       this.form.patchValue({
+        login: data.user.userId ?? null,
         userName: data.user.userName,
         email: data.user.email,
         role: data.user.role,
@@ -285,6 +326,7 @@ export class UserRoleFormDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadLogins();
     if (this.data.mode === 'edit') {
       this.loadManagers();
     }
@@ -296,7 +338,7 @@ export class UserRoleFormDialogComponent implements OnInit {
       return;
     }
 
-    const { userName, email, role, isActive } = this.form.getRawValue();
+    const { userName, email, role, isActive, login } = this.form.getRawValue();
 
     if (this.data.mode === 'create') {
       const password = this.form.controls.password?.value ?? '';
@@ -305,6 +347,7 @@ export class UserRoleFormDialogComponent implements OnInit {
         email: email!,
         role: role!,
         isActive: !!isActive,
+        login: login ?? undefined,
         password,
       };
       this.dialogRef.close({ mode: 'create', payload });
@@ -314,6 +357,7 @@ export class UserRoleFormDialogComponent implements OnInit {
         email: email!,
         role: role!,
         isActive: !!isActive,
+        login: login ?? undefined,
       };
       this.dialogRef.close({ mode: 'edit', id: this.data.user.id, payload });
     }
@@ -364,6 +408,32 @@ export class UserRoleFormDialogComponent implements OnInit {
       this.assignedManagerRows = assigned;
       this.managerRows = allManagers.filter(m => !assignedIds.has(m.id));
     });
+  }
+
+  private loadLogins(): void {
+    this.masterService.getLogins().subscribe(options => {
+      this.logins = options ?? [];
+      this.applyLoginDigitFilter();
+    });
+  }
+
+  applyLoginDigitFilter(): void {
+    const filter = this.form.controls.loginDigit.value ?? 'all';
+    const targetLength = filter === 'all' ? null : Number(filter);
+    this.filteredLogins = this.logins.filter(option => {
+      if (!targetLength) {
+        return true;
+      }
+      return option.login.toString().length === targetLength;
+    });
+
+    const selectedLogin = this.form.controls.login.value;
+    if (selectedLogin != null) {
+      const stillExists = this.filteredLogins.some(option => option.login === selectedLogin);
+      if (!stillExists) {
+        this.form.controls.login.setValue(null);
+      }
+    }
   }
 
   private persistManagerMapping(selection: Manager[], action: ManagerMappingAction): void {
