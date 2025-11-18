@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { DealsService } from '@services/deals.service';
 import {
   GridApi,
@@ -32,6 +33,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    MatSelectModule,
     AgGridModule,
     AgGridAngular,
   ],
@@ -39,6 +41,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrls: ['./deals-live.component.scss']
 })
 export class DealsLiveComponent implements OnDestroy {
+  loginDigitFilter: 'all' | '4' | '5' = 'all';
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -101,6 +104,7 @@ export class DealsLiveComponent implements OnDestroy {
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
+  private allRows: any[] = [];
   private readonly today = new Date();
   constructor(private svc: DealsService) {}
 
@@ -129,6 +133,10 @@ export class DealsLiveComponent implements OnDestroy {
     this.gridApi.setGridOption('quickFilterText', value);
   }
 
+  onLoginDigitChange() {
+    this.refreshGridRows();
+  }
+
   exportCsv() {
     const dateStr = this.today.toISOString().split('T')[0];
     this.gridApi.exportDataAsCsv({ fileName: `Deal-${dateStr}.csv` });
@@ -155,11 +163,12 @@ export class DealsLiveComponent implements OnDestroy {
       .pipe(
         tap(res => {
           if (res.rows?.length) {
-            if (this.lastMaxTime) {
-              this.gridApi.applyTransaction({ add: res.rows });
-            } else {
-              this.gridApi.setGridOption('rowData', res.rows);
-            }
+            const merged = new Map<string, any>(
+              this.allRows.map(r => [String(r.deal), r])
+            );
+            res.rows.forEach(r => merged.set(String(r.deal), r));
+            this.allRows = Array.from(merged.values());
+            this.refreshGridRows();
           }
           if (res.maxTime != null) {
             this.lastMaxTime = res.maxTime;
@@ -169,5 +178,21 @@ export class DealsLiveComponent implements OnDestroy {
           }
         })
       );
+  }
+
+  private refreshGridRows() {
+    if (!this.gridApi) {
+      return;
+    }
+    const filtered = this.getFilteredRows();
+    this.gridApi.setGridOption('rowData', filtered);
+  }
+
+  private getFilteredRows() {
+    if (this.loginDigitFilter === 'all') {
+      return this.allRows;
+    }
+    const digitLength = Number(this.loginDigitFilter);
+    return this.allRows.filter(r => String(r.login ?? '').length === digitLength);
   }
 }

@@ -12,6 +12,14 @@
       <span class="info">Rows: {{ rowCount }}</span>
     </div>
     <div class="right">
+      <mat-form-field appearance="outline" class="digit-filter">
+        <mat-label>Login Digits</mat-label>
+        <mat-select [(ngModel)]="loginDigitFilter" (selectionChange)="onLoginDigitChange()">
+          <mat-option value="all">All</mat-option>
+          <mat-option value="4">4 Digits</mat-option>
+          <mat-option value="5">5 Digits</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Search</mat-label>
         <input matInput (input)="onFilterTextBoxChanged($event)" />
