@@ -60,6 +60,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class StandingComponent implements OnInit {
   selectedDate: Date = new Date();
   logins: LoginOption[] = [];
+  filteredLogins: LoginOption[] = [];
+  loginDigitFilter: 'all' | '4' | '6' = 'all';
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
@@ -184,7 +186,10 @@ export class StandingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.master.getLogins().subscribe(res => (this.logins = res));
+    this.master.getLogins().subscribe(res => {
+      this.logins = res;
+      this.applyLoginDigitFilter();
+    });
     this.master.getSymbols().subscribe(res => (this.symbols = res));
   }
 
@@ -251,6 +256,23 @@ export class StandingComponent implements OnInit {
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
     doc.save('standing.pdf');
+  }
+
+  applyLoginDigitFilter(): void {
+    const targetLength = this.loginDigitFilter === 'all' ? null : Number(this.loginDigitFilter);
+    this.filteredLogins = this.logins.filter(option => {
+      if (!targetLength) {
+        return true;
+      }
+      return option.login.toString().length === targetLength;
+    });
+
+    if (
+      this.selectedLogin != null &&
+      !this.filteredLogins.some(option => option.login === this.selectedLogin)
+    ) {
+      this.selectedLogin = null;
+    }
   }
 
   formatQty(params: any): string {

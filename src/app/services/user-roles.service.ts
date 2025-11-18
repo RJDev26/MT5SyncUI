@@ -28,7 +28,6 @@ export interface CreateUserRoleRequest {
   email: string;
   password: string;
   role: string;
-  login?: number | null;
   isActive: boolean;
 }
 
@@ -36,7 +35,6 @@ export interface UpdateUserRoleRequest {
   userName: string;
   email: string;
   role: string;
-  login?: number | null;
   isActive: boolean;
 }
 
