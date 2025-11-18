@@ -61,7 +61,7 @@ export class StandingComponent implements OnInit {
   selectedDate: Date = new Date();
   logins: LoginOption[] = [];
   filteredLogins: LoginOption[] = [];
-  loginDigitFilter: 'all' | '4' | '6' = 'all';
+  loginDigitFilter: 'all' | '4' | '5' = 'all';
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
