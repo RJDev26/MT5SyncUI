@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -32,6 +33,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    MatSelectModule,
     AgGridModule,
     AgGridAngular,
   ],
@@ -39,6 +41,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrls: ['./jobbing-deals.component.scss'],
 })
 export class JobbingDealsComponent implements OnDestroy {
+  loginDigitFilter: 'all' | '4' | '5' = 'all';
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -86,6 +89,7 @@ export class JobbingDealsComponent implements OnDestroy {
   rowCount = 0;
   private refreshSub?: Subscription;
   private gridApi!: GridApi<JobbingDealRow>;
+  private allRows: JobbingDealRow[] = [];
 
   constructor(private svc: DealsService) {}
 
@@ -109,7 +113,8 @@ export class JobbingDealsComponent implements OnDestroy {
     this.svc
       .getJobbingDeals(from, to, this.intervalMinutes)
       .subscribe(res => {
-        this.gridApi.setGridOption('rowData', res.rows);
+        this.allRows = res.rows;
+        this.gridApi.setGridOption('rowData', this.getFilteredRows());
         setTimeout(() => this.gridApi.sizeColumnsToFit());
         this.lastMaxTime = res.maxTime || undefined;
         this.rowCount = res.rowCount;
@@ -138,6 +143,10 @@ export class JobbingDealsComponent implements OnDestroy {
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  onLoginDigitChange() {
+    this.gridApi.setGridOption('rowData', this.getFilteredRows());
   }
 
   exportCsv() {
@@ -206,5 +215,13 @@ export class JobbingDealsComponent implements OnDestroy {
       return '';
     }
     return ensureText ? `\u200E${formatted}` : formatted;
+  }
+
+  private getFilteredRows() {
+    if (this.loginDigitFilter === 'all') {
+      return this.allRows;
+    }
+    const length = Number(this.loginDigitFilter);
+    return this.allRows.filter(r => String(r.login ?? '').length === length);
   }
 }

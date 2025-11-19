@@ -39,6 +39,11 @@
   mat-form-field {
     width: 300px;
   }
+
+  .digit-filter {
+    width: 160px;
+    margin-right: 0.5rem;
+  }
 }
 
 :host ::ng-deep .ag-theme-alpine {
