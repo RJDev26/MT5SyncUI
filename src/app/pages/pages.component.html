@@ -23,7 +23,10 @@
                             <a class="logo" routerLink="/" (click)="closeSubMenus()">GRADUS</a>
                         }
                     </div>
-                    <div fxLayout="row" fxLayoutAlign="end center">
+                    <div fxLayout="row" fxLayoutAlign="end center" class="toolbar-user-row">
+                        <div class="user-badge" fxLayout="row" fxLayoutAlign="center center" *ngIf="userName || userRole">
+                            <span class="user-label">{{ userName || 'User' }} | {{ userRole || 'User' }}</span>
+                        </div>
                         <button mat-icon-button (click)="toggleTheme()" [matTooltip]="settings.theme === 'black-dashboard' ? 'Switch to light theme' : 'Switch to dark theme'">
                             <mat-icon>{{settings.theme === 'black-dashboard' ? 'light_mode' : 'dark_mode'}}</mat-icon>
                         </button>

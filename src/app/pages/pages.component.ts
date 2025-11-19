@@ -19,6 +19,7 @@ import { MessagesComponent } from '../theme/components/messages/messages.compone
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { HorizontalMenuComponent } from '../theme/components/menu/horizontal-menu/horizontal-menu.component';
 import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.component';
+import { AuthenticationService } from '@services/authentication.service';
 
 @Component({
     selector: 'app-pages',
@@ -60,8 +61,10 @@ export class PagesComponent implements OnInit {
   public showBackToTop: boolean = false;
   private defaultMenu: string; //declared for return default menu when window resized
   public showSidenav: boolean = false;
+  public userName: string = '';
+  public userRole: string = '';
 
-  constructor(public settingsService: SettingsService, public router: Router, private menuService: MenuService){
+  constructor(public settingsService: SettingsService, public router: Router, private menuService: MenuService, private authenticationService: AuthenticationService){
     this.settings = this.settingsService.settings;
   }
 
@@ -74,6 +77,13 @@ export class PagesComponent implements OnInit {
     this.menuOption = this.settings.menu;
     this.menuTypeOption = this.settings.menuType;
     this.defaultMenu = this.settings.menu;
+    this.authenticationService.getUserData().subscribe(data => {
+      if (data) {
+        this.userName = data.name || data.userName || '';
+        const roles = Array.isArray(data.roles) ? data.roles : [];
+        this.userRole = data.role || roles[0] || '';
+      }
+    });
   }
 
   ngAfterViewInit(){

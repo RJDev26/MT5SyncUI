@@ -2,8 +2,24 @@
 
 .sidenav{
     width: $sidenav-width;
-    overflow: hidden; 
-    border: none !important;  
+    overflow: hidden;
+    border: none !important;
+}
+
+.toolbar-user-row {
+    gap: 12px;
+}
+
+.user-badge {
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    .user-label {
+        white-space: nowrap;
+    }
 }
 .horizontal-menu{
     padding: 0;
