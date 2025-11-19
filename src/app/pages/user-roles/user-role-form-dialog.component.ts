@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -74,7 +75,22 @@ export type UserRoleFormDialogResult =
             <ng-container *ngIf="data.mode === 'create'">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Password</mat-label>
-                <input matInput type="password" formControlName="password" required />
+                <input
+                  matInput
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  required
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+                  [attr.title]="showPassword ? 'Hide password' : 'Show password'"
+                >
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
                 <mat-error *ngIf="form.controls.password?.hasError('required')">
                   Password is required
                 </mat-error>
@@ -211,6 +227,7 @@ export type UserRoleFormDialogResult =
     ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -252,6 +269,7 @@ export class UserRoleFormDialogComponent implements OnInit {
   managerGridApi?: GridApi<Manager>;
   assignedGridApi?: GridApi<Manager>;
   noManagersTemplate = '<span class="no-rows">No records found.</span>';
+  showPassword = false;
 
   readonly form = this.fb.group({
     userName: this.fb.control('', { validators: [Validators.required] }),
@@ -281,6 +299,10 @@ export class UserRoleFormDialogComponent implements OnInit {
     if (data.mode === 'edit') {
       this.form.controls.password.disable();
     }
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   ngOnInit(): void {
