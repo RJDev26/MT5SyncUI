@@ -6,8 +6,34 @@
     border: none !important;
 }
 
+
+.main-toolbar {
+    position: relative;
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-right {
+    margin-left: auto;
+}
+
 .toolbar-user-row {
     gap: 12px;
+}
+
+.toolbar-center {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .user-badge {
