@@ -89,7 +89,7 @@ export class JobbingDealsComponent implements OnDestroy {
     getRowId: p => String(p.data.buyDeal) + '-' + String(p.data.sellDeal),
   };
 
-  intervalMinutes = 5;
+  intervalMinutes = 15;
   autoRefresh = false;
   lastMaxTime?: string;
   rowCount = 0;
