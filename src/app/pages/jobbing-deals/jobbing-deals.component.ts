@@ -7,6 +7,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { DealsService, JobbingDealRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -34,6 +36,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatButtonModule,
     MatIconModule,
     MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     AgGridModule,
     AgGridAngular,
   ],
@@ -42,8 +46,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class JobbingDealsComponent implements OnDestroy {
   loginDigitFilter: 'all' | '4' | '5' = 'all';
-  fromDate = this.formatDateInputValue(new Date());
-  toDate = this.formatDateInputValue(new Date());
+  fromDate: Date | null = new Date();
+  toDate: Date | null = new Date();
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -122,24 +126,12 @@ export class JobbingDealsComponent implements OnDestroy {
       });
   }
 
-  private formatDateForApi(dateValue: string): string {
-    if (!dateValue) {
+  private formatDateForApi(dateValue: Date | null): string {
+    if (!(dateValue instanceof Date) || Number.isNaN(dateValue.getTime())) {
       return this.formatDateForBackend(new Date());
     }
 
-    const [year, month, day] = dateValue.split('-');
-    if (!year || !month || !day) {
-      return this.formatDateForBackend(new Date());
-    }
-
-    return `${year}/${month}/${day}`;
-  }
-
-  private formatDateInputValue(d: Date): string {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return this.formatDateForBackend(dateValue);
   }
 
   private formatDateForBackend(d: Date): string {
