@@ -42,6 +42,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class JobbingDealsComponent implements OnDestroy {
   loginDigitFilter: 'all' | '4' | '5' = 'all';
+  fromDate = this.formatDateInputValue(new Date());
+  toDate = this.formatDateInputValue(new Date());
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -107,9 +109,8 @@ export class JobbingDealsComponent implements OnDestroy {
   }
 
   loadData() {
-    const today = new Date();
-    const from = this.formatDate(today);
-    const to = this.formatDate(today);
+    const from = this.formatDateForApi(this.fromDate);
+    const to = this.formatDateForApi(this.toDate);
     this.svc
       .getJobbingDeals(from, to, this.intervalMinutes)
       .subscribe(res => {
@@ -121,7 +122,27 @@ export class JobbingDealsComponent implements OnDestroy {
       });
   }
 
-  private formatDate(d: Date): string {
+  private formatDateForApi(dateValue: string): string {
+    if (!dateValue) {
+      return this.formatDateForBackend(new Date());
+    }
+
+    const [year, month, day] = dateValue.split('-');
+    if (!year || !month || !day) {
+      return this.formatDateForBackend(new Date());
+    }
+
+    return `${year}/${month}/${day}`;
+  }
+
+  private formatDateInputValue(d: Date): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private formatDateForBackend(d: Date): string {
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
