@@ -70,3 +70,9 @@
 .mat-mdc-raised-button {
   height: 2.75rem;
 }
+
+:host ::ng-deep .clickable-cell {
+  cursor: pointer;
+  color: #1976d2;
+  text-decoration: underline;
+}

@@ -10,6 +10,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AgGridModule } from 'ag-grid-angular';
 import {
   GridApi,
@@ -17,11 +18,13 @@ import {
   ColDef,
   ModuleRegistry,
   AllCommunityModule,
+  CellClickedEvent,
 } from 'ag-grid-community';
 import { DealsService, StandingRow } from '@services/deals.service';
 import { MasterService, MasterItem, LoginOption } from '@services/master.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { StandingSymbolDetailDialogComponent } from './standing-symbol-detail-dialog.component';
 
 interface StandingGridRow extends StandingRow {
   isGroupHeader?: boolean;
@@ -48,6 +51,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    MatDialogModule,
     AgGridModule,
   ],
   templateUrl: './standing.component.html',
@@ -56,6 +60,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 export class StandingComponent implements OnInit {
   selectedDate: Date = new Date();
   logins: LoginOption[] = [];
+  filteredLogins: LoginOption[] = [];
+  loginDigitFilter: 'all' | '4' | '5' = 'all';
   symbols: MasterItem[] = [];
   selectedLogin: number | null = null;
   selectedSymbol: string | null = null;
@@ -110,7 +116,12 @@ export class StandingComponent implements OnInit {
   ];
 
   summaryColumnDefs: ColDef<StandingGridRow>[] = [
-    { field: 'symbol', headerName: 'Symbol' },
+    {
+      field: 'symbol',
+      headerName: 'Symbol',
+      cellClass: params =>
+        params.data?.isGroupHeader || params.data?.isGroupTotal ? '' : 'clickable-cell',
+    },
     {
       field: 'netQty',
       headerName: 'Net Qty',
@@ -163,14 +174,22 @@ export class StandingComponent implements OnInit {
     paginationPageSizeSelector: [100],
     getRowClass: params => this.getRowClass(params),
     domLayout: 'autoHeight',
+    onCellClicked: event => this.onCellClicked(event),
   };
 
   private gridApi!: GridApi<StandingGridRow>;
 
-  constructor(private deals: DealsService, private master: MasterService) {}
+  constructor(
+    private deals: DealsService,
+    private master: MasterService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-    this.master.getLogins().subscribe(res => (this.logins = res));
+    this.master.getLogins().subscribe(res => {
+      this.logins = res;
+      this.applyLoginDigitFilter();
+    });
     this.master.getSymbols().subscribe(res => (this.symbols = res));
   }
 
@@ -198,6 +217,24 @@ export class StandingComponent implements OnInit {
     this.onShow();
   }
 
+  onCellClicked(event: CellClickedEvent<StandingGridRow>) {
+    if (this.groupBy !== 'summary') {
+      return;
+    }
+    if (event.colDef.field !== 'symbol') {
+      return;
+    }
+    const data = event.data;
+    if (!data || data.isGroupHeader || data.isGroupTotal) {
+      return;
+    }
+    const symbol = data.symbol;
+    if (!symbol) {
+      return;
+    }
+    this.openSymbolDetails(symbol);
+  }
+
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
@@ -219,6 +256,23 @@ export class StandingComponent implements OnInit {
     const doc = new jsPDF();
     (autoTable as any)(doc, { head: [cols], body: rows });
     doc.save('standing.pdf');
+  }
+
+  applyLoginDigitFilter(): void {
+    const targetLength = this.loginDigitFilter === 'all' ? null : Number(this.loginDigitFilter);
+    this.filteredLogins = this.logins.filter(option => {
+      if (!targetLength) {
+        return true;
+      }
+      return option.login.toString().length === targetLength;
+    });
+
+    if (
+      this.selectedLogin != null &&
+      !this.filteredLogins.some(option => option.login === this.selectedLogin)
+    ) {
+      this.selectedLogin = null;
+    }
   }
 
   formatQty(params: any): string {
@@ -267,6 +321,31 @@ export class StandingComponent implements OnInit {
     } else {
       this.gridOptions.rowData = grouped;
     }
+  }
+
+  private openSymbolDetails(symbol: string) {
+    const dateStr = this.selectedDate
+      .toISOString()
+      .split('T')[0]
+      .replace(/-/g, '/');
+    this.deals
+      .getStanding(dateStr, this.selectedLogin, symbol, 'login')
+      .subscribe(res => {
+        const dialogRows = res.rows.map(r => ({
+          ...r,
+          netQty: r.netQty ?? (r.buyQty || 0) - (r.sellQty || 0),
+        }));
+        this.dialog.open(StandingSymbolDetailDialogComponent, {
+          width: '90vw',
+          maxWidth: '90vw',
+          height: '80vh',
+          maxHeight: '80vh',
+          data: {
+            symbol,
+            rows: dialogRows,
+          },
+        });
+      });
   }
 
   private groupByKey(rows: StandingGridRow[], key: 'login' | 'symbol'): any[] {

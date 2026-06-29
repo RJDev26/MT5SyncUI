@@ -17,7 +17,13 @@ export const routes: Routes = [
         loadComponent: () => import('./users/users.component').then(c => c.UsersComponent),
         data: { breadcrumb: 'Users' }
       },
-     
+      {
+        path: 'user-roles',
+        loadComponent: () =>
+          import('./user-roles/user-roles.component').then(c => c.UserRolesComponent),
+        data: { breadcrumb: 'User Roles' }
+      },
+
       {
         path: 'dynamic-menu',
         loadComponent: () => import('./dynamic-menu/dynamic-menu.component').then(c => c.DynamicMenuComponent),

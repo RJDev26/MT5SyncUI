@@ -7,30 +7,33 @@
 
     <mat-sidenav-content id="main" #mainSidenavContent>
 
-            <mat-toolbar color="primary" class="px-2">
-                <div fxLayout="row" fxLayoutAlign="space-between center" class="w-100">
-                    <div fxLayout="row" fxLayoutAlign="center center">
-                        @if (settings.menu == 'vertical') {
-                            <button mat-icon-button (click)="toggleSidenav()">
-                                <mat-icon>menu</mat-icon>
-                            </button>
-                            <button fxShow="false" fxShow.gt-xs mat-icon-button (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock">
-                                <mat-icon>person</mat-icon>
-                            </button>
-                        }
-                        @if (settings.menu == 'horizontal') {
-                            <a mat-raised-button color="accent" routerLink="/" (click)="closeSubMenus()" class="small-logo">G</a>
-                            <a class="logo" routerLink="/" (click)="closeSubMenus()">GRADUS</a>
-                        }
-                    </div>
-                    <div fxLayout="row" fxLayoutAlign="end center">
-                        <button mat-icon-button (click)="toggleTheme()" [matTooltip]="settings.theme === 'black-dashboard' ? 'Switch to light theme' : 'Switch to dark theme'">
-                            <mat-icon>{{settings.theme === 'black-dashboard' ? 'light_mode' : 'dark_mode'}}</mat-icon>
+            <mat-toolbar color="primary" class="px-2 main-toolbar">
+                <div class="toolbar-left" fxLayout="row" fxLayoutAlign="center center">
+                    @if (settings.menu == 'vertical') {
+                        <button mat-icon-button (click)="toggleSidenav()">
+                            <mat-icon>menu</mat-icon>
                         </button>
-                        <app-fullscreen></app-fullscreen>
-                        <app-messages fxShow="false" fxShow.gt-xs></app-messages>
-                        <app-user-menu></app-user-menu>
+                        <button fxShow="false" fxShow.gt-xs mat-icon-button (click)="settings.sidenavUserBlock = !settings.sidenavUserBlock">
+                            <mat-icon>person</mat-icon>
+                        </button>
+                    }
+                    @if (settings.menu == 'horizontal') {
+                        <a mat-raised-button color="accent" routerLink="/" (click)="closeSubMenus()" class="small-logo">G</a>
+                        <a class="logo" routerLink="/" (click)="closeSubMenus()">GRADUS</a>
+                    }
+                </div>
+                <div class="toolbar-center" fxLayout="row" fxLayoutAlign="center center" *ngIf="userName || userRole">
+                    <div class="user-badge" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="user-label">{{ userName || 'User' }} | {{ userRole || 'User' }}</span>
                     </div>
+                </div>
+                <div fxLayout="row" fxLayoutAlign="end center" class="toolbar-user-row toolbar-right">
+                    <button mat-icon-button (click)="toggleTheme()" [matTooltip]="settings.theme === 'black-dashboard' ? 'Switch to light theme' : 'Switch to dark theme'">
+                        <mat-icon>{{settings.theme === 'black-dashboard' ? 'light_mode' : 'dark_mode'}}</mat-icon>
+                    </button>
+                    <app-fullscreen></app-fullscreen>
+                    <app-messages fxShow="false" fxShow.gt-xs></app-messages>
+                    <app-user-menu></app-user-menu>
                 </div>
             </mat-toolbar>
 

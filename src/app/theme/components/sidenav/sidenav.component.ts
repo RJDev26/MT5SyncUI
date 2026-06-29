@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';  
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Settings, SettingsService } from '../../../services/settings.service';
 import { MenuService } from '../../../services/menu.service';
 import { VerticalMenuComponent } from '../menu/vertical-menu/vertical-menu.component';
+import { AuthenticationService } from '@services/authentication.service';
 
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -28,12 +29,15 @@ export class SidenavComponent implements OnInit {
   public userImage = 'img/users/user.jpg';
   public menuItems: Array<any>;
   public settings: Settings;
-  constructor(public settingsService: SettingsService, public menuService: MenuService){
-      this.settings = this.settingsService.settings; 
+  constructor(public settingsService: SettingsService, public menuService: MenuService, private authenticationService: AuthenticationService){
+      this.settings = this.settingsService.settings;
   }
 
   ngOnInit() {
-    this.menuItems = this.menuService.getVerticalMenuItems();
+    this.authenticationService.getUserData().subscribe(data => {
+      const role = data?.role || (Array.isArray(data?.roles) ? data.roles[0] : null);
+      this.menuItems = this.menuService.filterMenuItemsForRole(this.menuService.getVerticalMenuItems(), role);
+    });
   }
 
   public closeSubMenus(){

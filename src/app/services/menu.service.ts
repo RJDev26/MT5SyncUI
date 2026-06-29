@@ -8,6 +8,7 @@ import { Menu } from '../common/models/menu.model';
   providedIn: 'root'
 })
 export class MenuService {
+  private readonly adminOnlyRoutes = new Set(['/user-roles', '/client-master']);
 
   constructor(private location:Location,
               private router:Router){ } 
@@ -18,6 +19,14 @@ export class MenuService {
 
   public getHorizontalMenuItems():Array<Menu> {
     return horizontalMenuItems;
+  }
+
+  public filterMenuItemsForRole(menuItems: Menu[], role?: string | null): Menu[] {
+    const isAdmin = (role || '').toLowerCase() === 'admin';
+    if (isAdmin) {
+      return menuItems;
+    }
+    return menuItems.filter(item => !this.adminOnlyRoutes.has(item.routerLink ?? ''));
   }
 
   public expandActiveSubMenu(menu:Array<Menu>){

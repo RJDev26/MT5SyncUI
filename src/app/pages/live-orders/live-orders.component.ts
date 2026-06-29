@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
 import { DealsService, OrderRow } from '@services/deals.service';
 import { interval, Subscription } from 'rxjs';
 import {
@@ -32,6 +33,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
+    MatSelectModule,
     AgGridModule,
     AgGridAngular,
   ],
@@ -39,6 +41,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrls: ['./live-orders.component.scss'],
 })
 export class LiveOrdersComponent implements OnDestroy {
+  loginDigitFilter: 'all' | '4' | '5' = 'all';
   gridOptions: GridOptions = {
     theme: 'legacy',
     columnDefs: [
@@ -84,6 +87,7 @@ export class LiveOrdersComponent implements OnDestroy {
   };
 
   rowData: OrderRow[] = [];
+  private allRows: OrderRow[] = [];
 
   autoRefresh = false;
   lastMaxTime?: string;
@@ -105,19 +109,25 @@ export class LiveOrdersComponent implements OnDestroy {
     }
   }
 
-    loadData() {
-      this.svc.getOrdersSnapshot().subscribe(res => {
-        this.rowData = res.rows;
-        this.gridApi.setGridOption('rowData', this.rowData);
-        this.lastMaxTime = res.maxTime || undefined;
-        this.rowCount = res.rowCount;
-        setTimeout(() => this.gridApi.sizeColumnsToFit());
-      });
-    }
+  loadData() {
+    this.svc.getOrdersSnapshot().subscribe(res => {
+      this.allRows = res.rows;
+      this.rowData = this.getFilteredRows();
+      this.gridApi.setGridOption('rowData', this.rowData);
+      this.lastMaxTime = res.maxTime || undefined;
+      this.rowCount = res.rowCount;
+      setTimeout(() => this.gridApi.sizeColumnsToFit());
+    });
+  }
 
   onFilterTextBoxChanged(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.gridApi.setGridOption('quickFilterText', value);
+  }
+
+  onLoginDigitChange() {
+    this.rowData = this.getFilteredRows();
+    this.gridApi.setGridOption('rowData', this.rowData);
   }
 
   exportCsv() {
@@ -142,5 +152,13 @@ export class LiveOrdersComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.refreshSub?.unsubscribe();
+  }
+
+  private getFilteredRows() {
+    if (this.loginDigitFilter === 'all') {
+      return this.allRows;
+    }
+    const length = Number(this.loginDigitFilter);
+    return this.allRows.filter(r => String(r.login ?? '').length === length);
   }
 }

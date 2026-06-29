@@ -1,6 +1,18 @@
   <div class="toolbar">
     <div class="left">
       <mat-form-field appearance="outline">
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="fromDatePicker" [(ngModel)]="fromDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromDatePicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="toDatePicker" [(ngModel)]="toDate" />
+        <mat-datepicker-toggle matIconSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #toDatePicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Interval</mat-label>
         <input
           matInput
@@ -19,6 +31,14 @@
       <span class="info">Rows: {{ rowCount }}</span>
     </div>
     <div class="right">
+      <mat-form-field appearance="outline" class="digit-filter">
+        <mat-label>Login Digits</mat-label>
+        <mat-select [(ngModel)]="loginDigitFilter" (selectionChange)="onLoginDigitChange()">
+          <mat-option value="all">All</mat-option>
+          <mat-option value="4">4 Digits</mat-option>
+          <mat-option value="5">5 Digits</mat-option>
+        </mat-select>
+      </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Search</mat-label>
         <input matInput (input)="onFilterTextBoxChanged($event)" />

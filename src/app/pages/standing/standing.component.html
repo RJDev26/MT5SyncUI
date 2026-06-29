@@ -7,10 +7,19 @@
   </mat-form-field>
 
   <mat-form-field appearance="outline">
+    <mat-label>Login Digits</mat-label>
+    <mat-select [(ngModel)]="loginDigitFilter" (selectionChange)="applyLoginDigitFilter()">
+      <mat-option value="all">All</mat-option>
+      <mat-option value="4">4 Digit</mat-option>
+      <mat-option value="5">5 Digit</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
     <mat-label>Login</mat-label>
     <mat-select [(ngModel)]="selectedLogin">
       <mat-option [value]="null">All</mat-option>
-      <mat-option *ngFor="let l of logins" [value]="l.login">
+      <mat-option *ngFor="let l of filteredLogins" [value]="l.login">
         {{ l.login }} - {{ l.name }}
       </mat-option>
     </mat-select>
